@@ -122,14 +122,14 @@ function handleBack() {
   if (totalBet.value > 0 && !isSpinning.value) {
     showExitConfirmDialog.value = true
   } else {
-    router.push('/')
+    router.push('/casino')
   }
 }
 
 function confirmExit() {
   store.clearBets() // reembolsa las fichas antes de salir
   showExitConfirmDialog.value = false
-  router.push('/')
+  router.push('/casino')
 }
 
 function handleRefill() {

@@ -181,7 +181,7 @@ function handleMachineChange() {
 }
 
 function handleBack() {
-  router.push('/')
+  router.push('/casino')
 }
 
 function handleRefill() {
