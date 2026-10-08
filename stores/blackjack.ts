@@ -199,6 +199,15 @@ export const useBlackjackStore = defineStore('blackjack', () => {
     saveStats()
   }
 
+  /**
+   * Suma fichas de producción pasiva sin llamar a saveStats()
+   * El watcher de player.chips ya se encarga de guardar la billetera en localStorage.
+   */
+  function creditPassive(amount: number) {
+    if (amount <= 0) return
+    player.value.chips = Math.max(0, player.value.chips + Math.floor(amount))
+  }
+
   // ── Dealer ───────────────────────────────
   const dealer = ref<DealerState>({
     hand: [],
@@ -567,6 +576,7 @@ export const useBlackjackStore = defineStore('blackjack', () => {
     addChips,
     removeChips,
     refillChips,
+    creditPassive,
     startNewGame,
     placeBet,
     hit,
