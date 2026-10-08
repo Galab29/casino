@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { useBlackjackStore } from './blackjack'
+import { useCasinoBridge } from '~/composables/useCasinoBridge'
 import type { Card } from '~/types/blackjack'
 import type {
   Street,
@@ -749,6 +750,13 @@ export const usePokerStore = defineStore('poker', () => {
     }
 
     saveStats()
+
+    useCasinoBridge().reportRound({
+      game: 'poker',
+      bet: playerTotalBet.value,
+      payout: roundResult.value?.playerWon || 0,
+      isJackpot: cmp > 0 && pHand.rank <= 2,
+    })
   }
 
   function endHandWithFold(winner: 'player' | 'dealer') {
@@ -800,6 +808,12 @@ export const usePokerStore = defineStore('poker', () => {
     }
 
     saveStats()
+
+    useCasinoBridge().reportRound({
+      game: 'poker',
+      bet: playerTotalBet.value,
+      payout: roundResult.value?.playerWon || 0,
+    })
   }
 
   function setStakes(sb: number) {

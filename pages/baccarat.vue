@@ -8,6 +8,7 @@ import { CHIP_OPTIONS, CHIP_CONFIG } from '~/constants/ruleta'
 import BaccaratRoadmap from '~/components/baccarat/BaccaratRoadmap.vue'
 import BaccaratTable from '~/components/baccarat/BaccaratTable.vue'
 import GameRulesDialog from '~/components/common/GameRulesDialog.vue'
+import AdrenalineBanner from '~/components/idle/AdrenalineBanner.vue'
 
 useHead({
   title: 'Baccarat Royale · Royal Casino',
@@ -221,6 +222,8 @@ onUnmounted(() => {
           >
             +1,000 Fichas
           </v-btn>
+
+          <AdrenalineBanner />
 
           <div class="balance-pill">
             <v-icon color="amber" size="18" class="mr-1.5">mdi-poker-chip</v-icon>

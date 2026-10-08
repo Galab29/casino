@@ -11,6 +11,7 @@ import DadosControls from '~/components/dados/DadosControls.vue'
 import DadosHistory from '~/components/dados/DadosHistory.vue'
 import DadosStatsDialog from '~/components/dados/DadosStatsDialog.vue'
 import GameRulesDialog from '~/components/common/GameRulesDialog.vue'
+import AdrenalineBanner from '~/components/idle/AdrenalineBanner.vue'
 
 useHead({
   title: 'Dados (Craps) · Royal Casino',
@@ -187,6 +188,8 @@ function handleRefill() {
 
         <!-- Saldo y Botones de Menú -->
         <div class="d-flex align-center ga-2 flex-wrap">
+          <AdrenalineBanner />
+
           <!-- Píldora de Saldo -->
           <div class="balance-pill-badge">
             <v-icon color="amber" size="20" class="mr-1">mdi-poker-chip</v-icon>
