@@ -134,14 +134,14 @@ function handleBackClick() {
   if (gameStatus.value === 'player_turn' || gameStatus.value === 'dealing' || gameStatus.value === 'dealer_turn') {
     showExitConfirmDialog.value = true
   } else {
-    router.push('/casino')
+    router.push('/')
   }
 }
 
 function confirmExit() {
   showExitConfirmDialog.value = false
   store.resetRound()
-  router.push('/casino')
+  router.push('/')
 }
 
 function confirmResetStats() {

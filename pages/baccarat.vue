@@ -120,14 +120,14 @@ function handleBack() {
   if (totalBet.value > 0 && !isDealing.value) {
     showExitConfirmDialog.value = true
   } else {
-    router.push('/casino')
+    router.push('/')
   }
 }
 
 function confirmExit() {
   store.clearBets()
   showExitConfirmDialog.value = false
-  router.push('/casino')
+  router.push('/')
 }
 
 function handleRefill() {

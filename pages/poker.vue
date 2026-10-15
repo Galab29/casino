@@ -64,14 +64,14 @@ function handleBack() {
   if (store.street !== 'idle' && store.street !== 'showdown') {
     showExitConfirmDialog.value = true
   } else {
-    router.push('/casino')
+    router.push('/')
   }
 }
 
 function confirmExit() {
   showExitConfirmDialog.value = false
   store.forfeitHand()
-  router.push('/casino')
+  router.push('/')
 }
 
 function handleRefill() {
