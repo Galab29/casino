@@ -1,12 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useBlackjackStore } from '~/stores/blackjack'
-import { useIdleStore } from '~/stores/idle'
-import { formatNumber } from '~/utils/formatNumber'
 
 const nuxtApp = useNuxtApp()
 const wallet = useBlackjackStore(nuxtApp.$pinia)
-const idleStore = useIdleStore(nuxtApp.$pinia)
 const chips = computed(() => wallet.player.chips)
 
 interface GameCard {
@@ -118,33 +115,6 @@ const games: GameCard[] = [
               @click="wallet.refillChips(1000)"
             >
               +1,000 Fichas Gratis
-            </v-btn>
-          </div>
-
-          <!-- Fase 1: Verificación de Economía Idle -->
-          <div class="d-flex justify-center align-center ga-2 mt-2 mb-2 flex-wrap">
-            <v-chip color="amber" variant="outlined" size="small">
-              <v-icon start size="16">mdi-lightning-bolt</v-icon>
-              CPS: {{ formatNumber(idleStore.cps) }}/s
-            </v-chip>
-            <v-btn
-              size="small"
-              color="primary"
-              variant="tonal"
-              prepend-icon="mdi-hand-coin"
-              @click="idleStore.click()"
-            >
-              Propina (+{{ formatNumber(idleStore.clickValue) }})
-            </v-btn>
-            <v-btn
-              size="small"
-              color="success"
-              variant="tonal"
-              prepend-icon="mdi-slot-machine"
-              :disabled="wallet.player.chips < idleStore.getGeneratorCost('slots_classic', 1)"
-              @click="idleStore.buyGenerator('slots_classic', 1)"
-            >
-              +1 Tragamonedas ({{ idleStore.generators['slots_classic'] || 0 }}) - Costo: {{ idleStore.getGeneratorCost('slots_classic', 1) }}
             </v-btn>
           </div>
 
