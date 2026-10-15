@@ -134,9 +134,9 @@ const games: GameCard[] = [
               rounded="pill"
               prepend-icon="mdi-gift"
               class="elevation-4 refill-btn"
-              @click="wallet.refillChips()"
+              @click="wallet.refillChips(1000)"
             >
-              +{{ formatNumber(wallet.getRescueAmount()) }} Fichas de Rescate
+              +1,000 Fichas Gratis
             </v-btn>
           </div>
 

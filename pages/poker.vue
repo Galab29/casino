@@ -8,7 +8,6 @@ import { useConfetti } from '~/composables/useConfetti'
 import PokerTable from '~/components/poker/PokerTable.vue'
 import PokerControls from '~/components/poker/PokerControls.vue'
 import GameRulesDialog from '~/components/common/GameRulesDialog.vue'
-import AdrenalineBanner from '~/components/idle/AdrenalineBanner.vue'
 
 useHead({
   title: 'Texas Hold\'em Poker · Royal Casino',
@@ -194,8 +193,6 @@ onUnmounted(() => {
           >
             +1,000 Fichas
           </v-btn>
-
-          <AdrenalineBanner />
 
           <div class="balance-pill">
             <v-icon color="amber" size="18" class="mr-1">mdi-poker-chip</v-icon>

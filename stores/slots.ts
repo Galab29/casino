@@ -12,7 +12,6 @@ import type {
 } from '~/types/slots'
 import { SLOT_MACHINES } from '~/constants/slotMachines'
 import { useBlackjackStore } from '~/stores/blackjack'
-import { useCasinoBridge } from '~/composables/useCasinoBridge'
 
 // ─── Constantes ──────────────────────────────────────────────
 const STATS_STORAGE_KEY = 'slots_machine_stats_v1'
@@ -227,17 +226,10 @@ export const useSlotsStore = defineStore('slots', () => {
     pendingOutcome.value = null
     status.value = 'result'
     saveStats()
-
-    useCasinoBridge().reportRound({
-      game: 'slots',
-      bet: m.cost,
-      payout: outcome.payout,
-      isJackpot: outcome.winLevel === 'jackpot',
-    })
   }
 
   function refillChips() {
-    wallet.refillChips()
+    if (chips.value < minCost) setChips(REFILL_CHIPS)
   }
 
   function resetStats() {

@@ -5,7 +5,6 @@ import { useSoundEngine } from '~/composables/useSoundEngine'
 import { useConfetti } from '~/composables/useConfetti'
 import { storeToRefs } from 'pinia'
 import GameRulesDialog from '~/components/common/GameRulesDialog.vue'
-import AdrenalineBanner from '~/components/idle/AdrenalineBanner.vue'
 
 const router = useRouter()
 const nuxtApp = useNuxtApp()
@@ -211,12 +210,11 @@ const resultIconColor = computed(() => {
           </v-btn>
         </v-col>
 
-        <v-col cols="auto" class="text-center d-flex align-center ga-2 flex-wrap">
+        <v-col cols="auto" class="text-center">
           <div class="table-badge d-flex align-center ga-2">
             <span class="pulse-dot" />
             <span class="table-badge-text">Mesa VIP Blackjack • Paga 3:2</span>
           </div>
-          <AdrenalineBanner />
         </v-col>
 
         <v-col cols="auto" class="d-none d-sm-flex align-center ga-2">

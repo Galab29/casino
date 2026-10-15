@@ -1,8 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed, watch } from 'vue'
 import type { Card, Suit, PlayerState, DealerState, GameStatus, GameStats } from '~/types/blackjack'
-import { useCasinoBridge } from '~/composables/useCasinoBridge'
-import { useIdleStore } from '~/stores/idle'
 
 // ─── Helpers ─────────────────────────────────────────────────
 
@@ -196,21 +194,8 @@ export const useBlackjackStore = defineStore('blackjack', () => {
     saveStats()
   }
 
-  function getRescueAmount(): number {
-    let idleCps = 0
-    try {
-      if (typeof useNuxtApp === 'function') {
-        const nuxtApp = useNuxtApp()
-        const idleStore = nuxtApp?.$pinia ? useIdleStore(nuxtApp.$pinia) : useIdleStore()
-        idleCps = idleStore?.cps || 0
-      }
-    } catch {}
-    return Math.max(1000, Math.floor(idleCps * 60))
-  }
-
-  function refillChips(amount?: number) {
-    const rescue = amount ?? getRescueAmount()
-    player.value.chips = Math.max(player.value.chips + rescue, rescue)
+  function refillChips(amount = 1000) {
+    player.value.chips = Math.max(player.value.chips + amount, amount)
     saveStats()
   }
 
@@ -313,7 +298,7 @@ export const useBlackjackStore = defineStore('blackjack', () => {
     player.value.currentBet = 0
     player.value.status = 'playing'
     if (player.value.chips <= 0) {
-      player.value.chips = getRescueAmount()
+      player.value.chips = 1000
     }
     dealer.value = {
       hand: [],
@@ -540,21 +525,6 @@ export const useBlackjackStore = defineStore('blackjack', () => {
     }
 
     saveStats()
-
-    const isNaturalBj = player.value.status === 'blackjack' && ds !== 21
-    let payout = 0
-    if (lastResult.value === 'win') {
-      payout = isNaturalBj ? Math.floor(player.value.currentBet * 2.5) : player.value.currentBet * 2
-    } else if (lastResult.value === 'draw') {
-      payout = player.value.currentBet
-    }
-
-    useCasinoBridge().reportRound({
-      game: 'blackjack',
-      bet: player.value.currentBet,
-      payout,
-      isJackpot: isNaturalBj,
-    })
   }
 
   function resetRound() {
@@ -570,7 +540,7 @@ export const useBlackjackStore = defineStore('blackjack', () => {
 
     if (player.value.chips <= 0) {
       // Re-fill chips if out
-      player.value.chips = getRescueAmount()
+      player.value.chips = 1000
       saveStats()
     }
 
@@ -606,7 +576,6 @@ export const useBlackjackStore = defineStore('blackjack', () => {
     addChips,
     removeChips,
     refillChips,
-    getRescueAmount,
     creditPassive,
     startNewGame,
     placeBet,

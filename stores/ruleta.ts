@@ -14,7 +14,6 @@ import {
   CHIP_OPTIONS,
 } from '~/constants/ruleta'
 import { useBlackjackStore } from '~/stores/blackjack'
-import { useCasinoBridge } from '~/composables/useCasinoBridge'
 
 const STATS_STORAGE_KEY = 'ruleta_game_stats_v1'
 const HISTORY_LIMIT = 15
@@ -290,13 +289,6 @@ export const useRuletaStore = defineStore('ruleta', () => {
     status.value = 'result'
 
     saveStats()
-
-    useCasinoBridge().reportRound({
-      game: 'ruleta',
-      bet: outcome.totalBet,
-      payout: outcome.totalWon,
-      isJackpot: outcome.winningBets.some((w) => w.multiplier >= 36),
-    })
   }
 
   function resetRound() {

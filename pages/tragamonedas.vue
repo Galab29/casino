@@ -6,7 +6,6 @@ import { useConfetti } from '~/composables/useConfetti'
 import { getMaxPayout, getSymbol } from '~/constants/slotMachines'
 import type { MachineTier, SlotMachineConfig } from '~/types/slots'
 import GameRulesDialog from '~/components/common/GameRulesDialog.vue'
-import AdrenalineBanner from '~/components/idle/AdrenalineBanner.vue'
 
 useHead({
   title: 'Tragamonedas · Royal Casino',
@@ -260,8 +259,6 @@ onUnmounted(() => {
           >
             ¿Cómo Jugar?
           </v-btn>
-
-          <AdrenalineBanner />
 
           <div class="balance-pill">
             <v-icon color="amber" size="20" class="mr-2">mdi-poker-chip</v-icon>

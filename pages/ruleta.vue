@@ -6,7 +6,6 @@ import { useConfetti } from '~/composables/useConfetti'
 import type { BetType } from '~/types/ruleta'
 import { RED_NUMBERS } from '~/constants/ruleta'
 import GameRulesDialog from '~/components/common/GameRulesDialog.vue'
-import AdrenalineBanner from '~/components/idle/AdrenalineBanner.vue'
 
 useHead({
   title: 'Ruleta Europea · Royal Casino',
@@ -276,8 +275,6 @@ onUnmounted(() => {
           >
             +1,000 Fichas
           </v-btn>
-
-          <AdrenalineBanner />
 
           <div class="balance-pill">
             <v-icon color="amber" size="18" class="mr-1.5">mdi-poker-chip</v-icon>

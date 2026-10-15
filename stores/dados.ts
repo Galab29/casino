@@ -14,7 +14,6 @@ import {
   type ValidPoint,
 } from '~/constants/dados'
 import { useBlackjackStore } from '~/stores/blackjack'
-import { useCasinoBridge } from '~/composables/useCasinoBridge'
 
 const STATS_STORAGE_KEY = 'craps_dados_stats_v1'
 const HISTORY_LIMIT = 40
@@ -598,14 +597,6 @@ export const useDadosStore = defineStore('dados', () => {
     }
 
     saveStats()
-
-    useCasinoBridge().reportRound({
-      game: 'dados',
-      bet: outcome.totalBet,
-      payout: outcome.totalWon,
-      isJackpot: outcome.winningBets.some((w) => w.payoutMultiplier >= 30),
-    })
-
     return outcome
   }
 

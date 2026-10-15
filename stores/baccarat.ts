@@ -18,7 +18,6 @@ import {
   shouldBankerDraw,
 } from '~/constants/baccarat'
 import { useBlackjackStore } from '~/stores/blackjack'
-import { useCasinoBridge } from '~/composables/useCasinoBridge'
 
 const STATS_STORAGE_KEY = 'baccarat_game_stats_v1'
 const HISTORY_LIMIT = 36
@@ -447,13 +446,6 @@ export const useBaccaratStore = defineStore('baccarat', () => {
     status.value = 'result'
 
     saveStats()
-
-    useCasinoBridge().reportRound({
-      game: 'baccarat',
-      bet: outcome.totalBet,
-      payout: outcome.totalWon,
-      isJackpot: outcome.isNatural && outcome.totalWon > outcome.totalBet * 2,
-    })
   }
 
   function resetRound() {
