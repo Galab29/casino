@@ -70,76 +70,77 @@ const winPercents = computed(() => {
 
 <style scoped>
 .baccarat-roadmap {
-  background: rgba(10, 16, 26, 0.7);
-  border: 1px solid rgba(255, 213, 79, 0.2);
-  border-radius: 14px;
-  backdrop-filter: blur(8px);
+  background: #0b111c;
+  border: 2px solid #ffd54f;
+  border-radius: 0;
+  box-shadow: 3px 3px 0 #000;
 }
 
 .roadmap-label {
-  font-family: 'Cinzel', serif;
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 1.5px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0;
   color: #ffd54f;
 }
 
 .no-history-text {
-  font-size: 0.75rem;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.52rem;
   color: rgba(255, 255, 255, 0.4);
-  font-style: italic;
 }
 
 .bead-circle {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  border-radius: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Cinzel', serif;
-  font-size: 0.72rem;
-  font-weight: 900;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.58rem;
+  font-weight: 700;
   color: #fff;
-  border: 1.5px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.6);
+  border: 1px solid #fff;
+  box-shadow: 2px 2px 0 #000;
   flex-shrink: 0;
-  transition: transform 0.2s ease;
+  transition: transform 0.15s ease;
 }
 
 .bead-circle--latest {
   border-color: #ffd54f;
-  box-shadow: 0 0 10px rgba(255, 213, 79, 0.85);
-  transform: scale(1.18);
+  border-width: 2px;
+  box-shadow: 0 0 8px rgba(255, 213, 79, 0.85), 2px 2px 0 #000;
+  transform: scale(1.15);
 }
 
 .bead-circle--player {
-  background: radial-gradient(circle at 35% 35%, #1976d2, #0d47a1);
+  background: #1d4ed8;
 }
 
 .bead-circle--banker {
-  background: radial-gradient(circle at 35% 35%, #e53935, #b71c1c);
+  background: #b91c1c;
 }
 
 .bead-circle--tie {
-  background: radial-gradient(circle at 35% 35%, #43a047, #1b5e20);
+  background: #15803d;
 }
 
 .badge-item {
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: 0.72rem;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.52rem;
   font-weight: 700;
 }
 
 .badge-dot {
   width: 8px;
   height: 8px;
-  border-radius: 50%;
+  border-radius: 0;
 }
 
-.dot-player { background: #1976d2; box-shadow: 0 0 5px #1976d2; }
-.dot-banker { background: #e53935; box-shadow: 0 0 5px #e53935; }
-.dot-tie { background: #43a047; box-shadow: 0 0 5px #43a047; }
+.dot-player { background: #3b82f6; box-shadow: 1px 1px 0 #000; }
+.dot-banker { background: #ef4444; box-shadow: 1px 1px 0 #000; }
+.dot-tie { background: #22c55e; box-shadow: 1px 1px 0 #000; }
 </style>

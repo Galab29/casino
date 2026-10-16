@@ -398,35 +398,38 @@ const gameInfo = computed(() => {
 
 <style scoped>
 .rules-dialog-card {
-  background: #111726 !important;
-  border: 1.5px solid rgba(255, 213, 79, 0.35);
-  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.85);
+  background: #0c1017 !important;
+  border: 3px solid #ffd54f !important;
+  border-radius: 0 !important;
+  box-shadow: 6px 6px 0 #000;
   color: #fff;
 }
 
 .rules-icon-wrap {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--icon-color);
+  width: 40px;
+  height: 40px;
+  border-radius: 0;
+  background: #000;
+  border: 2px solid var(--icon-color);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+  box-shadow: 2px 2px 0 #000;
 }
 
 .rules-title {
-  font-family: 'Cinzel', serif;
-  font-size: 1.15rem;
-  font-weight: 900;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
   color: #ffd54f;
-  line-height: 1.2;
+  line-height: 1.3;
 }
 
 .rules-subtitle {
-  font-size: 0.75rem;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.45rem;
   color: rgba(255, 255, 255, 0.6);
+  margin-top: 3px;
 }
 
 .rules-body {
@@ -434,37 +437,39 @@ const gameInfo = computed(() => {
 }
 
 .rule-block {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  padding: 12px 14px;
+  background: #111827;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0;
+  padding: 10px 12px;
 }
 
 .rule-heading {
-  font-family: 'Cinzel', serif;
-  font-size: 0.92rem;
-  font-weight: 800;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.55rem;
+  font-weight: 700;
   color: #ffd54f;
   margin-bottom: 6px;
 }
 
 .rule-text {
-  font-size: 0.82rem;
-  line-height: 1.5;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.48rem;
+  line-height: 1.65;
   color: rgba(255, 255, 255, 0.85);
   margin: 0;
 }
 
 .rule-list {
-  padding-left: 18px;
+  padding-left: 16px;
   margin: 0;
-  font-size: 0.82rem;
-  line-height: 1.55;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.46rem;
+  line-height: 1.65;
   color: rgba(255, 255, 255, 0.85);
 }
 
 .rule-list li {
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .rule-list li:last-child {

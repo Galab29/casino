@@ -150,12 +150,16 @@ const emit = defineEmits<{
 }
 
 .score-number {
-  font-family: 'Cinzel', serif;
+  font-family: 'Press Start 2P', monospace !important;
+  font-size: 0.95rem !important;
 }
 
 .status-chip {
-  font-weight: 700;
-  letter-spacing: 0.5px;
+  font-family: 'Press Start 2P', monospace !important;
+  font-size: 0.62rem !important;
+  letter-spacing: -0.5px;
+  border: 2px solid #000 !important;
+  border-radius: 4px !important;
   animation: pulse-glow 2s ease-in-out infinite;
 }
 
@@ -165,9 +169,9 @@ const emit = defineEmits<{
 }
 
 .info-value {
-  font-family: 'Cinzel', serif;
+  font-family: 'Press Start 2P', monospace !important;
   font-weight: 700;
-  font-size: 16px;
+  font-size: 0.75rem;
   color: #fff;
   transition: color 0.3s ease;
 }
@@ -183,10 +187,11 @@ const emit = defineEmits<{
 }
 
 .info-label {
-  font-size: 11px;
+  font-family: 'Press Start 2P', monospace !important;
+  font-size: 0.52rem;
   color: rgba(255, 255, 255, 0.5);
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0px;
 }
 
 .chip-icon {
@@ -202,23 +207,24 @@ const emit = defineEmits<{
 /* ─── Streak Bar ─── */
 .streak-bar {
   background: rgba(255,255,255,0.04);
-  border-radius: 8px;
+  border-radius: 4px;
   padding: 4px 12px;
   border: 1px solid rgba(255,255,255,0.06);
 }
 
 .streak-text {
-  font-size: 12px;
+  font-family: 'Press Start 2P', monospace !important;
+  font-size: 0.55rem;
   font-weight: 600;
-  letter-spacing: 1px;
+  letter-spacing: 0px;
   color: #ffe082;
 }
 
 /* ─── History & Stat Badges ─── */
 .history-title {
-  font-family: 'Cinzel', serif;
-  font-size: 11px;
-  letter-spacing: 2px;
+  font-family: 'Press Start 2P', monospace !important;
+  font-size: 0.52rem;
+  letter-spacing: 0px;
   font-weight: 700;
   color: #ffd54f;
   display: flex;

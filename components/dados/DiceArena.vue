@@ -309,65 +309,59 @@ const nickname = computed(() => getRollNickname(props.die1, props.die2))
 }
 
 .craps-puck {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  box-shadow:
-    0 6px 12px rgba(0, 0, 0, 0.6),
-    inset 0 2px 4px rgba(255, 255, 255, 0.3);
+  width: 48px;
+  height: 48px;
+  border-radius: 4px;
+  border: 3px solid #000;
+  box-shadow: 0 4px 0 #000;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: all 0.2s ease;
 }
 
 .craps-puck--off {
-  background: radial-gradient(circle at 35% 35%, #37474f, #10171a);
-  border: 3px solid #607d8b;
+  background: #272738;
   color: #cfd8dc;
 }
 
 .craps-puck--on {
-  background: radial-gradient(circle at 35% 35%, #ffffff, #e0e0e0);
-  border: 3px solid #ffd54f;
+  background: var(--pixel-gold);
   color: #1a1a1a;
-  box-shadow:
-    0 0 16px rgba(255, 213, 79, 0.6),
-    0 6px 14px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 4px 0 #000, 0 0 14px rgba(251, 192, 45, 0.5);
 }
 
 .puck-face {
-  font-family: 'Cinzel', serif;
-  font-weight: 900;
+  font-family: 'Press Start 2P', monospace !important;
+  font-weight: 700;
   text-align: center;
-  line-height: 1;
+  line-height: 1.2;
 }
 
 .puck-on {
   display: flex;
   flex-direction: column;
-  font-size: 0.95rem;
-  color: #111;
+  font-size: 0.65rem;
+  color: #000;
 }
 
 .puck-point-val {
-  font-size: 0.75rem;
+  font-size: 0.6rem;
   font-weight: 900;
   color: #c62828;
 }
 
 .puck-off {
-  font-size: 0.9rem;
+  font-size: 0.62rem;
   color: #ffffff;
-  opacity: 0.85;
 }
 
 .puck-label {
-  font-size: 0.7rem;
-  font-weight: 800;
-  letter-spacing: 1px;
+  font-family: 'Press Start 2P', monospace !important;
+  font-size: 0.5rem;
+  letter-spacing: 0px;
   color: #ffd54f;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+  text-shadow: 1px 1px 0 #000;
 }
 
 /* Escena 3D de los Dados */
@@ -418,22 +412,23 @@ const nickname = computed(() => getRollNickname(props.die1, props.die2))
   transition: transform 1.1s cubic-bezier(0.18, 0.89, 0.32, 1.15);
 }
 
-/* Caras del Dado: Rojo Rubí Translúcido con Esquinas Redondeadas */
+/* Caras del Dado: 8-Bit Pixel Cube */
 .die-face {
   position: absolute;
   width: 64px;
   height: 64px;
-  border-radius: 12px;
-  background: radial-gradient(circle at 30% 30%, #ef233c 0%, #d90429 60%, #900c1e 100%);
-  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 4px;
+  background: #d90429;
+  border: 2px solid #000;
   box-shadow:
-    inset 0 0 10px rgba(0, 0, 0, 0.5),
-    inset 0 2px 4px rgba(255, 255, 255, 0.4);
+    inset -4px -4px 0px 0px #800010,
+    inset 4px 4px 0px 0px #ff6b6b;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
   padding: 6px;
   box-sizing: border-box;
+  image-rendering: pixelated;
 }
 
 /* Posiciones 3D de cada cara de un cubo de 64px (radio = 32px) */
@@ -444,16 +439,15 @@ const nickname = computed(() => getRollNickname(props.die1, props.die2))
 .die-face--3 { transform: rotateX(90deg) translateZ(32px); }
 .die-face--4 { transform: rotateX(-90deg) translateZ(32px); }
 
-/* Puntos / Pips del Dado (Puntos Blancos Nítidos con Relieve) */
+/* Puntos / Pips del Dado (Puntos Cuadrados 8-bit) */
 .pip {
   display: block;
-  width: 11px;
-  height: 11px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, #ffffff 0%, #e0e0e0 70%, #bdbdbd 100%);
-  box-shadow:
-    inset 0 1px 2px rgba(0, 0, 0, 0.4),
-    0 1px 1px rgba(255, 255, 255, 0.6);
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  background: #ffffff;
+  border: 1px solid #000;
+  box-shadow: 1px 1px 0 #000;
   place-self: center;
 }
 
@@ -472,9 +466,8 @@ const nickname = computed(() => getRollNickname(props.die1, props.die2))
   left: 6px;
   width: 52px;
   height: 14px;
-  border-radius: 50%;
-  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0) 70%);
-  filter: blur(2px);
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.7);
   transition: all 0.3s ease;
 }
 
@@ -503,32 +496,36 @@ const nickname = computed(() => getRollNickname(props.die1, props.die2))
   justify-content: center;
   width: 38px;
   height: 38px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #ffd54f 0%, #ff8f00 100%);
-  color: #1a1a1a;
-  font-family: 'Cinzel', serif;
-  font-weight: 900;
-  font-size: 1.3rem;
-  box-shadow: 0 4px 12px rgba(255, 193, 7, 0.4);
+  border-radius: 4px;
+  background: var(--pixel-gold);
+  border: 2px solid #000;
+  box-shadow: 0 3px 0 #000;
+  color: #000;
+  font-family: 'Press Start 2P', monospace !important;
+  font-weight: 700;
+  font-size: 0.85rem;
 }
 
 .nickname-text {
-  font-family: 'Cinzel', serif;
-  font-weight: 800;
-  font-size: 1.1rem;
+  font-family: 'Press Start 2P', monospace !important;
+  font-weight: 700;
+  font-size: 0.75rem;
   color: #ffffff;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
+  text-shadow: 2px 2px 0 #000;
+  margin-top: 4px;
 }
 
 .event-pill {
   display: inline-block;
-  padding: 3px 14px;
-  border-radius: 20px;
-  background: rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(255, 213, 79, 0.4);
-  font-size: 0.8rem;
+  padding: 4px 12px;
+  border-radius: 4px;
+  background: #181822;
+  border: 2px solid var(--pixel-gold);
+  box-shadow: 0 3px 0 #000;
+  font-family: 'Press Start 2P', monospace !important;
+  font-size: 0.55rem;
   font-weight: 700;
   color: #ffd54f;
-  letter-spacing: 0.5px;
+  letter-spacing: 0px;
 }
 </style>

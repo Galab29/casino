@@ -5,6 +5,9 @@ import { useSoundEngine } from '~/composables/useSoundEngine'
 import { useConfetti } from '~/composables/useConfetti'
 import { storeToRefs } from 'pinia'
 import GameRulesDialog from '~/components/common/GameRulesDialog.vue'
+import RechargeDialog from '~/components/common/RechargeDialog.vue'
+import { useDeckStyle } from '~/composables/useDeckStyle'
+import { getPixelCardUrl } from '~/utils/pixelDeck'
 
 const router = useRouter()
 const nuxtApp = useNuxtApp()
@@ -29,6 +32,7 @@ const {
   streakText,
   lastResult,
   currentStreak,
+  isRechargeOpen,
 } = storeToRefs(store)
 
 const betAmount = ref<number>(0)
@@ -45,6 +49,13 @@ const cardBackOptions = [
   { text: 'Negro Casino', value: 'black', color: '#1e1e1e' },
   { text: 'Verde Mesa', value: 'green', color: '#1b5e20' },
 ]
+
+// ─── Deck Style (8-bit / classic), shared across all card games ───
+const { isPixel, toggle: toggleDeckStyle } = useDeckStyle()
+function cardBackUrl(color: CardBackColor) {
+  const src = isPixel.value ? getPixelCardUrl({ type: 'BACK', theme: color }) : `/cards/back-${color}.png`
+  return `url(${src})`
+}
 
 // ─── Sound System Hook ─────────────────────────────────
 const soundMap: Record<SoundEvent, () => void> = {
@@ -248,10 +259,21 @@ const resultIconColor = computed(() => {
                 <template #prepend>
                   <div
                     class="deck-sample mr-2"
-                    :style="{ backgroundImage: `url(/cards/back-${opt.value}.png)` }"
+                    :style="{ backgroundImage: cardBackUrl(opt.value as CardBackColor) }"
                   />
                 </template>
                 <v-list-item-title class="text-caption font-weight-bold">{{ opt.text }}</v-list-item-title>
+              </v-list-item>
+              <v-divider class="my-1" />
+              <v-list-item
+                id="blackjack-deck-style-toggle"
+                rounded="md"
+                :prepend-icon="isPixel ? 'mdi-image-outline' : 'mdi-gamepad-square-outline'"
+                @click="toggleDeckStyle"
+              >
+                <v-list-item-title class="text-caption font-weight-bold">
+                  {{ isPixel ? 'Usar baraja clásica' : 'Usar baraja 8-Bit' }}
+                </v-list-item-title>
               </v-list-item>
             </v-list>
           </v-menu>
@@ -268,6 +290,19 @@ const resultIconColor = computed(() => {
             @click="showRulesDialog = true"
           >
             ¿Cómo Jugar?
+          </v-btn>
+
+          <!-- Botón Recargar Monedas -->
+          <v-btn
+            variant="elevated"
+            color="amber-darken-2"
+            size="small"
+            rounded="pill"
+            prepend-icon="mdi-cash-plus"
+            class="rules-btn font-weight-bold ml-1"
+            @click="store.openRecharge()"
+          >
+            + Recargar
           </v-btn>
         </v-col>
       </v-row>
@@ -309,15 +344,15 @@ const resultIconColor = computed(() => {
           <div class="shoe-box">
             <div
               class="shoe-card shoe-card-1"
-              :style="{ backgroundImage: `url(/cards/back-${cardBackColor}.png)` }"
+              :style="{ backgroundImage: cardBackUrl(cardBackColor) }"
             />
             <div
               class="shoe-card shoe-card-2"
-              :style="{ backgroundImage: `url(/cards/back-${cardBackColor}.png)` }"
+              :style="{ backgroundImage: cardBackUrl(cardBackColor) }"
             />
             <div
               class="shoe-card shoe-card-3"
-              :style="{ backgroundImage: `url(/cards/back-${cardBackColor}.png)` }"
+              :style="{ backgroundImage: cardBackUrl(cardBackColor) }"
             />
           </div>
           <span class="shoe-caption">Baraja</span>
@@ -537,6 +572,9 @@ const resultIconColor = computed(() => {
 
       <!-- Diálogo de Reglas del Blackjack -->
       <GameRulesDialog v-model="showRulesDialog" game="blackjack" />
+
+      <!-- Diálogo de Recarga por Códigos -->
+      <RechargeDialog v-model="isRechargeOpen" />
     </v-container>
   </div>
 </template>

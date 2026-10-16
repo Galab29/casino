@@ -142,13 +142,12 @@ onBeforeUnmount(() => {
   position: relative;
   height: calc(var(--cell-h) * 3);
   overflow: hidden;
-  border-radius: 14px;
-  background:
-    linear-gradient(180deg, #d9d9d9 0%, #ffffff 18%, #ffffff 82%, #d0d0d0 100%);
+  border-radius: 0;
+  background: #ffffff;
   box-shadow:
-    inset 0 0 0 2px rgba(0, 0, 0, 0.35),
-    inset 0 10px 18px rgba(0, 0, 0, 0.35),
-    inset 0 -10px 18px rgba(0, 0, 0, 0.35);
+    inset 0 0 0 2px #000,
+    inset 0 8px 12px rgba(0, 0, 0, 0.4),
+    inset 0 -8px 12px rgba(0, 0, 0, 0.4);
 }
 
 /* Sombreado cilíndrico superior / inferior */
@@ -189,30 +188,29 @@ onBeforeUnmount(() => {
 }
 
 .reel-strip--spinning .symbol-cell {
-  filter: blur(1.4px);
+  filter: blur(1px);
 }
 
 .symbol-icon {
-  font-size: calc(var(--cell-h) * 0.6) !important;
-  filter: drop-shadow(0 3px 2px rgba(0, 0, 0, 0.35));
+  font-size: calc(var(--cell-h) * 0.55) !important;
+  filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 0.4));
 }
 
 .symbol-text {
-  font-family: 'Cinzel', serif;
-  font-weight: 900;
-  font-size: calc(var(--cell-h) * 0.66);
+  font-family: 'Press Start 2P', monospace;
+  font-weight: 700;
+  font-size: calc(var(--cell-h) * 0.46);
   line-height: 1;
-  text-shadow:
-    0 3px 0 rgba(0, 0, 0, 0.25),
-    0 0 12px rgba(255, 23, 68, 0.35);
+  text-shadow: 2px 2px 0 #000;
 }
 
 /* Símbolo ganador */
 .symbol-cell--win::before {
   content: '';
   position: absolute;
-  inset: 8px;
-  border-radius: 12px;
+  inset: 6px;
+  border-radius: 0;
+  border: 2px solid var(--accent);
   background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
   opacity: 0.55;
   animation: win-glow 0.7s ease-in-out infinite alternate;

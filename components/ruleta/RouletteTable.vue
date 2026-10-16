@@ -384,10 +384,9 @@ function getChipColor(amount: number): string {
   min-width: 680px;
   background: radial-gradient(circle at 50% 50%, #0d4422 0%, #082d16 100%);
   border: 4px solid #b8860b;
-  border-radius: 18px;
+  border-radius: 0;
   padding: 14px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), inset 0 0 25px rgba(0, 0, 0, 0.8),
-    0 0 0 2px rgba(255, 213, 79, 0.3);
+  box-shadow: 0 6px 0 #000, inset 0 0 0 2px #ffd54f;
   position: relative;
   user-select: none;
 }
@@ -400,24 +399,24 @@ function getChipColor(amount: number): string {
 
 .spot-zero {
   width: 58px;
-  background: #1b5e20;
-  border: 1.5px solid rgba(255, 213, 79, 0.6);
-  border-top-left-radius: 12px;
-  border-bottom-left-radius: 12px;
+  background: #15803d;
+  border: 2px solid rgba(255, 213, 79, 0.7);
+  border-radius: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   position: relative;
-  transition: all 0.2s ease;
+  box-shadow: 2px 2px 0 #000;
+  transition: all 0.15s ease;
 }
 
 .zero-text {
-  font-family: 'Cinzel', serif;
-  font-size: 2rem;
-  font-weight: 900;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 1.2rem;
+  font-weight: 700;
   color: #fff;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+  text-shadow: 2px 2px 0 #000;
 }
 
 .numbers-matrix {
@@ -444,19 +443,19 @@ function getChipColor(amount: number): string {
 }
 
 .spot--red {
-  background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%);
+  background: #b91c1c;
 }
 
 .spot--black {
-  background: linear-gradient(135deg, #212529 0%, #15181b 100%);
+  background: #111418;
 }
 
 .number-label {
-  font-family: 'Cinzel', serif;
-  font-size: 1.25rem;
-  font-weight: 800;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.82rem;
+  font-weight: 700;
   color: #ffffff;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+  text-shadow: 1px 1px 0 #000;
 }
 
 /* Columnas (2 a 1) */
@@ -469,7 +468,7 @@ function getChipColor(amount: number): string {
 .spot-col {
   flex: 1;
   height: 48px;
-  background: rgba(10, 50, 24, 0.8);
+  background: #092c15;
   border: 1.5px solid rgba(255, 213, 79, 0.5);
   border-left: none;
   display: flex;
@@ -477,14 +476,15 @@ function getChipColor(amount: number): string {
   justify-content: center;
   cursor: pointer;
   position: relative;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
 }
 
 .col-label {
-  font-size: 0.8rem;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.52rem;
   font-weight: 700;
   color: #ffd54f;
-  letter-spacing: 0.5px;
+  letter-spacing: 0;
 }
 
 /* ═══ Fila de Docenas ═══ */
@@ -504,31 +504,33 @@ function getChipColor(amount: number): string {
 .spot-dozen {
   flex: 1;
   height: 42px;
-  background: rgba(13, 60, 30, 0.85);
-  border: 1.5px solid rgba(255, 213, 79, 0.5);
+  background: #0c381c;
+  border: 2px solid rgba(255, 213, 79, 0.5);
   margin: 0 2px;
-  border-radius: 6px;
+  border-radius: 0;
+  box-shadow: 2px 2px 0 #000;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   position: relative;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
 }
 
 .outside-title {
-  font-family: 'Cinzel', serif;
-  font-size: 0.95rem;
-  font-weight: 800;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.58rem;
+  font-weight: 700;
   color: #ffffff;
-  letter-spacing: 1px;
+  letter-spacing: 0;
 }
 
 .outside-sub {
-  font-size: 0.65rem;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.48rem;
   color: #ffd54f;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 /* ═══ Fila de Apuestas Simples (1:1) ═══ */
@@ -539,16 +541,17 @@ function getChipColor(amount: number): string {
 .spot-simple {
   flex: 1;
   height: 44px;
-  background: rgba(13, 60, 30, 0.85);
-  border: 1.5px solid rgba(255, 213, 79, 0.5);
+  background: #0c381c;
+  border: 2px solid rgba(255, 213, 79, 0.5);
   margin: 0 2px;
-  border-radius: 6px;
+  border-radius: 0;
+  box-shadow: 2px 2px 0 #000;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   position: relative;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
 }
 
 .color-diamond {
@@ -557,34 +560,35 @@ function getChipColor(amount: number): string {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
-  font-family: 'Cinzel', serif;
-  font-size: 0.85rem;
-  font-weight: 800;
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 0;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.55rem;
+  font-weight: 700;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 1px 1px 0 #000;
 }
 
 .red-diamond {
-  background: #c62828;
+  background: #dc2626;
   color: #fff;
 }
 
 .black-diamond {
-  background: #1e1e1e;
+  background: #18181b;
   color: #fff;
 }
 
 /* ═══ Efectos de interacción y hover ═══ */
 .bet-spot:hover {
   filter: brightness(1.2);
-  border-color: #ffe082 !important;
-  box-shadow: inset 0 0 10px rgba(255, 213, 79, 0.4);
+  border-color: #ffd54f !important;
+  box-shadow: 0 0 0 2px #fff, 2px 2px 0 #000;
 }
 
 .spot--highlight {
   border-color: #ffd54f !important;
-  box-shadow: inset 0 0 14px rgba(255, 213, 79, 0.85), 0 0 8px rgba(255, 213, 79, 0.6);
-  filter: brightness(1.3);
+  box-shadow: 0 0 10px rgba(255, 213, 79, 0.85), 2px 2px 0 #000;
+  filter: brightness(1.25);
   z-index: 2;
 }
 
@@ -595,18 +599,18 @@ function getChipColor(amount: number): string {
 
 @keyframes winningSpotPulse {
   0% {
-    box-shadow: 0 0 10px #ffd54f, inset 0 0 15px #ffd54f;
+    box-shadow: 0 0 0 2px #ffd54f, 2px 2px 0 #000;
     border-color: #ffffff;
-    filter: brightness(1.4);
+    filter: brightness(1.3);
   }
   100% {
-    box-shadow: 0 0 25px #ffd54f, inset 0 0 25px #ffd54f;
+    box-shadow: 0 0 16px #ffd54f, 0 0 0 3px #fff, 2px 2px 0 #000;
     border-color: #ffe082;
-    filter: brightness(1.8);
+    filter: brightness(1.6);
   }
 }
 
-/* ═══ Ficha 3D sobre la casilla ═══ */
+/* ═══ Ficha 8-Bit sobre la casilla ═══ */
 .chip-token {
   position: absolute;
   top: 50%;
@@ -614,24 +618,25 @@ function getChipColor(amount: number): string {
   transform: translate(-50%, -50%);
   width: 28px;
   height: 28px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, var(--chip-color), #000);
-  border: 2px dashed rgba(255, 255, 255, 0.85);
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.8), 0 0 8px var(--chip-color);
+  border-radius: 0;
+  background: var(--chip-color);
+  border: 2px solid #ffffff;
+  box-shadow: 2px 2px 0 #000;
   color: #fff;
-  font-size: 0.62rem;
-  font-weight: 900;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.5rem;
+  font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 3;
   pointer-events: none;
-  animation: dropChip 0.18s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation: dropChip 0.18s steps(4);
 }
 
 @keyframes dropChip {
   0% {
-    transform: translate(-50%, -80%) scale(1.4);
+    transform: translate(-50%, -80%) scale(1.3);
     opacity: 0.5;
   }
   100% {

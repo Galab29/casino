@@ -187,123 +187,139 @@ const colorDistribution = computed(() => {
 }
 
 .history-strip {
+.roulette-history-bar {
+  background: #0b111c;
+  border: 2px solid #ffd54f;
+  border-radius: 0;
+  box-shadow: 3px 3px 0 #000;
+}
+
+.history-strip {
   overflow-x: auto;
 }
 
 .history-label {
-  font-family: 'Cinzel', serif;
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 1.5px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.52rem;
+  letter-spacing: 0;
   color: #ffd54f;
 }
 
 .no-history-text {
-  font-size: 0.75rem;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.48rem;
   color: rgba(255, 255, 255, 0.4);
-  font-style: italic;
 }
 
 .history-badge {
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  border-radius: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Cinzel', serif;
-  font-size: 0.75rem;
-  font-weight: 900;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.55rem;
+  font-weight: 700;
   color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 2px 2px 0 #000;
   flex-shrink: 0;
-  transition: transform 0.2s ease;
+  transition: transform 0.15s ease;
 }
 
 .history-badge--latest {
   border-color: #ffd54f;
   border-width: 2px;
-  box-shadow: 0 0 10px rgba(255, 213, 79, 0.8);
+  box-shadow: 0 0 10px rgba(255, 213, 79, 0.8), 2px 2px 0 #000;
   transform: scale(1.15);
 }
 
 .history-badge--green {
-  background: #1b5e20;
+  background: #15803d;
 }
 
 .history-badge--red {
-  background: #c62828;
+  background: #b91c1c;
 }
 
 .history-badge--black {
-  background: #212529;
+  background: #18181b;
 }
 
 .stats-toggle-btn {
-  font-size: 0.72rem;
-  letter-spacing: 0.5px;
+  font-family: 'Press Start 2P', monospace !important;
+  font-size: 0.52rem !important;
+  letter-spacing: 0;
 }
 
 /* ═══ Diálogo de estadísticas ═══ */
 .stats-dialog-card {
-  background: #101624 !important;
-  border: 1px solid rgba(255, 213, 79, 0.3);
+  background: #0c1017 !important;
+  border: 3px solid #ffd54f !important;
+  border-radius: 0 !important;
+  box-shadow: 6px 6px 0 #000 !important;
 }
 
 .dialog-title {
-  font-family: 'Cinzel', serif;
-  font-weight: 800;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
   color: #ffd54f;
 }
 
 .metric-card {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
-  padding: 10px;
+  background: #111827;
+  border: 2px solid #2a3a55;
+  border-radius: 0;
+  box-shadow: 2px 2px 0 #000;
+  padding: 8px;
   display: flex;
   flex-direction: column;
 }
 
 .metric-label {
-  font-size: 0.7rem;
-  color: rgba(255, 255, 255, 0.5);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.45rem;
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .metric-val {
-  font-family: 'Cinzel', serif;
-  font-size: 1.3rem;
-  font-weight: 800;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.78rem;
+  font-weight: 700;
   color: #fff;
+  margin-top: 4px;
 }
 
 .distribution-bar {
   height: 20px;
-  border-radius: 10px;
+  border-radius: 0;
+  border: 2px solid #000;
   overflow: hidden;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6);
+  box-shadow: 2px 2px 0 #000;
 }
 
 .dist-segment {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.65rem;
-  font-weight: 800;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.48rem;
+  font-weight: 700;
   color: #fff;
   transition: width 0.3s ease;
 }
 
 .dist-red {
-  background: #c62828;
+  background: #b91c1c;
 }
 
 .dist-green {
-  background: #1b5e20;
+  background: #15803d;
 }
 
 .dist-black {
-  background: #212529;
+  background: #18181b;
 }
 </style>

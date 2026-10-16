@@ -48,56 +48,59 @@ const accentColor = computed(() => {
 
 <style scoped>
 .hand-badge {
-  background: rgba(10, 18, 30, 0.85);
-  border: 1px solid var(--accent-color);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), inset 0 0 12px rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(8px);
-  border-radius: 999px;
-  padding: 4px 14px;
+  background: #14141d;
+  border: 2px solid var(--accent-color);
+  box-shadow: 0 3px 0 0 #000, 0 0 10px rgba(0, 0, 0, 0.8);
+  border-radius: 4px;
+  padding: 5px 12px;
   display: inline-flex;
   flex-direction: column;
   align-items: center;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 
 .hand-badge--winning {
-  box-shadow: 0 0 20px var(--accent-color), inset 0 0 15px rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 16px var(--accent-color), 0 4px 0 0 #000;
   transform: scale(1.05);
-  animation: winningPulse 1.8s infinite ease-in-out;
+  animation: winningPulse 1.2s infinite ease-in-out;
 }
 
 @keyframes winningPulse {
   0%, 100% {
-    box-shadow: 0 0 15px var(--accent-color);
+    box-shadow: 0 0 12px var(--accent-color), 0 4px 0 0 #000;
   }
   50% {
-    box-shadow: 0 0 30px var(--accent-color), 0 0 45px rgba(255, 215, 0, 0.4);
+    box-shadow: 0 0 24px var(--accent-color), 0 0 36px rgba(255, 215, 0, 0.5), 0 4px 0 0 #000;
   }
 }
 
 .badge-label {
-  font-size: 0.65rem;
+  font-family: 'Press Start 2P', monospace !important;
+  font-size: 0.48rem;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: #cfd8dc;
+  letter-spacing: 0px;
+  color: #a1a1aa;
   line-height: 1;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
 }
 
 .rank-tag {
-  color: #0b101b;
-  font-weight: 900;
-  font-size: 0.68rem;
-  padding: 1px 7px;
-  border-radius: 6px;
+  font-family: 'Press Start 2P', monospace !important;
+  color: #000;
+  font-weight: 700;
+  font-size: 0.52rem;
+  padding: 2px 6px;
+  border-radius: 3px;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  border: 1px solid #000;
 }
 
 .hand-full-name {
+  font-family: 'Press Start 2P', monospace !important;
   color: #fff;
   font-weight: 700;
-  font-size: 0.8rem;
+  font-size: 0.55rem;
+  text-shadow: 1px 1px 0 #000;
   letter-spacing: 0.02em;
 }
 </style>

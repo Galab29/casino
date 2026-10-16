@@ -1,14 +1,17 @@
 import type { DadosBetType } from '~/types/dados'
 
-export const CHIP_OPTIONS = [5, 25, 100, 500, 1000] as const
+export const CHIP_OPTIONS = [10, 25, 50, 100, 250, 500, 1000] as const
 
 export const CHIP_CONFIG: Record<
   number,
   { color: string; border: string; textColor: string; label: string }
 > = {
   5: { color: '#c62828', border: '#ef5350', textColor: '#ffffff', label: '5' },
+  10: { color: '#00897b', border: '#80cbc4', textColor: '#ffffff', label: '10' },
   25: { color: '#2e7d32', border: '#4caf50', textColor: '#ffffff', label: '25' },
-  100: { color: '#1565c0', border: '#42a5f5', textColor: '#ffffff', label: '100' },
+  50: { color: '#1565c0', border: '#90caf9', textColor: '#ffffff', label: '50' },
+  100: { color: '#5e35b1', border: '#b39ddb', textColor: '#ffffff', label: '100' },
+  250: { color: '#c62828', border: '#ef9a9a', textColor: '#ffffff', label: '250' },
   500: { color: '#4a148c', border: '#ab47bc', textColor: '#ffffff', label: '500' },
   1000: { color: '#d48800', border: '#ffd54f', textColor: '#000000', label: '1K' },
 }

@@ -6,6 +6,7 @@ import { useConfetti } from '~/composables/useConfetti'
 import { getMaxPayout, getSymbol } from '~/constants/slotMachines'
 import type { MachineTier, SlotMachineConfig } from '~/types/slots'
 import GameRulesDialog from '~/components/common/GameRulesDialog.vue'
+import RechargeDialog from '~/components/common/RechargeDialog.vue'
 
 useHead({
   title: 'Tragamonedas · Royal Casino',
@@ -54,6 +55,7 @@ const displayedWin = ref(0)
 const showRulesDialog = ref(false)
 const showJackpotDialog = ref(false)
 const showResetStatsDialog = ref(false)
+const showRechargeModal = ref(false)
 const jackpotAmount = ref(0)
 
 let tickTimer: ReturnType<typeof setInterval> | null = null
@@ -185,8 +187,7 @@ function handleBack() {
 }
 
 function handleRefill() {
-  sound.playChipStack()
-  store.refillChips()
+  showRechargeModal.value = true
 }
 
 function confirmResetStats() {
@@ -260,8 +261,20 @@ onUnmounted(() => {
             ¿Cómo Jugar?
           </v-btn>
 
+          <v-btn
+            variant="elevated"
+            color="amber-darken-2"
+            size="small"
+            rounded="pill"
+            prepend-icon="mdi-cash-plus"
+            class="rules-btn font-weight-bold mr-1"
+            @click="showRechargeModal = true"
+          >
+            + Recargar
+          </v-btn>
+
           <div class="balance-pill">
-            <v-icon color="amber" size="20" class="mr-2">mdi-poker-chip</v-icon>
+            <PixelChip :value="100" size="xs" class="mr-2" />
             <span class="balance-value">{{ chips.toLocaleString() }}</span>
             <span class="balance-label ml-1">fichas</span>
           </div>
@@ -532,13 +545,16 @@ onUnmounted(() => {
           size="large"
           rounded="lg"
           block
-          prepend-icon="mdi-refresh"
+          prepend-icon="mdi-cash-plus"
           @click="handleRefill"
         >
-          Recargar 1,000 fichas
+          Canjear Código en Cajero
         </v-btn>
       </v-card>
     </v-dialog>
+
+    <!-- Diálogo de Recarga por Códigos -->
+    <RechargeDialog v-model="showRechargeModal" />
 
     <!-- ═══ Diálogo reiniciar estadísticas ═══ -->
     <v-dialog v-model="showResetStatsDialog" max-width="380">
@@ -650,56 +666,30 @@ onUnmounted(() => {
 .room-badge {
   background: rgba(0, 0, 0, 0.4);
   padding: 6px 14px;
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  font-size: 12px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.75);
-}
-
-.pulse-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #00e676;
-  box-shadow: 0 0 8px #00e676;
-  animation: pulse 1.8s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.35; }
-}
-
-.balance-pill {
-  display: flex;
-  align-items: center;
-  background: rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(255, 213, 79, 0.35);
-  border-radius: 30px;
-  padding: 6px 16px;
-  box-shadow: 0 0 18px rgba(255, 213, 79, 0.12);
+  border-radius: 4px;
+  border: 1px solid rgba(255, 213, 79, 0.3);
 }
 
 .balance-value {
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Press Start 2P', monospace;
   font-weight: 700;
-  font-size: 1.05rem;
+  font-size: 0.8rem;
   color: #ffd54f;
+  text-shadow: 1px 1px 0 #000;
 }
 
 .balance-label {
-  font-size: 0.75rem;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.5rem;
   color: rgba(255, 255, 255, 0.5);
 }
 
 /* ─── Título ───────────────────────────── */
 .room-title {
-  font-family: 'Cinzel', serif;
-  font-weight: 900;
-  font-size: 2.3rem;
-  letter-spacing: 7px;
+  font-family: 'Press Start 2P', monospace;
+  font-weight: 700;
+  font-size: 1.25rem;
+  letter-spacing: 0;
   background: linear-gradient(135deg, #fff 0%, var(--m-primary) 50%, var(--m-secondary) 100%);
   -webkit-background-clip: text;
   background-clip: text;
@@ -721,23 +711,23 @@ onUnmounted(() => {
 }
 
 .room-subtitle {
+  font-family: 'Press Start 2P', monospace;
   color: rgba(255, 255, 255, 0.5);
-  letter-spacing: 1.5px;
-  font-size: 0.95rem;
+  letter-spacing: 0;
+  font-size: 0.55rem;
 }
 
 /* ─── Gabinete ─────────────────────────── */
 .cabinet {
   position: relative;
-  border-radius: 30px;
+  border-radius: 0;
   padding: 18px 22px 22px;
   background: var(--m-gradient);
-  border: 2px solid var(--m-primary);
+  border: 3px solid var(--m-primary);
   box-shadow:
-    0 0 0 6px rgba(0, 0, 0, 0.35),
-    0 0 50px var(--m-glow),
-    inset 0 2px 0 rgba(255, 255, 255, 0.15),
-    inset 0 -20px 40px rgba(0, 0, 0, 0.5);
+    0 6px 0 #000,
+    0 0 35px var(--m-glow),
+    inset 0 2px 0 rgba(255, 255, 255, 0.15);
   transition: box-shadow 0.4s ease, border-color 0.4s ease;
 }
 
@@ -746,8 +736,8 @@ onUnmounted(() => {
 }
 
 @keyframes cabinet-win {
-  0%, 100% { box-shadow: 0 0 0 6px rgba(0, 0, 0, 0.35), 0 0 50px var(--m-glow); }
-  50% { box-shadow: 0 0 0 6px rgba(0, 0, 0, 0.35), 0 0 110px var(--m-primary); }
+  0%, 100% { box-shadow: 0 6px 0 #000, 0 0 35px var(--m-glow); }
+  50% { box-shadow: 0 6px 0 #000, 0 0 70px var(--m-primary); }
 }
 
 .cabinet--jackpot {
@@ -775,11 +765,12 @@ onUnmounted(() => {
 }
 
 .bulb {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 0;
   background: var(--m-primary);
   opacity: 0.2;
+  box-shadow: 1px 1px 0 #000;
   animation: bulb-chase 1.6s ease-in-out infinite;
   animation-delay: calc(var(--i) * 0.09s);
 }
@@ -794,8 +785,8 @@ onUnmounted(() => {
 }
 
 @keyframes bulb-chase {
-  0%, 100% { opacity: 0.2; box-shadow: none; }
-  50% { opacity: 1; box-shadow: 0 0 10px var(--m-primary), 0 0 18px var(--m-primary); }
+  0%, 100% { opacity: 0.2; box-shadow: 1px 1px 0 #000; }
+  50% { opacity: 1; box-shadow: 0 0 10px var(--m-primary), 1px 1px 0 #000; }
 }
 
 @keyframes bulb-flash {
@@ -804,22 +795,24 @@ onUnmounted(() => {
 }
 
 .marquee-title {
-  font-family: 'Cinzel', serif;
-  font-weight: 900;
-  font-size: 1.7rem;
-  letter-spacing: 4px;
+  font-family: 'Press Start 2P', monospace;
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0;
   color: var(--m-primary);
-  text-shadow: 0 0 18px var(--m-glow), 0 2px 0 rgba(0, 0, 0, 0.5);
+  text-shadow: 0 0 18px var(--m-glow), 2px 2px 0 #000;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .marquee-sub {
-  font-size: 0.8rem;
-  letter-spacing: 2px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.52rem;
+  letter-spacing: 0;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 4px;
 }
 
 .marquee-sub strong {
@@ -839,12 +832,10 @@ onUnmounted(() => {
   display: flex;
   gap: 10px;
   padding: 14px;
-  border-radius: 22px;
-  background: linear-gradient(180deg, #0c0c0c, #1c1c1c);
+  border-radius: 0;
+  background: #09090b;
   border: 3px solid var(--m-secondary);
-  box-shadow:
-    inset 0 0 24px rgba(0, 0, 0, 0.9),
-    0 0 0 4px rgba(0, 0, 0, 0.4);
+  box-shadow: 4px 4px 0 #000, inset 0 0 20px rgba(0, 0, 0, 0.9);
 }
 
 .payline {
@@ -856,7 +847,7 @@ onUnmounted(() => {
   transform: translateY(-50%);
   background: rgba(255, 23, 68, 0.55);
   pointer-events: none;
-  border-radius: 2px;
+  border-radius: 0;
   transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -899,10 +890,10 @@ onUnmounted(() => {
   align-items: center;
   gap: 14px;
   padding: 10px 16px;
-  border-radius: 14px;
-  background: #030603;
-  border: 2px solid #1d2a1d;
-  box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.9);
+  border-radius: 0;
+  background: #000000;
+  border: 2px solid #22c55e;
+  box-shadow: 3px 3px 0 #000;
 }
 
 .lcd-cell {
@@ -916,32 +907,33 @@ onUnmounted(() => {
 }
 
 .lcd-label {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 0.6rem;
-  letter-spacing: 2px;
-  color: rgba(105, 240, 174, 0.55);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.48rem;
+  letter-spacing: 0;
+  color: rgba(105, 240, 174, 0.7);
 }
 
 .lcd-value {
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Press Start 2P', monospace;
   font-weight: 700;
-  font-size: 1.25rem;
+  font-size: 0.8rem;
   color: #69f0ae;
-  text-shadow: 0 0 8px rgba(105, 240, 174, 0.7);
+  text-shadow: 1px 1px 0 #000;
+  margin-top: 2px;
 }
 
 .lcd-value--win {
   color: #ffd740;
-  text-shadow: 0 0 8px rgba(255, 215, 64, 0.7);
+  text-shadow: 1px 1px 0 #000;
 }
 
 .lcd-message {
-  font-family: 'Orbitron', sans-serif;
-  font-weight: 500;
-  font-size: 0.85rem;
+  font-family: 'Press Start 2P', monospace;
+  font-weight: 700;
+  font-size: 0.55rem;
   text-align: center;
   color: #b9f6ca;
-  letter-spacing: 1px;
+  letter-spacing: 0;
 }
 
 .lcd-message--win {
@@ -966,26 +958,29 @@ onUnmounted(() => {
 .bet-badge {
   display: flex;
   flex-direction: column;
-  padding: 6px 14px;
-  border-radius: 12px;
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 6px 12px;
+  border-radius: 0;
+  background: #000;
+  border: 2px solid var(--m-primary);
+  box-shadow: 2px 2px 0 #000;
   min-width: 96px;
 }
 
 .bet-badge-label {
-  font-size: 0.6rem;
-  letter-spacing: 2px;
-  color: rgba(255, 255, 255, 0.5);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.48rem;
+  letter-spacing: 0;
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .bet-badge-value {
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Press Start 2P', monospace;
   font-weight: 700;
-  font-size: 1.1rem;
+  font-size: 0.8rem;
   color: var(--m-primary);
   display: flex;
   align-items: center;
+  margin-top: 2px;
 }
 
 .spin-btn {
@@ -993,63 +988,36 @@ onUnmounted(() => {
   overflow: hidden;
   flex: 1;
   max-width: 320px;
-  height: 64px;
-  border: none;
-  border-radius: 40px;
-  font-family: 'Cinzel', serif;
-  font-weight: 900;
-  font-size: 1.35rem;
-  letter-spacing: 5px;
-  color: #1a1000;
+  height: 54px;
+  border: 2px solid #000;
+  border-radius: 0;
+  font-family: 'Press Start 2P', monospace;
+  font-weight: 700;
+  font-size: 0.82rem;
+  letter-spacing: -0.5px;
+  color: #000;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(180deg, #fff 0%, var(--m-primary) 35%, var(--m-secondary) 100%);
-  box-shadow:
-    0 6px 0 rgba(0, 0, 0, 0.45),
-    0 0 26px var(--m-glow),
-    inset 0 2px 0 rgba(255, 255, 255, 0.6);
-  transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.3s ease;
-}
-
-.spin-btn::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -60%;
-  width: 40%;
-  height: 100%;
-  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.55), transparent);
-  transform: skewX(-20deg);
-  animation: shine 2.8s ease-in-out infinite;
-}
-
-@keyframes shine {
-  0% { left: -60%; }
-  60%, 100% { left: 130%; }
+  background: #ffd54f;
+  box-shadow: 0 4px 0 #000;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
 }
 
 .spin-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow:
-    0 8px 0 rgba(0, 0, 0, 0.45),
-    0 0 40px var(--m-primary),
-    inset 0 2px 0 rgba(255, 255, 255, 0.6);
+  box-shadow: 0 6px 0 #000;
 }
 
 .spin-btn:active:not(:disabled) {
-  transform: translateY(4px);
-  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.45), 0 0 20px var(--m-glow);
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #000;
 }
 
 .spin-btn:disabled {
   cursor: not-allowed;
-  filter: grayscale(0.7) brightness(0.7);
-}
-
-.spin-btn:disabled::after {
-  display: none;
+  filter: grayscale(0.8) brightness(0.6);
 }
 
 .spin-icon--rotating {
@@ -1106,30 +1074,36 @@ kbd {
   display: flex;
   flex-direction: column;
   padding: 8px 10px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.04);
+  border-radius: 0;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .stat-box-label {
-  font-size: 0.62rem;
-  letter-spacing: 1px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.45rem;
+  letter-spacing: 0;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .stat-box-value {
+  font-family: 'Press Start 2P', monospace;
   font-weight: 700;
-  font-size: 1rem;
+  font-size: 0.72rem;
+  margin-top: 4px;
 }
 
 .stat-box-value small {
-  font-weight: 400;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.48rem;
   color: rgba(255, 255, 255, 0.5);
 }
 
 .empty-history {
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.35);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.52rem;
+  color: rgba(255, 255, 255, 0.4);
 }
 
 .history-list {
@@ -1142,37 +1116,40 @@ kbd {
 
 .history-row {
   display: grid;
-  grid-template-columns: 70px 1fr auto;
+  grid-template-columns: 80px 1fr auto;
   align-items: center;
   padding: 5px 8px;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.03);
-  font-size: 0.8rem;
+  border-radius: 0;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+  font-size: 0.65rem;
 }
 
 .history-machine {
-  font-weight: 600;
-  font-size: 0.72rem;
-  letter-spacing: 0.5px;
+  font-family: 'Press Start 2P', monospace;
+  font-weight: 700;
+  font-size: 0.5rem;
+  letter-spacing: 0;
 }
 
 .history-symbols {
   display: flex;
-  gap: 2px;
+  gap: 3px;
   align-items: center;
 }
 
 .history-text {
-  font-family: 'Cinzel', serif;
-  font-weight: 900;
+  font-family: 'Press Start 2P', monospace;
+  font-weight: 700;
+  font-size: 0.55rem;
   width: 16px;
   text-align: center;
 }
 
 .history-amount {
   font-weight: 700;
-  font-family: 'Orbitron', sans-serif;
-  font-size: 0.75rem;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.58rem;
 }
 
 .history-enter-active {
@@ -1185,18 +1162,20 @@ kbd {
 }
 
 .footer-text {
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.25);
-  letter-spacing: 1px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.48rem;
+  color: rgba(255, 255, 255, 0.35);
+  letter-spacing: 0;
 }
 
 /* ─── Diálogos ─────────────────────────── */
 .jackpot-dialog {
   position: relative;
   overflow: hidden;
-  background: radial-gradient(circle at 50% 30%, #2a0f4a 0%, #0a0418 80%) !important;
-  border: 2px solid #18ffff;
-  box-shadow: 0 0 60px rgba(24, 255, 255, 0.4);
+  background: #090312 !important;
+  border: 3px solid #18ffff !important;
+  border-radius: 0 !important;
+  box-shadow: 6px 6px 0 #000, 0 0 40px rgba(24, 255, 255, 0.4);
   color: #fff;
 }
 
@@ -1223,10 +1202,10 @@ kbd {
 }
 
 .jackpot-title {
-  font-family: 'Cinzel', serif;
-  font-weight: 900;
-  font-size: 2.4rem;
-  letter-spacing: 6px;
+  font-family: 'Press Start 2P', monospace;
+  font-weight: 700;
+  font-size: 1.35rem;
+  letter-spacing: 0;
   background: linear-gradient(90deg, #18ffff, #ff4081, #ffd740, #18ffff);
   background-size: 300% 100%;
   -webkit-background-clip: text;
@@ -1240,27 +1219,32 @@ kbd {
 }
 
 .jackpot-sub {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.6rem;
   color: rgba(255, 255, 255, 0.7);
 }
 
 .jackpot-amount {
-  font-family: 'Orbitron', sans-serif;
-  font-weight: 900;
-  font-size: 2.6rem;
+  font-family: 'Press Start 2P', monospace;
+  font-weight: 700;
+  font-size: 1.4rem;
   color: #ffd740;
-  text-shadow: 0 0 20px rgba(255, 215, 64, 0.7);
+  text-shadow: 2px 2px 0 #000;
 }
 
 .info-dialog {
-  background: linear-gradient(145deg, #1a1426, #0d0a14) !important;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #0c1017 !important;
+  border: 3px solid rgba(255, 213, 79, 0.5) !important;
+  border-radius: 0 !important;
+  box-shadow: 6px 6px 0 #000 !important;
   color: #fff;
 }
 
 .dialog-title {
-  font-family: 'Cinzel', serif;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.75rem;
   font-weight: 700;
-  letter-spacing: 2px;
+  letter-spacing: 0;
 }
 
 /* ─── Responsive ───────────────────────── */

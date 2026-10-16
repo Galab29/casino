@@ -176,24 +176,33 @@ function isWinningCard(card: Card, isPlayer: boolean): boolean {
           </div>
         </div>
 
+        <!-- Table Action Line / Arcade Felt Separator -->
+        <div class="table-action-line">
+          <span class="action-line-text">★ TU MANO ★</span>
+        </div>
+
         <!-- ═══ BOTTOM: PLAYER ZONE ═══ -->
         <div class="player-zone">
-          <!-- Player Current Hand Strength Badge -->
-          <div v-if="store.playerBestHand && store.street !== 'idle'" class="player-hand-eval-wrap">
-            <PokerHandBadge
-              :hand="store.playerBestHand"
-              label="Tu Mano Actual"
-              :is-winning="store.roundResult?.winner === 'player'"
-            />
+          <!-- Left Column: Player Hand Strength Badge -->
+          <div class="player-side-col player-side-col--left">
+            <transition name="fade-badge">
+              <div v-if="store.playerBestHand && store.street !== 'idle'" class="player-hand-eval-wrap">
+                <PokerHandBadge
+                  :hand="store.playerBestHand"
+                  label="Tu Mano Actual"
+                  :is-winning="store.roundResult?.winner === 'player'"
+                />
+              </div>
+            </transition>
           </div>
 
-          <!-- Player Cards Fan & Bet Spot -->
+          <!-- Center Column: Player Cards Fan & Bet Spot -->
           <div class="player-cards-area">
             <!-- Player Round Bet Spot with 3D Chips -->
             <div v-if="store.playerRoundBet > 0" class="bet-spot bet-spot--player mb-1">
               <PokerChip3D :amount="store.playerRoundBet" size="sm" :stacked="store.playerRoundBet >= 50" />
               <div class="bet-tag">
-                <span class="bet-tag-lbl"></span>
+                <span class="bet-tag-lbl">Apuesta</span>
                 <span class="bet-tag-num">{{ store.playerRoundBet }}</span>
               </div>
             </div>
@@ -217,31 +226,33 @@ function isWinningCard(card: Card, isPlayer: boolean): boolean {
             </div>
           </div>
 
-          <!-- Player Header/Profile in Table (Retro Arcade 2P Player) -->
-          <div class="player-profile d-flex align-center ga-3">
-            <div class="player-avatar-wrap">
-              <div
-                class="player-avatar"
-                :class="{ 'player-avatar--active': store.currentTurn === 'player' }"
-              >
-                <v-icon color="amber" size="30">mdi-account-star</v-icon>
+          <!-- Right Column: Player Header/Profile in Table (Retro Arcade 2P Player) -->
+          <div class="player-side-col player-side-col--right">
+            <div class="player-profile d-flex align-center ga-3">
+              <div class="player-avatar-wrap">
+                <div
+                  class="player-avatar"
+                  :class="{ 'player-avatar--active': store.currentTurn === 'player' }"
+                >
+                  <v-icon color="amber" size="30">mdi-account-star</v-icon>
+                </div>
+                <div v-if="store.dealerButton === 'player'" class="dealer-button-chip dealer-btn-bot">
+                  D
+                </div>
               </div>
-              <div v-if="store.dealerButton === 'player'" class="dealer-button-chip dealer-btn-bot">
-                D
-              </div>
-            </div>
 
-            <div class="player-meta">
-              <div class="d-flex align-center ga-2">
-                <span class="player-tag-pill player-tag--player">2P TÚ</span>
-                <span v-if="store.currentTurn === 'player'" class="turn-indicator turn-indicator--player">
-                  ¡Tu Turno!
-                </span>
-              </div>
-              <div class="player-bankroll">
-                <v-icon size="14" color="amber">mdi-poker-chip</v-icon>
-                <span>{{ store.playerChips.toLocaleString() }}</span>
-                <span class="bankroll-lbl">fichas</span>
+              <div class="player-meta">
+                <div class="d-flex align-center ga-2">
+                  <span class="player-tag-pill player-tag--player">2P TÚ</span>
+                  <span v-if="store.currentTurn === 'player'" class="turn-indicator turn-indicator--player">
+                    ¡Tu Turno!
+                  </span>
+                </div>
+                <div class="player-bankroll">
+                  <v-icon size="14" color="amber">mdi-poker-chip</v-icon>
+                  <span>{{ store.playerChips.toLocaleString() }}</span>
+                  <span class="bankroll-lbl">fichas</span>
+                </div>
               </div>
             </div>
           </div>
@@ -277,14 +288,13 @@ function isWinningCard(card: Card, isPlayer: boolean): boolean {
   background: radial-gradient(ellipse at 50% 50%, #681720 0%, #460f15 55%, #2a080d 100%);
   border: 2px solid rgba(255, 215, 0, 0.35);
   border-radius: 108px;
-  min-height: 520px;
-  padding: 18px 24px;
+  min-height: 560px;
+  padding: 16px 24px 20px 24px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
   position: relative;
-  overflow: hidden;
   box-shadow: inset 0 0 45px rgba(0, 0, 0, 0.7);
 }
 
@@ -317,8 +327,7 @@ function isWinningCard(card: Card, isPlayer: boolean): boolean {
 }
 
 /* ═══ Zones ═══ */
-.dealer-zone,
-.player-zone {
+.dealer-zone {
   width: 100%;
   display: flex;
   align-items: center;
@@ -331,9 +340,69 @@ function isWinningCard(card: Card, isPlayer: boolean): boolean {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 8px;
   z-index: 2;
-  margin: 6px 0;
+  margin: 0;
+}
+
+/* Table Action Line / Arcade Felt Separator */
+.table-action-line {
+  width: 76%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 12px auto 10px auto;
+  position: relative;
+  user-select: none;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.table-action-line::before,
+.table-action-line::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  border-bottom: 1.5px dashed rgba(255, 215, 0, 0.28);
+}
+
+.action-line-text {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.44rem;
+  color: rgba(255, 215, 0, 0.45);
+  padding: 0 12px;
+  letter-spacing: 0.12em;
+}
+
+.player-zone {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: end;
+  z-index: 2;
+  margin-top: auto;
+  padding: 0 6px;
+}
+
+.player-side-col {
+  display: flex;
+  align-items: flex-end;
+}
+
+.player-side-col--left {
+  justify-content: flex-start;
+}
+
+.player-side-col--right {
+  justify-content: flex-end;
+}
+
+.player-cards-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 8px;
 }
 
 /* Dealer / Player Avatars (Estética Arcade Retro) */
@@ -495,14 +564,16 @@ function isWinningCard(card: Card, isPlayer: boolean): boolean {
 
 /* 16-bit Retro Dialogue Box */
 .dealer-speech-bubble {
-  background: rgba(14, 5, 8, 0.95);
-  border: 2px solid #ffd54f;
-  border-radius: 10px;
-  padding: 6px 16px;
+  background: #14141d;
+  border: 2px solid var(--pixel-gold);
+  border-radius: 4px;
+  padding: 6px 14px;
   color: #fff;
-  font-size: 0.82rem;
+  font-family: 'Press Start 2P', monospace !important;
+  font-size: 0.55rem;
+  line-height: 1.4;
   max-width: 260px;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.85), 0 0 10px rgba(255, 213, 79, 0.2);
+  box-shadow: 0 4px 0 #000, 0 0 10px rgba(0, 0, 0, 0.5);
   position: relative;
 }
 
@@ -515,7 +586,7 @@ function isWinningCard(card: Card, isPlayer: boolean): boolean {
   height: 0;
   border-top: 6px solid transparent;
   border-bottom: 6px solid transparent;
-  border-right: 8px solid #ffd54f;
+  border-right: 8px solid var(--pixel-gold);
 }
 
 .speech-quote {
@@ -554,15 +625,15 @@ function isWinningCard(card: Card, isPlayer: boolean): boolean {
 }
 
 .card-slot--left {
-  transform: rotate(-4deg) translateY(-2px);
+  transform: rotate(-4deg) translateY(4px);
 }
 .card-slot--right {
-  transform: rotate(4deg) translateY(-2px);
+  transform: rotate(4deg) translateY(4px);
 }
 
 .card-highlight {
   filter: drop-shadow(0 0 14px #ffd700) drop-shadow(0 0 25px rgba(255, 215, 0, 0.8));
-  transform: translateY(-8px) scale(1.08) !important;
+  transform: translateY(-4px) scale(1.04) !important;
   z-index: 5;
 }
 
@@ -596,32 +667,34 @@ function isWinningCard(card: Card, isPlayer: boolean): boolean {
 }
 
 .bet-tag-lbl {
-  font-size: 0.58rem;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.5rem;
   font-weight: 700;
   text-transform: uppercase;
   color: #cfd8dc;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
 }
 
 .bet-tag-num {
-  font-family: 'Cinzel', serif;
-  font-size: 0.95rem;
-  font-weight: 900;
-  color: #ffd54f;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #ffe600;
+  text-shadow: 2px 2px 0 #000;
 }
 
 .action-pill {
   display: inline-flex;
   align-items: center;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 999px;
-  padding: 3px 12px;
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: #eceff1;
+  background: #111420;
+  border: 2px solid #3b82f6;
+  box-shadow: 2px 2px 0 #000;
+  padding: 4px 10px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.55rem;
+  color: #93c5fd;
   margin-top: 6px;
+  text-transform: uppercase;
 }
 
 /* ═══ Center Community Board ═══ */
@@ -629,23 +702,24 @@ function isWinningCard(card: Card, isPlayer: boolean): boolean {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.7rem;
-  font-weight: 800;
-  letter-spacing: 0.05em;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.52rem;
   text-transform: uppercase;
 }
 
 .street-pill {
   color: rgba(255, 255, 255, 0.4);
-  padding: 1px 6px;
-  border-radius: 4px;
+  padding: 3px 6px;
+  border-radius: 0;
+  border: 1px solid transparent;
   transition: all 0.2s ease;
 }
 
 .street-pill--active {
-  color: #ffd54f;
-  background: rgba(255, 213, 79, 0.2);
-  border: 1px solid rgba(255, 213, 79, 0.5);
+  color: #ffe600;
+  background: #2a1f00;
+  border: 1px solid #ffe600;
+  box-shadow: 0 0 8px rgba(255, 230, 0, 0.4);
 }
 
 .street-arrow {
@@ -657,42 +731,41 @@ function isWinningCard(card: Card, isPlayer: boolean): boolean {
   display: flex;
   align-items: center;
   gap: 12px;
-  background: radial-gradient(circle, #2a0d11 0%, #150507 100%);
-  border: 1.5px solid #ffd54f;
-  border-radius: 999px;
-  padding: 6px 22px 6px 14px;
-  box-shadow:
-    0 6px 20px rgba(0, 0, 0, 0.8),
-    0 0 18px rgba(255, 213, 79, 0.25);
+  background: #1a080c;
+  border: 3px solid #ffe600;
+  box-shadow: 0 4px 0 #000, 0 0 16px rgba(255, 230, 0, 0.3);
+  padding: 6px 18px;
 }
 
 .pot-label {
-  font-size: 0.65rem;
-  color: #cfd8dc;
-  letter-spacing: 0.1em;
-  font-weight: 800;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.55rem;
+  color: #ffd54f;
+  letter-spacing: 0.08em;
+  font-weight: 700;
   line-height: 1;
 }
 
 .pot-amount {
-  font-family: 'Cinzel', serif;
-  font-size: 1.28rem;
-  font-weight: 900;
-  color: #ffd54f;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #ffe600;
+  text-shadow: 2px 2px 0 #000;
   line-height: 1;
 }
 
 .community-cards-row {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   align-items: center;
   justify-content: center;
 }
 
 .community-slot {
-  width: 96px;
-  height: 140px;
-  border-radius: 10px;
+  width: 76px;
+  height: 110px;
+  border-radius: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -701,44 +774,62 @@ function isWinningCard(card: Card, isPlayer: boolean): boolean {
 }
 
 .community-slot :deep(.playing-card-wrapper) {
-  transform: scale(0.96);
+  transform: scale(0.76);
   transform-origin: center center;
   margin: 0;
+}
+
+.card-slot--dealer {
+  width: 76px;
+  height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .card-slot--dealer :deep(.playing-card-wrapper) {
-  transform: scale(0.98);
+  transform: scale(0.76);
   transform-origin: center center;
   margin: 0;
 }
 
+.card-slot--player {
+  width: 86px;
+  height: 124px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
 .card-slot--player :deep(.playing-card-wrapper) {
-  transform: scale(1.12);
+  transform: scale(0.86);
   transform-origin: center center;
   margin: 0;
 }
 
 .community-slot--winning {
   filter: drop-shadow(0 0 12px #ffd700) drop-shadow(0 0 20px rgba(255, 215, 0, 0.7));
-  transform: translateY(-4px) scale(1.04) !important;
+  transform: translateY(-4px) scale(0.84) !important;
 }
 
 .empty-card-placeholder {
   width: 100%;
   height: 100%;
-  border: 1.5px dashed rgba(255, 215, 0, 0.35);
-  border-radius: 10px;
-  background: rgba(0, 0, 0, 0.25);
+  border: 2px dashed rgba(255, 215, 0, 0.4);
+  border-radius: 0;
+  background: rgba(0, 0, 0, 0.35);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .placeholder-label {
-  font-size: 0.75rem;
-  font-weight: 900;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.5rem;
+  font-weight: 700;
   color: rgba(255, 215, 0, 0.45);
-  letter-spacing: 0.1em;
+  letter-spacing: 0;
 }
 
 .player-hand-eval-wrap {

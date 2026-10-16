@@ -84,7 +84,7 @@ const propBets = [
 
               <!-- Ficha colocada -->
               <div v-if="(bets[item.type] || 0) > 0" class="bet-chip-badge">
-                <v-icon size="13" color="amber" class="mr-1">mdi-poker-chip</v-icon>
+                <PixelChip :value="bets[item.type]" size="xs" class="mr-1" />
                 <span>{{ formatChips(bets[item.type]) }}</span>
               </div>
             </div>
@@ -119,7 +119,7 @@ const propBets = [
 
             <!-- Ficha en Campo -->
             <div v-if="(bets.field || 0) > 0" class="bet-chip-badge bet-chip-badge--center">
-              <v-icon size="14" color="amber" class="mr-1">mdi-poker-chip</v-icon>
+              <PixelChip :value="bets.field" size="xs" class="mr-1" />
               <span>{{ formatChips(bets.field) }}</span>
             </div>
           </div>
@@ -134,7 +134,7 @@ const propBets = [
               <div class="range-title">BAJO 7</div>
               <div class="range-sub">SUMA 2 AL 6 (1:1)</div>
               <div v-if="(bets.under_7 || 0) > 0" class="bet-chip-badge">
-                <v-icon size="13" color="amber" class="mr-1">mdi-poker-chip</v-icon>
+                <PixelChip :value="bets.under_7" size="xs" class="mr-1" />
                 <span>{{ formatChips(bets.under_7) }}</span>
               </div>
             </div>
@@ -147,7 +147,7 @@ const propBets = [
               <div class="range-title">ALTO 7</div>
               <div class="range-sub">SUMA 8 AL 12 (1:1)</div>
               <div v-if="(bets.over_7 || 0) > 0" class="bet-chip-badge">
-                <v-icon size="13" color="amber" class="mr-1">mdi-poker-chip</v-icon>
+                <PixelChip :value="bets.over_7" size="xs" class="mr-1" />
                 <span>{{ formatChips(bets.over_7) }}</span>
               </div>
             </div>
@@ -171,7 +171,7 @@ const propBets = [
               <span v-else class="text-amber">ACTIVA: Gana si sale 7 antes del punto</span>
             </div>
             <div v-if="(bets.dont_pass || 0) > 0" class="bet-chip-badge">
-              <v-icon size="14" color="amber" class="mr-1">mdi-poker-chip</v-icon>
+              <PixelChip :value="bets.dont_pass" size="xs" class="mr-1" />
               <span>{{ formatChips(bets.dont_pass) }}</span>
             </div>
           </div>
@@ -194,7 +194,7 @@ const propBets = [
               <span v-else class="text-amber">ACTIVA: Gana si sale el punto {{ point }} antes de un 7</span>
             </div>
             <div v-if="(bets.pass_line || 0) > 0" class="bet-chip-badge">
-              <v-icon size="14" color="amber" class="mr-1">mdi-poker-chip</v-icon>
+              <PixelChip :value="bets.pass_line" size="xs" class="mr-1" />
               <span>{{ formatChips(bets.pass_line) }}</span>
             </div>
           </div>
@@ -222,7 +222,7 @@ const propBets = [
               <div class="hw-label">{{ hw.label }}</div>
               <div class="hw-payout">{{ hw.payout }}</div>
               <div v-if="(bets[hw.type] || 0) > 0" class="bet-chip-badge bet-chip-badge--mini">
-                <v-icon size="11" color="amber">mdi-poker-chip</v-icon>
+                <PixelChip :value="bets[hw.type]" size="xs" class="mr-1" />
                 <span>{{ formatChips(bets[hw.type]) }}</span>
               </div>
             </div>
@@ -241,7 +241,7 @@ const propBets = [
               <div class="prop-sub">{{ p.sub }}</div>
               <div class="prop-payout-pill">{{ p.payout }}</div>
               <div v-if="(bets[p.type] || 0) > 0" class="bet-chip-badge bet-chip-badge--mini">
-                <v-icon size="11" color="amber">mdi-poker-chip</v-icon>
+                <PixelChip :value="bets[p.type]" size="xs" class="mr-1" />
                 <span>{{ formatChips(bets[p.type]) }}</span>
               </div>
             </div>
@@ -255,28 +255,26 @@ const propBets = [
 <style scoped>
 .craps-table-layout {
   width: 100%;
-  border-radius: 20px;
-  background: #0f3d1e;
+  border-radius: 0;
+  background: #082414;
   border: 4px solid #b8860b;
   box-shadow:
-    0 12px 30px rgba(0, 0, 0, 0.7),
-    inset 0 0 30px rgba(0, 0, 0, 0.8),
-    0 0 0 2px #d4af37;
+    0 6px 0 #000,
+    inset 0 0 0 2px #ffd54f;
   overflow: hidden;
   user-select: none;
 }
 
 .felt-surface {
-  padding: 18px;
-  background:
-    radial-gradient(ellipse at 50% 50%, #175e2f 0%, #0c3816 75%, #06230e 100%);
+  padding: 16px;
+  background: radial-gradient(ellipse at 50% 50%, #0d4422 0%, #082d16 100%);
   background-size: cover;
 }
 
 .table-grid {
   display: grid;
   grid-template-columns: 1fr 300px;
-  gap: 16px;
+  gap: 14px;
 }
 
 @media (max-width: 960px) {
@@ -300,15 +298,16 @@ const propBets = [
 }
 
 .place-box {
-  background: rgba(0, 0, 0, 0.35);
+  background: #09170e;
   border: 2px solid #ffd54f;
-  border-radius: 12px;
+  border-radius: 0;
   padding: 10px 4px;
   text-align: center;
   position: relative;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
-  min-height: 86px;
+  box-shadow: 2px 2px 0 #000;
+  transition: all 0.15s ease;
+  min-height: 82px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -316,15 +315,15 @@ const propBets = [
 }
 
 .place-box:hover {
-  background: rgba(255, 213, 79, 0.15);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 213, 79, 0.3);
+  background: #112d1c;
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0 #000;
 }
 
 .place-box--active-point {
   border-color: #ffffff;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.25) 0%, rgba(0, 0, 0, 0.4) 100%);
-  box-shadow: 0 0 16px rgba(255, 255, 255, 0.7);
+  background: #173823;
+  box-shadow: 0 0 0 2px #fff, 3px 3px 0 #000;
 }
 
 .place-puck-indicator {
@@ -332,50 +331,57 @@ const propBets = [
   top: -8px;
   background: #ffffff;
   color: #111;
-  padding: 1px 6px;
-  border-radius: 10px;
-  font-size: 0.62rem;
-  font-weight: 900;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+  padding: 2px 6px;
+  border-radius: 0;
+  border: 1px solid #000;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.48rem;
+  font-weight: 700;
+  box-shadow: 1px 1px 0 #000;
 }
 
 .place-number-val {
-  font-family: 'Cinzel', serif;
-  font-size: 1.6rem;
-  font-weight: 900;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 1.1rem;
+  font-weight: 700;
   color: #ffd54f;
   line-height: 1;
 }
 
 .place-payout {
-  font-size: 0.75rem;
-  font-weight: 800;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.5rem;
+  font-weight: 700;
   color: #ffffff;
   opacity: 0.9;
-  margin-top: 3px;
+  margin-top: 4px;
 }
 
 .place-label {
-  font-size: 0.65rem;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.45rem;
   font-weight: 700;
   color: rgba(255, 255, 255, 0.6);
-  letter-spacing: 1px;
+  letter-spacing: 0;
+  margin-top: 2px;
 }
 
 /* El Campo (Field Bet) */
 .field-bet-box {
-  background: rgba(0, 0, 0, 0.35);
+  background: #09170e;
   border: 2px solid #ffd54f;
-  border-radius: 14px;
+  border-radius: 0;
   padding: 12px 14px;
   cursor: pointer;
   position: relative;
-  transition: all 0.2s ease;
+  box-shadow: 3px 3px 0 #000;
+  transition: all 0.15s ease;
 }
 
 .field-bet-box:hover {
-  background: rgba(255, 213, 79, 0.12);
-  box-shadow: 0 4px 14px rgba(255, 213, 79, 0.25);
+  background: #112d1c;
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0 #000;
 }
 
 .field-header {
@@ -386,16 +392,17 @@ const propBets = [
 }
 
 .field-title {
-  font-family: 'Cinzel', serif;
-  font-size: 1.25rem;
-  font-weight: 900;
-  letter-spacing: 4px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0;
   color: #ffd54f;
 }
 
 .field-subtitle {
-  font-size: 0.75rem;
-  font-weight: 800;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.48rem;
+  font-weight: 700;
   color: #ffffff;
   opacity: 0.8;
 }
@@ -411,36 +418,37 @@ const propBets = [
   flex: 1;
   text-align: center;
   padding: 6px 2px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 10px;
+  background: #000;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
 .field-bubble--double {
-  border-color: #42a5f5;
-  background: rgba(33, 150, 243, 0.15);
+  border-color: #3b82f6;
+  background: #0f1c3f;
 }
 
 .field-bubble--triple {
-  border-color: #ef5350;
-  background: rgba(239, 83, 80, 0.15);
+  border-color: #ef4444;
+  background: #3a0d10;
 }
 
 .bubble-num {
-  font-family: 'Cinzel', serif;
-  font-size: 1.15rem;
-  font-weight: 900;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
   color: #ffffff;
 }
 
 .bubble-tag {
-  font-size: 0.6rem;
-  font-weight: 800;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.42rem;
+  font-weight: 700;
   color: #ffd54f;
-  margin-top: 1px;
+  margin-top: 2px;
 }
 
 /* Rangos Bajo / Alto */
@@ -451,54 +459,62 @@ const propBets = [
 }
 
 .range-box {
-  background: rgba(0, 0, 0, 0.3);
-  border: 1.5px solid rgba(255, 213, 79, 0.6);
-  border-radius: 10px;
+  background: #09170e;
+  border: 2px solid rgba(255, 213, 79, 0.6);
+  border-radius: 0;
   padding: 8px 12px;
   text-align: center;
   cursor: pointer;
   position: relative;
-  transition: all 0.2s ease;
+  box-shadow: 2px 2px 0 #000;
+  transition: all 0.15s ease;
 }
 
 .range-box:hover {
-  background: rgba(255, 213, 79, 0.12);
+  background: #112d1c;
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 #000;
 }
 
 .range-title {
-  font-family: 'Cinzel', serif;
-  font-size: 0.95rem;
-  font-weight: 800;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.62rem;
+  font-weight: 700;
   color: #ffd54f;
 }
 
 .range-sub {
-  font-size: 0.7rem;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.48rem;
   font-weight: 700;
   color: rgba(255, 255, 255, 0.8);
+  margin-top: 3px;
 }
 
 /* Líneas Pass Line & Don't Pass */
 .dont-pass-box,
 .pass-line-box {
-  background: rgba(0, 0, 0, 0.4);
+  background: #09170e;
   border: 2px solid #ffd54f;
-  border-radius: 12px;
-  padding: 10px 16px;
+  border-radius: 0;
+  padding: 10px 14px;
   cursor: pointer;
   position: relative;
-  transition: all 0.2s ease;
+  box-shadow: 3px 3px 0 #000;
+  transition: all 0.15s ease;
 }
 
 .dont-pass-box:hover,
 .pass-line-box:hover {
-  background: rgba(255, 213, 79, 0.15);
+  background: #112d1c;
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0 #000;
 }
 
 .pass-line-box {
   border-width: 2.5px;
   border-color: #ffd54f;
-  background: rgba(0, 0, 0, 0.45);
+  background: #09170e;
 }
 
 .line-header {
@@ -508,49 +524,52 @@ const propBets = [
 }
 
 .line-title {
-  font-family: 'Cinzel', serif;
-  font-size: 1.15rem;
-  font-weight: 900;
-  letter-spacing: 2px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0;
   color: #ffd54f;
 }
 
 .line-payout {
-  font-size: 0.75rem;
-  font-weight: 800;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.52rem;
+  font-weight: 700;
   color: #ffffff;
 }
 
 .line-desc {
-  font-size: 0.72rem;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.48rem;
   color: rgba(255, 255, 255, 0.75);
-  margin-top: 3px;
+  margin-top: 4px;
 }
 
 .line-box--disabled {
-  opacity: 0.55;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
 /* ─── Columna Derecha: Proposiciones ──────────────────────── */
 .center-props-area {
-  background: rgba(0, 0, 0, 0.4);
+  background: #081a10;
   border: 2px solid #b8860b;
-  border-radius: 14px;
+  border-radius: 0;
   padding: 12px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
+  box-shadow: 3px 3px 0 #000;
 }
 
 .props-title-bar {
   text-align: center;
-  font-family: 'Cinzel', serif;
-  font-size: 0.8rem;
-  font-weight: 800;
-  letter-spacing: 1.5px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 0;
   color: #ffd54f;
-  border-bottom: 1px solid rgba(255, 213, 79, 0.3);
+  border-bottom: 2px solid rgba(255, 213, 79, 0.3);
   padding-bottom: 6px;
 }
 
@@ -562,18 +581,19 @@ const propBets = [
 }
 
 .hardway-item {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 8px;
+  background: #000;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 0;
   padding: 6px 4px;
   text-align: center;
   cursor: pointer;
   position: relative;
-  transition: all 0.2s ease;
+  box-shadow: 1px 1px 0 #000;
+  transition: all 0.15s ease;
 }
 
 .hardway-item:hover {
-  background: rgba(255, 213, 79, 0.15);
+  background: #112d1c;
   border-color: #ffd54f;
 }
 
@@ -590,24 +610,28 @@ const propBets = [
   justify-content: center;
   width: 18px;
   height: 18px;
-  border-radius: 4px;
-  background: #c62828;
+  border-radius: 0;
+  background: #dc2626;
   color: #fff;
-  font-size: 0.75rem;
-  font-weight: 900;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.52rem;
+  font-weight: 700;
+  box-shadow: 1px 1px 0 #000;
 }
 
 .hw-label {
-  font-size: 0.68rem;
-  font-weight: 800;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.48rem;
+  font-weight: 700;
   color: #ffffff;
 }
 
 .hw-payout {
-  font-size: 0.65rem;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.45rem;
   font-weight: 700;
   color: #ffd54f;
+  margin-top: 2px;
 }
 
 /* Proposiciones Grid */
@@ -618,37 +642,41 @@ const propBets = [
 }
 
 .prop-item {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 8px;
+  background: #000;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0;
   padding: 6px 4px;
   text-align: center;
   cursor: pointer;
   position: relative;
-  transition: all 0.2s ease;
+  box-shadow: 1px 1px 0 #000;
+  transition: all 0.15s ease;
 }
 
 .prop-item:hover {
-  background: rgba(255, 213, 79, 0.15);
+  background: #112d1c;
   border-color: #ffd54f;
 }
 
 .prop-label {
-  font-family: 'Cinzel', serif;
-  font-size: 0.7rem;
-  font-weight: 900;
-  letter-spacing: 0.5px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.52rem;
+  font-weight: 700;
+  letter-spacing: 0;
 }
 
 .prop-sub {
-  font-size: 0.62rem;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.42rem;
   color: rgba(255, 255, 255, 0.65);
+  margin-top: 2px;
 }
 
 .prop-payout-pill {
-  font-size: 0.68rem;
-  font-weight: 800;
-  color: #ffffff;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.45rem;
+  font-weight: 700;
+  color: #ffd54f;
   margin-top: 2px;
 }
 
@@ -657,16 +685,17 @@ const propBets = [
   position: absolute;
   bottom: 4px;
   right: 6px;
-  background: #111;
-  border: 1.5px solid #ffd54f;
-  border-radius: 12px;
-  padding: 1px 6px;
+  background: #000;
+  border: 2px solid #ffd54f;
+  border-radius: 0;
+  padding: 2px 4px;
   display: flex;
   align-items: center;
-  font-size: 0.72rem;
-  font-weight: 900;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.5rem;
+  font-weight: 700;
   color: #ffd54f;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
+  box-shadow: 2px 2px 0 #000;
   z-index: 3;
 }
 
@@ -680,7 +709,7 @@ const propBets = [
 .bet-chip-badge--mini {
   bottom: 2px;
   right: 2px;
-  padding: 0 4px;
-  font-size: 0.65rem;
+  padding: 1px 3px;
+  font-size: 0.45rem;
 }
 </style>

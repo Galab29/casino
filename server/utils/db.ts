@@ -1,0 +1,123 @@
+import { DatabaseSync } from 'node:sqlite'
+import { existsSync, mkdirSync } from 'node:fs'
+import { resolve } from 'node:path'
+import { createHash, randomBytes, scryptSync, timingSafeEqual } from 'node:crypto'
+
+let dbInstance: DatabaseSync | null = null
+
+export function getDatabase(): DatabaseSync {
+  if (dbInstance) return dbInstance
+
+  // Crear directorio .data si no existe
+  const dataDir = resolve(process.cwd(), '.data')
+  if (!existsSync(dataDir)) {
+    mkdirSync(dataDir, { recursive: true })
+  }
+
+  const dbPath = resolve(dataDir, 'casino.db')
+  const db = new DatabaseSync(dbPath)
+
+  // Optimización de SQLite y claves foráneas
+  db.exec('PRAGMA foreign_keys = ON;')
+  db.exec('PRAGMA journal_mode = WAL;')
+  db.exec('PRAGMA synchronous = NORMAL;')
+
+  // ── Tablas del sistema ──────────────────────────────────────────
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS users (
+      id TEXT PRIMARY KEY,
+      username TEXT UNIQUE NOT NULL,
+      chips INTEGER NOT NULL DEFAULT 1000,
+      role TEXT NOT NULL DEFAULT 'player',
+      password_hash TEXT,
+      created_at TEXT NOT NULL,
+      last_active_at TEXT NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS recharge_codes (
+      id TEXT PRIMARY KEY,
+      code TEXT UNIQUE NOT NULL,
+      amount INTEGER NOT NULL,
+      status TEXT NOT NULL DEFAULT 'active',
+      expires_at TEXT,
+      created_by TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      redeemed_by TEXT,
+      redeemed_at TEXT,
+      FOREIGN KEY (redeemed_by) REFERENCES users(id)
+    );
+
+    CREATE TABLE IF NOT EXISTS transactions (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      type TEXT NOT NULL,
+      amount INTEGER NOT NULL,
+      previous_balance INTEGER NOT NULL,
+      new_balance INTEGER NOT NULL,
+      reference TEXT,
+      created_at TEXT NOT NULL,
+      FOREIGN KEY (user_id) REFERENCES users(id)
+    );
+
+    CREATE TABLE IF NOT EXISTS redeem_attempts (
+      ip TEXT PRIMARY KEY,
+      failed_count INTEGER NOT NULL DEFAULT 0,
+      blocked_until INTEGER NOT NULL DEFAULT 0,
+      last_attempt_at INTEGER NOT NULL
+    );
+
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_recharge_codes_code ON recharge_codes(code);
+    CREATE INDEX IF NOT EXISTS idx_recharge_codes_status ON recharge_codes(status);
+    CREATE INDEX IF NOT EXISTS idx_transactions_user ON transactions(user_id);
+    CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
+  `)
+
+  // ── Inicializar Administrador por defecto si no existe ────────
+  initDefaultAdmin(db)
+
+  dbInstance = db
+  return dbInstance
+}
+
+/** Hashear contraseñas de forma segura con scrypt */
+export function hashPassword(password: string): string {
+  const salt = randomBytes(16).toString('hex')
+  const hash = scryptSync(password, salt, 64).toString('hex')
+  return `${salt}:${hash}`
+}
+
+/** Verificar contraseña con scrypt */
+export function verifyPassword(password: string, storedHash: string): boolean {
+  try {
+    const [salt, key] = storedHash.split(':')
+    if (!salt || !key) return false
+    const keyBuffer = Buffer.from(key, 'hex')
+    const derivedKey = scryptSync(password, salt, 64)
+    return timingSafeEqual(keyBuffer, derivedKey)
+  } catch {
+    return false
+  }
+}
+
+function initDefaultAdmin(db: DatabaseSync) {
+  const checkAdmin = db.prepare("SELECT id FROM users WHERE role = 'admin' LIMIT 1").get()
+  if (!checkAdmin) {
+    const adminPassword = process.env.ADMIN_PASSWORD || 'RoyalAdmin2026!'
+    const pwdHash = hashPassword(adminPassword)
+    const now = new Date().toISOString()
+    const insertAdmin = db.prepare(`
+      INSERT INTO users (id, username, chips, role, password_hash, created_at, last_active_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+    `)
+    insertAdmin.run(
+      'admin-root-01',
+      'admin',
+      999999,
+      'admin',
+      pwdHash,
+      now,
+      now
+    )
+    console.log('[Casino DB] Administrador inicial creado (usuario: admin)')
+  }
+}

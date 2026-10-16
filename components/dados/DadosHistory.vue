@@ -79,31 +79,33 @@ function getEventColor(event: RollResult['event']): string {
 
 <style scoped>
 .dados-history-strip {
-  background: rgba(10, 15, 20, 0.65);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 213, 79, 0.15);
-  border-radius: 16px;
-  padding: 12px 16px;
+  background: #08170f;
+  border: 2px solid #ffd54f;
+  border-radius: 0;
+  box-shadow: 3px 3px 0 #000;
+  padding: 10px 14px;
 }
 
 .history-title {
-  font-family: 'Cinzel', serif;
-  font-size: 0.78rem;
-  font-weight: 800;
-  letter-spacing: 1.5px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 0;
   color: #ffd54f;
 }
 
 .history-count {
-  font-size: 0.72rem;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.45rem;
   color: rgba(255, 255, 255, 0.5);
 }
 
 .history-empty {
-  font-size: 0.75rem;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.48rem;
   color: rgba(255, 255, 255, 0.4);
   text-align: center;
-  padding: 10px 0;
+  padding: 8px 0;
 }
 
 .history-scroll-track {
@@ -119,24 +121,24 @@ function getEventColor(event: RollResult['event']): string {
 }
 
 .history-scroll-track::-webkit-scrollbar-thumb {
-  background: rgba(255, 213, 79, 0.3);
-  border-radius: 4px;
+  background: #ffd54f;
 }
 
 .history-card {
   flex-shrink: 0;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 10px;
-  padding: 6px 10px;
+  background: #000;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0;
+  box-shadow: 2px 2px 0 #000;
+  padding: 5px 8px;
   display: flex;
   align-items: center;
   gap: 8px;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
 }
 
 .history-card:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: #112d1c;
   border-color: var(--badge-color);
 }
 
@@ -151,41 +153,46 @@ function getEventColor(event: RollResult['event']): string {
   justify-content: center;
   width: 18px;
   height: 18px;
-  border-radius: 4px;
-  background: #d32f2f;
+  border-radius: 0;
+  background: #dc2626;
   color: #fff;
-  font-size: 0.75rem;
-  font-weight: 900;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.52rem;
+  font-weight: 700;
+  box-shadow: 1px 1px 0 #000;
 }
 
 .roll-sum-pill {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  border-radius: 0;
   background: rgba(255, 213, 79, 0.15);
   border: 1px solid #ffd54f;
+  box-shadow: 1px 1px 0 #000;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Cinzel', serif;
-  font-size: 0.8rem;
-  font-weight: 900;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.55rem;
+  font-weight: 700;
   color: #ffd54f;
 }
 
 .roll-event-text {
-  font-size: 0.68rem;
-  font-weight: 800;
-  letter-spacing: 0.5px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.48rem;
+  font-weight: 700;
+  letter-spacing: 0;
 }
 
 .roll-profit-badge {
-  font-size: 0.68rem;
-  font-weight: 800;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.48rem;
+  font-weight: 700;
   color: #69f0ae;
   background: rgba(105, 240, 174, 0.1);
-  padding: 1px 6px;
-  border-radius: 8px;
+  padding: 2px 4px;
+  border-radius: 0;
+  border: 1px solid #69f0ae;
 }
 </style>

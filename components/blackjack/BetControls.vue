@@ -52,28 +52,29 @@ function allIn() {
     <!-- Current bet display -->
     <div class="text-center mb-3">
       <div class="bet-amount-display">
-        <v-icon color="amber" size="28" class="mr-2 chip-spin">mdi-poker-chip</v-icon>
+        <PixelChip :value="modelValue || 25" size="xs" class="mr-2" />
         <span class="bet-value">{{ modelValue }}</span>
       </div>
       <div class="bet-label">APUESTA</div>
     </div>
 
-    <!-- Chip buttons -->
-    <div class="d-flex justify-center flex-wrap ga-2 mb-4">
-      <v-btn
+    <!-- Chip buttons: 8-Bit Pixel Chips from /fichas/ -->
+    <div class="d-flex justify-center flex-wrap ga-3 mb-4 align-center">
+      <button
         v-for="chip in chipOptions"
         :key="chip"
+        type="button"
+        class="chip-pixel-btn"
         :disabled="disabled || chip > maxBet"
-        variant="elevated"
-        rounded="pill"
-        size="small"
-        class="chip-btn"
-        :color="chipColors[chip]"
+        :title="`Apostar ${chip} fichas`"
         @click="addChips(chip)"
       >
-        <v-icon start size="16">mdi-poker-chip</v-icon>
-        {{ chip }}
-      </v-btn>
+        <PixelChip
+          :value="chip"
+          size="md"
+          :disabled="disabled || chip > maxBet"
+        />
+      </button>
     </div>
 
     <!-- Action buttons -->
@@ -124,28 +125,29 @@ function allIn() {
 .bet-amount-display {
   display: inline-flex;
   align-items: center;
-  background: rgba(0,0,0,0.4);
-  border: 2px solid rgba(255,213,79,0.4);
-  border-radius: 16px;
-  padding: 8px 24px;
-  box-shadow: 0 0 20px rgba(255,213,79,0.1);
+  background: #000;
+  border: 2px solid #ffd54f;
+  border-radius: 0;
+  padding: 6px 20px;
+  box-shadow: 3px 3px 0 #000;
 }
 
 .bet-value {
-  font-family: 'Cinzel', serif;
-  font-size: 2rem;
-  font-weight: 900;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 1.25rem;
+  font-weight: 700;
   color: #ffd54f;
-  text-shadow: 0 2px 10px rgba(255,213,79,0.4);
+  text-shadow: 2px 2px 0 #000;
   min-width: 60px;
   text-align: center;
 }
 
 .bet-label {
-  font-size: 10px;
-  letter-spacing: 4px;
-  color: rgba(255,255,255,0.4);
-  margin-top: 4px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.5rem;
+  letter-spacing: 0;
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 6px;
 }
 
 .chip-spin {
@@ -157,32 +159,34 @@ function allIn() {
   to { transform: rotate(360deg); }
 }
 
-.chip-btn {
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+.chip-pixel-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
 }
 
-.chip-btn:hover:not(:disabled) {
-  transform: scale(1.15) translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
-}
-
-.chip-btn:active:not(:disabled) {
-  transform: scale(0.95);
+.chip-pixel-btn:disabled {
+  cursor: not-allowed;
 }
 
 .all-in-btn {
-  font-weight: 700;
-  letter-spacing: 1px;
-}
-
-.all-in-btn:not(:disabled):hover {
-  box-shadow: 0 0 20px rgba(244,67,54,0.4);
+  font-family: 'Press Start 2P', monospace !important;
+  font-size: 0.58rem !important;
+  border-radius: 0 !important;
 }
 
 .place-bet-btn {
+  font-family: 'Press Start 2P', monospace !important;
+  font-size: 0.62rem !important;
   font-weight: 700;
-  letter-spacing: 1px;
+  border-radius: 0 !important;
+  border: 2px solid #000 !important;
+  box-shadow: 3px 3px 0 #000 !important;
 }
 </style>

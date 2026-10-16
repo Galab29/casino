@@ -114,11 +114,85 @@ export const useRuletaStore = defineStore('ruleta', () => {
 
   loadStats()
 
+  // ─── Advertencias de reglas de casino ──────────────────────
+  const ruleWarning = ref<string | null>(null)
+
+  function clearRuleWarning() {
+    ruleWarning.value = null
+  }
+
+  /**
+   * Verifica las reglas oficiales de casino para apuestas en la ruleta:
+   * 1. No se permiten apuestas opuestas de suerte sencilla (Rojo y Negro, Par e Impar, Falta y Pasa).
+   * 2. No se permite cubrir todas las docenas (1ª, 2ª y 3ª) simultáneamente (arbitraje sin riesgo).
+   * 3. No se permite cubrir todas las columnas (1ª, 2ª y 3ª) simultáneamente (arbitraje sin riesgo).
+   */
+  function checkCasinoBetRules(type: BetType, target: string | number): { allowed: boolean; reason?: string } {
+    const id = `${type}-${target}`
+    // Si ya existe apuesta en esta casilla, siempre se puede aumentar
+    if (bets.value[id]) return { allowed: true }
+
+    // 1. Suertes Sencillas Opuestas
+    if (type === 'color') {
+      if (target === 'red' && bets.value['color-black']) {
+        return { allowed: false, reason: 'Regla de casino: No se permite apostar a Rojo y Negro simultáneamente.' }
+      }
+      if (target === 'black' && bets.value['color-red']) {
+        return { allowed: false, reason: 'Regla de casino: No se permite apostar a Rojo y Negro simultáneamente.' }
+      }
+    }
+
+    if (type === 'parity') {
+      if (target === 'even' && bets.value['parity-odd']) {
+        return { allowed: false, reason: 'Regla de casino: No se permite apostar a Par e Impar simultáneamente.' }
+      }
+      if (target === 'odd' && bets.value['parity-even']) {
+        return { allowed: false, reason: 'Regla de casino: No se permite apostar a Par e Impar simultáneamente.' }
+      }
+    }
+
+    if (type === 'range') {
+      if (target === 'low' && bets.value['range-high']) {
+        return { allowed: false, reason: 'Regla de casino: No se permite apostar a Falta (1-18) y Pasa (19-36) simultáneamente.' }
+      }
+      if (target === 'high' && bets.value['range-low']) {
+        return { allowed: false, reason: 'Regla de casino: No se permite apostar a Falta (1-18) y Pasa (19-36) simultáneamente.' }
+      }
+    }
+
+    // 2. Cobertura de las 3 docenas
+    if (type === 'dozen') {
+      const activeDozens = [1, 2, 3].filter((d) => bets.value[`dozen-${d}`] && d !== Number(target))
+      if (activeDozens.length >= 2) {
+        return { allowed: false, reason: 'Regla de casino: No se permite cubrir las 3 docenas al mismo tiempo.' }
+      }
+    }
+
+    // 3. Cobertura de las 3 columnas
+    if (type === 'column') {
+      const activeCols = [1, 2, 3].filter((c) => bets.value[`column-${c}`] && c !== Number(target))
+      if (activeCols.length >= 2) {
+        return { allowed: false, reason: 'Regla de casino: No se permite cubrir las 3 columnas al mismo tiempo.' }
+      }
+    }
+
+    return { allowed: true }
+  }
+
   // ─── Acciones de apuestas ──────────────────────────────────
 
   /** Coloca o incrementa una apuesta en el tapete */
   function placeBet(type: BetType, target: string | number, label: string) {
     if (isSpinning.value) return false
+
+    // Validar reglas oficiales de casino
+    const ruleCheck = checkCasinoBetRules(type, target)
+    if (!ruleCheck.allowed) {
+      ruleWarning.value = ruleCheck.reason || null
+      return false
+    }
+    ruleWarning.value = null
+
     const amount = selectedChip.value
     if (chips.value < amount) return false
 
@@ -307,6 +381,7 @@ export const useRuletaStore = defineStore('ruleta', () => {
     stats,
     history,
     lastPlacedBets,
+    ruleWarning,
     // computed
     chips,
     totalBet,
@@ -321,6 +396,7 @@ export const useRuletaStore = defineStore('ruleta', () => {
     placeBet,
     undoBet,
     clearBets,
+    clearRuleWarning,
     doubleBets,
     rebet,
     spin,

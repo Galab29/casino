@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import type { Card } from '~/types/blackjack'
+import { useDeckStyle } from '~/composables/useDeckStyle'
+import { getPixelCardUrl, toPixelSpec } from '~/utils/pixelDeck'
 
 interface Props {
   card: Card
@@ -44,7 +46,10 @@ const valueToKey: Record<string, string> = {
   K: 'king',
 }
 
+const { isPixel } = useDeckStyle()
+
 const cardImageSrc = computed(() => {
+  if (isPixel.value) return getPixelCardUrl(toPixelSpec(props.card))
   const suitKey = suitToKey[props.card.suit] || 'spade'
   const valueKey = valueToKey[props.card.value] || '1'
   return `/cards/${suitKey}_${valueKey}.png`
@@ -52,6 +57,7 @@ const cardImageSrc = computed(() => {
 
 const cardBackSrc = computed(() => {
   const color = props.backColor || 'navy'
+  if (isPixel.value) return getPixelCardUrl({ type: 'BACK', theme: color })
   return `/cards/back-${color}.png`
 })
 
@@ -78,6 +84,9 @@ const imageError = ref(false)
 function onImageError() {
   imageError.value = true
 }
+watch(cardImageSrc, () => {
+  imageError.value = false
+})
 
 const suitSymbol = computed(() => {
   const map: Record<string, string> = {
@@ -93,7 +102,7 @@ const suitSymbol = computed(() => {
 <template>
   <div
     class="playing-card-wrapper mx-1"
-    :class="{ 'is-flipped': isFlipped }"
+    :class="{ 'is-flipped': isFlipped, 'is-pixel': isPixel }"
     :title="isFlipped ? 'Carta oculta' : cardAlt"
   >
     <div class="card-inner">
@@ -234,6 +243,16 @@ const suitSymbol = computed(() => {
   width: 100%;
   height: 100%;
   object-fit: fill;
+}
+
+/* 8-bit deck: the source is rendered at 4x, so let the browser downscale it
+   smoothly (nearest-neighbour downscaling would drop 1px lines). */
+.is-pixel .card-img {
+  image-rendering: auto;
+}
+
+.is-pixel .card-back {
+  background: #ffffff;
 }
 
 /* ─── Realistic Satin Sheen Overlay ─── */

@@ -1,0 +1,319 @@
+/* ============================================================================
+ * ROYAL CASINO 8-BIT RETRO ARCADE THEME
+ * Comprehensive design system for pixel-art gaming experience across all tables
+ * ============================================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Silkscreen:wght@400;700&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Typography */
+  --pixel-font: 'Press Start 2P', monospace;
+  --pixel-font-alt: 'Silkscreen', 'Press Start 2P', monospace;
+  --pixel-lcd-font: 'VT323', monospace;
+  --pixel-body-font: 'Inter', sans-serif;
+
+  /* 8-Bit Color Palette */
+  --pixel-bg-dark: #0f0f14;
+  --pixel-bg-panel: #181822;
+  --pixel-bg-surface: #222230;
+
+  --pixel-gold: #fbc02d;
+  --pixel-gold-glow: #ffd54f;
+  --pixel-gold-dark: #b28704;
+
+  --pixel-red: #e52521;
+  --pixel-red-glow: #ff5252;
+  --pixel-red-dark: #8a0c0a;
+
+  --pixel-blue: #1976d2;
+  --pixel-blue-glow: #42a5f5;
+  --pixel-cyan: #00e5ff;
+  --pixel-green: #00c853;
+  --pixel-green-glow: #69f0ae;
+  --pixel-purple: #9c27b0;
+  --pixel-magenta: #ff4081;
+
+  --pixel-black: #08080c;
+  --pixel-white: #ffffff;
+  --pixel-border-color: #2e2e42;
+}
+
+/* ─── Global Background & CRT Dot Grid ─── */
+body,
+.v-application {
+  background-color: var(--pixel-bg-dark) !important;
+  background-image:
+    radial-gradient(#272738 1px, transparent 1px),
+    radial-gradient(#272738 1px, var(--pixel-bg-dark) 1px) !important;
+  background-size: 20px 20px, 20px 20px !important;
+  background-position: 0 0, 10px 10px !important;
+  color: #f4f4f5 !important;
+  font-family: var(--pixel-body-font), sans-serif;
+  image-rendering: pixelated;
+}
+
+/* ─── Global 8-Bit Typography Classes ─── */
+.pixel-font,
+.font-pixel {
+  font-family: var(--pixel-font), monospace !important;
+}
+
+.pixel-lcd {
+  font-family: var(--pixel-lcd-font), monospace !important;
+  letter-spacing: 1px;
+}
+
+/* All headings adopt 8-bit styling */
+h1, h2, h3,
+.game-title,
+.casino-title,
+.poker-heading,
+.room-title,
+.hand-label,
+.table-badge-text,
+.dialog-title,
+.puck-face,
+.bet-label,
+.total-bet-label {
+  font-family: var(--pixel-font), monospace !important;
+  letter-spacing: -0.5px;
+  text-shadow: 2px 2px 0 #000, 3px 3px 0 rgba(0, 0, 0, 0.7);
+}
+
+/* ─── 8-Bit Chunky Arcade Box & Panels ─── */
+.pixel-box,
+.v-card:not(.transparent),
+.felt-surface,
+.poker-table,
+.cabinet,
+.arena-table-container,
+.baccarat-felt {
+  border: 3px solid #000 !important;
+  box-shadow:
+    inset -3px -3px 0px 0px rgba(0, 0, 0, 0.6),
+    inset 3px 3px 0px 0px rgba(255, 255, 255, 0.12),
+    0 6px 0 0 #000 !important;
+}
+
+/* Arcade Bezel Highlight */
+.pixel-border-gold {
+  border: 3px solid #000 !important;
+  box-shadow:
+    inset -3px -3px 0px 0px var(--pixel-gold-dark),
+    inset 3px 3px 0px 0px var(--pixel-gold-glow),
+    0 4px 0 0 #000,
+    0 0 16px rgba(251, 192, 45, 0.3) !important;
+}
+
+/* ─── 8-Bit Retro Buttons ─── */
+.v-btn {
+  font-family: var(--pixel-font), monospace !important;
+  font-size: 0.68rem !important;
+  letter-spacing: -0.5px !important;
+  text-transform: uppercase !important;
+  border-radius: 4px !important;
+  border: 2px solid #000 !important;
+  box-shadow: 0 4px 0 0 #000 !important;
+  transition: transform 0.08s ease, box-shadow 0.08s ease !important;
+  position: relative;
+  overflow: visible !important;
+}
+
+.v-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 0 #000 !important;
+}
+
+.v-btn:active:not(:disabled) {
+  transform: translateY(3px) !important;
+  box-shadow: 0 1px 0 0 #000 !important;
+}
+
+.v-btn:disabled {
+  opacity: 0.5 !important;
+  filter: grayscale(0.8);
+  box-shadow: 0 2px 0 0 #000 !important;
+}
+
+/* Circular icon buttons keep centered & 8-bit border */
+.v-btn.v-btn--icon {
+  border-radius: 6px !important;
+}
+
+/* ─── 8-Bit Casino Balance & Score Pills ─── */
+.balance-pill,
+.lobby-balance-wrap .balance-pill {
+  background: #14141d !important;
+  border: 2px solid #000 !important;
+  box-shadow:
+    inset -2px -2px 0px 0px #08080c,
+    inset 2px 2px 0px 0px #2a2a3c,
+    0 3px 0 0 #000 !important;
+  border-radius: 6px !important;
+  padding: 6px 14px !important;
+  display: inline-flex;
+  align-items: center;
+}
+
+.balance-title,
+.balance-label,
+.balance-lbl {
+  font-family: var(--pixel-font), monospace !important;
+  font-size: 0.62rem !important;
+  color: #9e9ea8 !important;
+}
+
+.balance-value,
+.balance-amount {
+  font-family: var(--pixel-font), monospace !important;
+  font-size: 0.78rem !important;
+  color: var(--pixel-gold-glow) !important;
+  text-shadow: 1px 1px 0 #000;
+}
+
+/* ─── 8-Bit Pixel Chip Aesthetic ─── */
+.chip-btn,
+.chip-selector-item,
+.poker-chip-3d,
+.roulette-chip {
+  border-radius: 50% !important;
+  border: 2px dashed #ffffff !important;
+  box-shadow:
+    0 0 0 2px #000,
+    0 4px 0 1px #000,
+    inset 0 0 0 3px rgba(0, 0, 0, 0.4) !important;
+  font-family: var(--pixel-font), monospace !important;
+  font-size: 0.65rem !important;
+  transition: transform 0.12s ease !important;
+}
+
+.chip-btn:hover,
+.chip-selector-item:hover {
+  transform: translateY(-3px) scale(1.05) !important;
+}
+
+.chip-selector-item--active {
+  box-shadow:
+    0 0 0 3px #fbc02d,
+    0 6px 0 2px #000,
+    0 0 16px rgba(251, 192, 45, 0.6) !important;
+  transform: translateY(-4px) !important;
+}
+
+/* ─── CRT Scanlines Overlay (Retro Arcade Glow) ─── */
+.pixel-crt-scanlines {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%,
+    rgba(0, 0, 0, 0.25) 50%
+  );
+  background-size: 100% 4px;
+  opacity: 0.25;
+}
+
+/* Subtle screen curvature vignette */
+.pixel-crt-vignette {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9998;
+  background: radial-gradient(circle at center, transparent 65%, rgba(0, 0, 0, 0.6) 100%);
+}
+
+/* ─── 8-Bit Marquee / Blinking Arcade Lights ─── */
+@keyframes arcade-blink {
+  0%, 49% { opacity: 1; filter: drop-shadow(0 0 6px #fbc02d); }
+  50%, 100% { opacity: 0.35; filter: none; }
+}
+
+.arcade-lamp {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  background: var(--pixel-gold);
+  border: 1px solid #000;
+  animation: arcade-blink 0.8s infinite;
+}
+
+.arcade-lamp:nth-child(even) {
+  animation-delay: 0.4s;
+  background: var(--pixel-red);
+}
+
+/* ─── 8-Bit Toast / Notification ─── */
+.v-snackbar__content {
+  font-family: var(--pixel-font), monospace !important;
+  font-size: 0.65rem !important;
+  border: 3px solid #000 !important;
+  box-shadow: 0 4px 0 #000 !important;
+}
+
+/* ─── 8-Bit Dialog Frames ─── */
+.v-dialog .v-overlay__content > .v-card,
+.inspect-panel,
+.jackpot-dialog {
+  border: 4px solid #000 !important;
+  box-shadow:
+    inset -4px -4px 0px 0px #0a0a0f,
+    inset 4px 4px 0px 0px #38384f,
+    0 12px 24px rgba(0, 0, 0, 0.8),
+    0 0 0 2px var(--pixel-gold) !important;
+  border-radius: 6px !important;
+}
+
+/* ─── Pixel Art Table Felts (Blackjack, Poker, Baccarat, Dados, Ruleta) ─── */
+.table-area,
+.felt-surface,
+.poker-table-surface,
+.baccarat-felt,
+.dice-arena-container,
+.roulette-cabinet {
+  background-color: #0d2818 !important;
+  background-image:
+    radial-gradient(#153e26 15%, transparent 16%),
+    radial-gradient(#153e26 15%, transparent 16%) !important;
+  background-size: 16px 16px !important;
+  background-position: 0 0, 8px 8px !important;
+  border: 4px solid #000 !important;
+  box-shadow:
+    inset 0 0 0 3px #fbc02d,
+    inset 0 0 24px rgba(0, 0, 0, 0.8),
+    0 8px 0 0 #000 !important;
+}
+
+/* Blue Baccarat felt override */
+.baccarat-felt {
+  background-color: #0b2540 !important;
+  background-image:
+    radial-gradient(#143a60 15%, transparent 16%),
+    radial-gradient(#143a60 15%, transparent 16%) !important;
+}
+
+/* Red Poker felt override */
+.poker-page .poker-table-surface {
+  background-color: #2b0c0c !important;
+  background-image:
+    radial-gradient(#471414 15%, transparent 16%),
+    radial-gradient(#471414 15%, transparent 16%) !important;
+}
+
+/* ─── 8-Bit Scrollbar ─── */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #08080c;
+  border: 1px solid #1e1e28;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--pixel-gold);
+  border: 2px solid #08080c;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--pixel-gold-glow);
+}

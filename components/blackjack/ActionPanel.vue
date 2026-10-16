@@ -80,15 +80,24 @@ const emit = defineEmits<{
 
 <style scoped>
 .action-btn {
-  font-weight: 700;
-  letter-spacing: 1px;
+  font-family: 'Press Start 2P', monospace !important;
+  font-size: 0.65rem !important;
+  letter-spacing: -0.5px;
   min-width: 130px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 2px solid #000 !important;
+  box-shadow: 0 4px 0 #000 !important;
+  border-radius: 4px !important;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
 }
 
 .action-btn:hover:not(:disabled) {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 #000 !important;
+}
+
+.action-btn:active:not(:disabled) {
+  transform: translateY(3px) !important;
+  box-shadow: 0 1px 0 #000 !important;
 }
 
 .hit-btn:not(:disabled) {

@@ -66,8 +66,8 @@ function formatPercent(p: number): string {
       <div class="option-stats">
         <div class="stat">
           <span class="stat-label">Costo</span>
-          <span class="stat-value">
-            <v-icon size="14" class="mr-1">mdi-poker-chip</v-icon>{{ m.cost }}
+          <span class="stat-value d-flex align-center">
+            <PixelChip :value="m.cost" size="xs" class="mr-1" />{{ m.cost }}
           </span>
         </div>
         <div class="stat">
@@ -118,22 +118,23 @@ function formatPercent(p: number): string {
   position: relative;
   overflow: hidden;
   text-align: left;
-  padding: 14px 16px;
-  border-radius: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(10, 10, 20, 0.6);
+  padding: 12px 14px;
+  border-radius: 0;
+  border: 2px solid var(--m-primary);
+  background: #09090e;
+  box-shadow: 3px 3px 0 #000;
   color: #fff;
   cursor: pointer;
-  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-  font-family: 'Outfit', sans-serif;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  font-family: 'Press Start 2P', monospace;
 }
 
 .option-bg {
   position: absolute;
   inset: 0;
   background: var(--m-gradient);
-  opacity: 0.55;
-  transition: opacity 0.3s ease;
+  opacity: 0.4;
+  transition: opacity 0.2s ease;
   pointer-events: none;
 }
 
@@ -142,17 +143,17 @@ function formatPercent(p: number): string {
 }
 
 .machine-option:hover:not(:disabled) {
-  transform: translateY(-4px);
-  border-color: var(--m-primary);
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0 #000;
 }
 
 .machine-option--active {
-  border-color: var(--m-primary);
-  box-shadow: 0 0 0 1px var(--m-primary), 0 10px 36px var(--m-glow);
+  border-color: #fff !important;
+  box-shadow: 0 0 0 2px var(--m-primary), 4px 4px 0 #000, 0 0 20px var(--m-glow) !important;
 }
 
 .machine-option--active .option-bg {
-  opacity: 0.95;
+  opacity: 0.85;
 }
 
 .machine-option--disabled {
@@ -163,21 +164,21 @@ function formatPercent(p: number): string {
 .option-header {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 12px;
+  gap: 10px;
+  margin-bottom: 10px;
 }
 
 .option-icon {
-  width: 44px;
-  height: 44px;
+  width: 38px;
+  height: 38px;
   flex-shrink: 0;
-  border-radius: 50%;
+  border-radius: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.35);
-  border: 1px solid var(--m-primary);
-  box-shadow: 0 0 14px var(--m-glow);
+  background: #000;
+  border: 2px solid var(--m-primary);
+  box-shadow: 2px 2px 0 #000;
 }
 
 .option-titles {
@@ -187,17 +188,19 @@ function formatPercent(p: number): string {
 }
 
 .option-name {
-  font-family: 'Cinzel', serif;
+  font-family: 'Press Start 2P', monospace;
   font-weight: 700;
-  font-size: 1.02rem;
-  letter-spacing: 1.5px;
+  font-size: 0.65rem;
+  letter-spacing: 0;
   color: var(--m-primary);
 }
 
 .option-sub {
-  font-size: 0.72rem;
-  color: rgba(255, 255, 255, 0.55);
-  line-height: 1.3;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.45rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 3px;
+  line-height: 1.4;
 }
 
 .option-stats {
@@ -210,23 +213,27 @@ function formatPercent(p: number): string {
 .stat {
   display: flex;
   flex-direction: column;
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 10px;
-  padding: 6px 8px;
+  background: #000;
+  border-radius: 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 5px 6px;
 }
 
 .stat-label {
-  font-size: 0.62rem;
-  letter-spacing: 1px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.4rem;
+  letter-spacing: 0;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .stat-value {
+  font-family: 'Press Start 2P', monospace;
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 0.55rem;
   display: flex;
   align-items: center;
+  margin-top: 2px;
 }
 
 .stat-value--prize {
@@ -234,25 +241,27 @@ function formatPercent(p: number): string {
 }
 
 .prob-bar {
-  height: 4px;
-  border-radius: 4px;
-  background: rgba(255, 255, 255, 0.08);
+  height: 6px;
+  border-radius: 0;
+  border: 1px solid #000;
+  background: rgba(255, 255, 255, 0.1);
   overflow: hidden;
   margin-bottom: 10px;
 }
 
 .prob-bar-fill {
   height: 100%;
-  border-radius: 4px;
-  background: linear-gradient(90deg, var(--m-secondary), var(--m-primary));
+  border-radius: 0;
+  background: var(--m-primary);
 }
 
 .option-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 0.72rem;
-  color: rgba(255, 255, 255, 0.55);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.45rem;
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .risk {
@@ -271,7 +280,7 @@ function formatPercent(p: number): string {
   color: var(--m-primary);
   display: flex;
   align-items: center;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 @media (max-width: 900px) {

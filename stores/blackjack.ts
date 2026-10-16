@@ -164,6 +164,45 @@ export const useBlackjackStore = defineStore('blackjack', () => {
     status: 'playing',
   })
 
+  // Diálogo de recarga global
+  const isRechargeOpen = ref(false)
+  function openRecharge() {
+    isRechargeOpen.value = true
+  }
+  function closeRecharge() {
+    isRechargeOpen.value = false
+  }
+
+  // Sincronización con el servidor
+  let syncTimeout: any = null
+  function syncChipsWithServer(chipsAmount: number) {
+    if (typeof window === 'undefined') return
+    if (syncTimeout) clearTimeout(syncTimeout)
+    syncTimeout = setTimeout(async () => {
+      try {
+        await $fetch('/api/user/sync-chips', {
+          method: 'POST',
+          body: { chips: chipsAmount },
+        })
+      } catch (e) {
+        // Ignorar errores de red temporales
+      }
+    }, 400)
+  }
+
+  async function syncWithServer() {
+    if (typeof window === 'undefined') return
+    try {
+      const data = await $fetch<{ success: boolean; user: { chips: number } }>('/api/auth/me')
+      if (data?.user?.chips !== undefined && data.user.chips !== null) {
+        player.value.chips = data.user.chips
+        localStorage.setItem(CHIPS_STORAGE_KEY, data.user.chips.toString())
+      }
+    } catch (e) {
+      console.warn('Could not sync chips with server:', e)
+    }
+  }
+
   // Auto-sync chips with localStorage whenever they change
   watch(
     () => player.value.chips,
@@ -171,6 +210,7 @@ export const useBlackjackStore = defineStore('blackjack', () => {
       if (typeof window !== 'undefined') {
         try {
           localStorage.setItem(CHIPS_STORAGE_KEY, val.toString())
+          syncChipsWithServer(val)
         } catch (e) {
           console.error('Error auto-saving chips:', e)
         }
@@ -182,21 +222,24 @@ export const useBlackjackStore = defineStore('blackjack', () => {
   function setChips(value: number) {
     player.value.chips = Math.max(0, Math.floor(value))
     saveStats()
+    syncChipsWithServer(player.value.chips)
   }
 
   function addChips(amount: number) {
     player.value.chips = Math.max(0, player.value.chips + Math.floor(amount))
     saveStats()
+    syncChipsWithServer(player.value.chips)
   }
 
   function removeChips(amount: number) {
     player.value.chips = Math.max(0, player.value.chips - Math.floor(amount))
     saveStats()
+    syncChipsWithServer(player.value.chips)
   }
 
-  function refillChips(amount = 1000) {
-    player.value.chips = Math.max(player.value.chips + amount, amount)
-    saveStats()
+  function refillChips() {
+    // Ya no se recargan fichas automáticamente; se abre el cajero de recarga
+    openRecharge()
   }
 
   // ── Dealer ───────────────────────────────
@@ -289,7 +332,7 @@ export const useBlackjackStore = defineStore('blackjack', () => {
     player.value.currentBet = 0
     player.value.status = 'playing'
     if (player.value.chips <= 0) {
-      player.value.chips = 1000
+      openRecharge()
     }
     dealer.value = {
       hand: [],
@@ -530,9 +573,7 @@ export const useBlackjackStore = defineStore('blackjack', () => {
     isDealing.value = false
 
     if (player.value.chips <= 0) {
-      // Re-fill chips if out
-      player.value.chips = 1000
-      saveStats()
+      openRecharge()
     }
 
     gameStatus.value = 'betting'
@@ -549,6 +590,7 @@ export const useBlackjackStore = defineStore('blackjack', () => {
     isDealing,
     currentStreak,
     lastResult,
+    isRechargeOpen,
     // computed
     playerScore,
     dealerScore,
@@ -563,10 +605,13 @@ export const useBlackjackStore = defineStore('blackjack', () => {
     loadSavedData,
     saveStats,
     resetStats,
+    syncWithServer,
     setChips,
     addChips,
     removeChips,
     refillChips,
+    openRecharge,
+    closeRecharge,
     startNewGame,
     placeBet,
     hit,

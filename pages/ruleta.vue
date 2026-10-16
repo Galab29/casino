@@ -6,6 +6,7 @@ import { useConfetti } from '~/composables/useConfetti'
 import type { BetType } from '~/types/ruleta'
 import { RED_NUMBERS } from '~/constants/ruleta'
 import GameRulesDialog from '~/components/common/GameRulesDialog.vue'
+import RechargeDialog from '~/components/common/RechargeDialog.vue'
 
 useHead({
   title: 'Ruleta Europea · Royal Casino',
@@ -36,12 +37,14 @@ const {
   isSpinning,
   canSpin,
   lastPlacedBets,
+  ruleWarning,
 } = storeToRefs(store)
 
 const wheelCabinetRef = ref<HTMLElement | null>(null)
 const showRulesDialog = ref(false)
 const showExitConfirmDialog = ref(false)
 const showRefillDialog = ref(false)
+const showRechargeModal = ref(false)
 const showStatsDialog = ref(false)
 const displayedWin = ref(0)
 let counterRaf: number | null = null
@@ -53,9 +56,14 @@ function handlePlaceBet(type: BetType, target: string | number, label: string) {
     store.resetRound()
   }
   const success = store.placeBet(type, target, label)
-  if (!success && chips.value < selectedChip.value) {
-    if (chips.value === 0 && totalBet.value === 0) {
-      showRefillDialog.value = true
+  if (!success) {
+    if (ruleWarning.value) {
+      sound.playBust()
+      effects.screenShake(4, 250)
+    } else if (chips.value < selectedChip.value) {
+      if (chips.value === 0 && totalBet.value === 0) {
+        showRechargeModal.value = true
+      }
     }
   }
 }
@@ -133,10 +141,8 @@ function confirmExit() {
 }
 
 function handleRefill() {
-  store.refillChips()
-  sound.playCoinCascade(12)
-  effects.floatingText('+1,000 🪙', '#ffd54f')
   showRefillDialog.value = false
+  showRechargeModal.value = true
 }
 
 // Atajo de teclado: Barra espaciadora para girar
@@ -264,16 +270,15 @@ onUnmounted(() => {
         <!-- Derecha: Recarga rápida + Saldo centralizado -->
         <div class="d-flex align-center ga-2">
           <v-btn
-            v-if="chips < 10"
             variant="elevated"
             color="amber-darken-2"
             size="small"
             rounded="pill"
-            prepend-icon="mdi-plus-circle"
+            prepend-icon="mdi-cash-plus"
             class="elevation-4 refill-alert-btn"
-            @click="handleRefill"
+            @click="showRechargeModal = true"
           >
-            +1,000 Fichas
+            + Recargar
           </v-btn>
 
           <div class="balance-pill">
@@ -374,6 +379,20 @@ onUnmounted(() => {
 
         <!-- ─── Columna Derecha: Tapete de Apuestas y Controles de Fichas ─── -->
         <section class="right-column">
+          <!-- Alerta de Reglas Oficiales de Casino (apuestas contradictorias bloqueadas) -->
+          <transition name="fade">
+            <div v-if="ruleWarning" class="pixel-rule-alert mb-2">
+              <div class="d-flex align-center ga-3">
+                <span class="rule-icon">🚫</span>
+                <div>
+                  <div class="rule-title">REGLA OFICIAL DE CASINO</div>
+                  <div class="rule-desc">{{ ruleWarning }}</div>
+                </div>
+              </div>
+              <button class="rule-close-btn" title="Cerrar" @click="store.clearRuleWarning()">✕</button>
+            </div>
+          </transition>
+
           <!-- Tapete Verde de Apuestas -->
           <div class="table-container mb-2">
             <RouletteTable
@@ -423,30 +442,34 @@ onUnmounted(() => {
       </v-card>
     </v-dialog>
 
-    <!-- Diálogo de Recarga Gratuita de Fichas -->
-    <v-dialog v-model="showRefillDialog" max-width="400">
+    <!-- Diálogo de Saldo Insuficiente -->
+    <v-dialog v-model="showRefillDialog" max-width="440">
       <v-card class="dialog-card pa-4 text-center" rounded="xl">
         <v-card-title class="justify-center">
-          <v-icon color="amber" size="48">mdi-gift</v-icon>
+          <v-icon color="amber" size="48">mdi-cash-remove</v-icon>
         </v-card-title>
-        <h2 class="dialog-heading mb-2">¡Bono de Fichas Gratis!</h2>
+        <h2 class="dialog-heading mb-2">¡Fichas Insuficientes!</h2>
         <v-card-text>
-          Te has quedado sin fichas para apostar. En Royal Casino la diversión no se detiene: ¡recibe <strong>1,000 fichas gratis</strong> ahora mismo!
+          Te has quedado sin fichas en tu cuenta. Para continuar apostando en la Ruleta Europea, abre el cajero y canjea un código de recarga.
         </v-card-text>
-        <v-card-actions class="justify-center mt-2">
+        <v-card-actions class="justify-center mt-2 ga-2">
+          <v-btn variant="text" @click="showRefillDialog = false">Cerrar</v-btn>
           <v-btn
             size="large"
             color="amber-darken-2"
             variant="elevated"
             rounded="pill"
-            prepend-icon="mdi-poker-chip"
+            prepend-icon="mdi-cash-plus"
             @click="handleRefill"
           >
-            Reclamar 1,000 Fichas
+            Abrir Cajero
           </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- Diálogo de Recarga por Códigos -->
+    <RechargeDialog v-model="showRechargeModal" />
 
     <!-- Diálogo de Estadísticas de Ruleta -->
     <v-dialog v-model="showStatsDialog" max-width="500">
@@ -645,52 +668,57 @@ onUnmounted(() => {
 .mini-history-badge {
   width: 22px;
   height: 22px;
-  border-radius: 50%;
+  border-radius: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Cinzel', serif;
-  font-size: 0.68rem;
-  font-weight: 900;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.52rem;
+  font-weight: 700;
   color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 1px 1px 0 #000;
 }
 
 .mini-history-badge--latest {
   border-color: #ffd54f;
-  box-shadow: 0 0 8px #ffd54f;
+  border-width: 2px;
+  box-shadow: 0 0 8px #ffd54f, 1px 1px 0 #000;
   transform: scale(1.15);
 }
 
-.mini-history-badge--green { background: #1b5e20; }
-.mini-history-badge--red { background: #c62828; }
-.mini-history-badge--black { background: #212529; }
+.mini-history-badge--green { background: #15803d; }
+.mini-history-badge--red { background: #b91c1c; }
+.mini-history-badge--black { background: #18181b; }
 
 .stats-btn {
-  font-size: 0.68rem;
-  letter-spacing: 0.5px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.52rem;
+  letter-spacing: 0;
 }
 
 .balance-pill {
   display: flex;
   align-items: center;
-  background: rgba(0, 0, 0, 0.55);
-  border: 1.5px solid rgba(255, 213, 79, 0.4);
-  border-radius: 20px;
-  padding: 4px 14px;
+  background: #000;
+  border: 2px solid #ffd54f;
+  border-radius: 0;
+  padding: 4px 10px;
+  box-shadow: 2px 2px 0 #000;
 }
 
 .balance-value {
-  font-family: 'Cinzel', serif;
-  font-size: 1.15rem;
-  font-weight: 900;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.78rem;
+  font-weight: 700;
   color: #ffd54f;
-  text-shadow: 0 0 8px rgba(255, 213, 79, 0.5);
+  text-shadow: 1px 1px 0 #000;
 }
 
 .balance-label {
-  font-size: 0.7rem;
-  color: rgba(255, 255, 255, 0.5);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.48rem;
+  color: rgba(255, 255, 255, 0.6);
 }
 
 /* ═══ Escenario de Casino Principal (Ajustado siempre en pantalla) ═══ */
@@ -699,7 +727,7 @@ onUnmounted(() => {
   align-items: flex-start;
   justify-content: center;
   gap: 16px;
-  transition: all 0.4s ease;
+  transition: all 0.3s ease;
 }
 
 /* Columna Izquierda: Rueda y Banner */
@@ -710,108 +738,108 @@ onUnmounted(() => {
 }
 
 .wheel-cabinet {
-  background: radial-gradient(circle at 50% 50%, #151c2c 0%, #0d121c 100%);
-  border: 1.5px solid rgba(255, 213, 79, 0.3);
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+  background: #0d121c;
+  border: 3px solid #ffd54f;
+  border-radius: 0;
+  box-shadow: 4px 4px 0 #000;
   width: 100%;
   padding: 12px;
-  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.6s ease, border-color 0.4s ease;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
   position: relative;
   z-index: 5;
 }
 
-/* Animación cuando gira la ruleta: acerca la cámara hacia ella con un resplandor dorado */
+/* Animación cuando gira la ruleta */
 .wheel-cabinet--focused {
-  transform: scale(1.06);
-  box-shadow: 0 0 50px rgba(255, 213, 79, 0.55), 0 20px 50px rgba(0, 0, 0, 0.95);
+  transform: scale(1.03);
+  box-shadow: 0 0 25px rgba(255, 213, 79, 0.5), 6px 6px 0 #000;
   border-color: #ffd54f;
   z-index: 20;
 }
 
 .casino-stage--spinning .right-column {
   opacity: 0.85;
-  transition: opacity 0.5s ease;
+  transition: opacity 0.3s ease;
 }
 
-/* Banner de Resultado (Mismo diseño de la captura) */
+/* Banner de Resultado */
 .result-banner {
   width: 100%;
   margin-top: 10px;
-  border-radius: 16px;
-  padding: 10px 16px;
-  background: linear-gradient(135deg, rgba(13, 50, 24, 0.9) 0%, rgba(8, 34, 16, 0.95) 100%);
-  border: 2px solid #2e7d32;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
-  transition: all 0.3s ease;
+  border-radius: 0;
+  padding: 10px 14px;
+  background: #071f11;
+  border: 3px solid #22c55e;
+  box-shadow: 4px 4px 0 #000;
 }
 
 .result-banner--win {
-  border-color: #69f0ae !important;
-  box-shadow: 0 0 25px rgba(105, 240, 174, 0.35), 0 8px 24px rgba(0, 0, 0, 0.7) !important;
+  border-color: #22c55e !important;
+  box-shadow: 0 0 16px rgba(34, 197, 94, 0.4), 4px 4px 0 #000 !important;
 }
 
 .result-banner--lose {
-  background: linear-gradient(135deg, rgba(38, 50, 56, 0.9) 0%, rgba(20, 28, 32, 0.95) 100%);
-  border-color: rgba(255, 255, 255, 0.2) !important;
+  background: #1a0f13;
+  border-color: #ef4444 !important;
+  box-shadow: 4px 4px 0 #000 !important;
 }
 
 .result-banner--standby {
-  background: rgba(14, 20, 32, 0.85);
-  border-color: rgba(255, 213, 79, 0.25);
+  background: #0c1017;
+  border-color: rgba(255, 213, 79, 0.4);
 }
 
 .result-number-badge {
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  border-radius: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Cinzel', serif;
-  font-size: 1.55rem;
-  font-weight: 900;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.95rem;
+  font-weight: 700;
   color: #fff;
   border: 2px solid #ffd54f;
-  box-shadow: 0 0 12px rgba(255, 213, 79, 0.6);
+  box-shadow: 2px 2px 0 #000;
   flex-shrink: 0;
 }
 
-.result-number-badge--green { background: #1b5e20; }
-.result-number-badge--red { background: #c62828; }
-.result-number-badge--black { background: #1e1e1e; }
+.result-number-badge--green { background: #15803d; }
+.result-number-badge--red { background: #b91c1c; }
+.result-number-badge--black { background: #18181b; }
 .result-number-badge--standby {
   background: #151d2a;
   border-color: rgba(255, 213, 79, 0.4);
 }
 
 .result-number-name {
-  font-family: 'Cinzel', serif;
-  font-size: 1.15rem;
-  font-weight: 900;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
   color: #ffd54f;
-  line-height: 1.15;
+  line-height: 1.2;
 }
 
 .result-tags {
-  font-size: 0.72rem;
-  color: rgba(255, 255, 255, 0.75);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.5rem;
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .win-headline {
-  font-family: 'Cinzel', serif;
-  font-size: 1.05rem;
-  font-weight: 900;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
   color: #69f0ae;
-  letter-spacing: 2px;
 }
 
 .win-chips {
-  font-family: 'Cinzel', serif;
-  font-size: 1.15rem;
-  font-weight: 900;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.85rem;
+  font-weight: 700;
   color: #ffd54f;
-  text-shadow: 0 0 8px rgba(255, 213, 79, 0.5);
+  text-shadow: 1px 1px 0 #000;
 }
 
 .winning-tags-row {
@@ -821,24 +849,26 @@ onUnmounted(() => {
 }
 
 .winning-tag {
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 213, 79, 0.4);
-  border-radius: 10px;
-  padding: 1px 8px;
-  font-size: 0.68rem;
+  background: #000;
+  border: 1px solid #ffd54f;
+  border-radius: 0;
+  padding: 2px 6px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.48rem;
   color: #ffd54f;
   font-weight: 700;
 }
 
 .lose-headline {
-  font-family: 'Cinzel', serif;
-  font-size: 0.95rem;
-  font-weight: 800;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.65rem;
+  font-weight: 700;
   color: rgba(255, 255, 255, 0.85);
 }
 
 .lose-sub {
-  font-size: 0.72rem;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.52rem;
   color: rgba(255, 255, 255, 0.5);
 }
 
@@ -852,8 +882,10 @@ onUnmounted(() => {
 
 /* ═══ Diálogos ═══ */
 .dialog-card {
-  background: #101624 !important;
-  border: 1px solid rgba(255, 213, 79, 0.3);
+  background: #0c1017 !important;
+  border: 3px solid #ffd54f !important;
+  box-shadow: 6px 6px 0 #000 !important;
+  border-radius: 0 !important;
   color: #fff;
 }
 
@@ -903,6 +935,59 @@ onUnmounted(() => {
 .dist-red { background: #c62828; }
 .dist-green { background: #1b5e20; }
 .dist-black { background: #212529; }
+
+/* ═══ Alerta de Reglas de Casino ═══ */
+.pixel-rule-alert {
+  background: #2d0a0a;
+  border: 3px solid #ff5252;
+  box-shadow: 4px 4px 0 #000;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  animation: shake 0.3s ease-in-out;
+}
+
+.rule-icon {
+  font-size: 1.4rem;
+}
+
+.rule-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.55rem;
+  color: #ff5252;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.rule-desc {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.5rem;
+  color: #ffd54f;
+  margin-top: 3px;
+  line-height: 1.4;
+}
+
+.rule-close-btn {
+  background: #1a0505;
+  border: 1px solid #ff5252;
+  color: #ff8a80;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.6rem;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-left: 8px;
+  flex-shrink: 0;
+}
+
+.rule-close-btn:hover {
+  background: #ff5252;
+  color: #fff;
+}
 
 /* ═══ Responsive para Móvil / Pantallas Pequeñas ═══ */
 @media (max-width: 960px) {

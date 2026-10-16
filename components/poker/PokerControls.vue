@@ -177,7 +177,7 @@ function handleStartHand() {
               </div>
             </div>
 
-            <!-- Fichas Interactivas (Exactamente como en Blackjack) -->
+            <!-- Fichas Interactivas 8-Bit -->
             <div class="chip-rack d-flex justify-center flex-wrap ga-2 mb-3">
               <button
                 v-for="chip in chipOptions"
@@ -186,17 +186,20 @@ function handleStartHand() {
                 :disabled="raiseSliderValue + chip > store.maxRaiseAmount"
                 @click="addChips(chip)"
               >
-                <PokerChip3D :amount="chip" size="sm" />
+                <PixelChip :value="chip" size="sm" :disabled="raiseSliderValue + chip > store.maxRaiseAmount" />
                 <span class="chip-add-text">+{{ chip }}</span>
               </button>
             </div>
 
             <!-- Presets Rápidos -->
-            <div class="d-flex ga-1 justify-center mb-2 flex-wrap">
+            <div class="d-flex ga-1 justify-center mb-2 flex-wrap align-center">
               <button class="preset-btn" @click="clearBet">Mínimo</button>
               <button class="preset-btn" @click="setPreset('half_pot')">1/2 Bote</button>
               <button class="preset-btn" @click="setPreset('pot')">Bote</button>
-              <button class="preset-btn preset-btn--allin" @click="setPreset('allin')">All-in</button>
+              <button class="preset-btn preset-btn--allin d-inline-flex align-center ga-1" @click="setPreset('allin')">
+                <PixelChip value="all-in" size="xs" />
+                <span>All-in</span>
+              </button>
             </div>
 
             <!-- Slider para ajuste fino -->
@@ -356,18 +359,20 @@ function handleStartHand() {
 
 /* Deal Button */
 .deal-btn {
-  font-family: 'Cinzel', serif;
-  font-size: 1.05rem;
-  letter-spacing: 0.08em;
-  background: linear-gradient(135deg, #ffc107 0%, #ff8f00 100%) !important;
-  color: #111 !important;
-  box-shadow: 0 6px 20px rgba(255, 143, 0, 0.4);
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  font-family: 'Press Start 2P', monospace !important;
+  font-size: 0.72rem !important;
+  letter-spacing: -0.5px;
+  background: var(--pixel-gold) !important;
+  color: #000 !important;
+  border: 2px solid #000 !important;
+  box-shadow: 0 4px 0 #000 !important;
+  border-radius: 4px !important;
+  transition: all 0.1s ease;
 }
 
 .deal-btn:hover {
-  transform: translateY(-2px) scale(1.03);
-  box-shadow: 0 8px 25px rgba(255, 143, 0, 0.6);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 #000 !important;
 }
 
 /* Active Controls */
@@ -376,17 +381,19 @@ function handleStartHand() {
 }
 
 .dealer-wait-banner {
-  background: rgba(10, 15, 25, 0.8);
-  border: 1px solid rgba(255, 215, 0, 0.25);
-  border-radius: 999px;
-  padding: 8px 24px;
-  font-size: 0.85rem;
-  font-weight: 700;
+  background: #14141d;
+  border: 2px solid #000;
+  box-shadow: 0 3px 0 #000;
+  border-radius: 4px;
+  padding: 8px 18px;
+  font-family: 'Press Start 2P', monospace !important;
+  font-size: 0.62rem;
   color: #ffd54f;
 }
 
 .no-chips-hint {
-  font-size: 0.75rem;
+  font-family: 'Press Start 2P', monospace !important;
+  font-size: 0.55rem;
   color: #ef9a9a;
   font-weight: 700;
 }
@@ -397,29 +404,38 @@ function handleStartHand() {
 }
 
 .action-btn {
-  letter-spacing: 0.04em;
-  font-size: 0.85rem;
-  min-width: 120px;
-  transition: all 0.2s ease;
+  font-family: 'Press Start 2P', monospace !important;
+  letter-spacing: -0.5px;
+  font-size: 0.65rem !important;
+  min-width: 110px;
+  border: 2px solid #000 !important;
+  box-shadow: 0 4px 0 #000 !important;
+  border-radius: 4px !important;
+  transition: all 0.1s ease;
 }
 
 .action-btn:hover {
   transform: translateY(-2px);
+  box-shadow: 0 6px 0 #000 !important;
+}
+
+.action-btn:active {
+  transform: translateY(3px) !important;
+  box-shadow: 0 1px 0 #000 !important;
 }
 
 .btn-raise-active {
-  box-shadow: 0 0 15px #ffd54f;
+  box-shadow: 0 0 15px #ffd54f, 0 4px 0 #000 !important;
 }
 
 /* Raise Panel */
 .raise-panel {
   width: 100%;
-  background: rgba(15, 8, 10, 0.95);
-  border: 1.5px solid #ffd54f;
-  border-radius: 16px;
+  background: #14141d;
+  border: 3px solid #000;
+  border-radius: 6px;
   padding: 10px 16px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(10px);
+  box-shadow: 0 6px 0 #000;
 }
 
 .bet-display-header {
@@ -428,25 +444,26 @@ function handleStartHand() {
 }
 
 .bet-display-pill {
-  background: rgba(0, 0, 0, 0.6);
-  border: 1.5px solid #ffd54f;
-  border-radius: 999px;
-  padding: 4px 14px 4px 8px;
-  box-shadow: 0 0 10px rgba(255, 213, 79, 0.25);
+  background: #0d0d14;
+  border: 2px solid #000;
+  border-radius: 4px;
+  padding: 4px 12px;
+  box-shadow: 0 2px 0 #000;
 }
 
 .raise-title {
-  font-size: 0.78rem;
-  font-weight: 700;
-  color: #cfd8dc;
+  font-family: 'Press Start 2P', monospace !important;
+  font-size: 0.55rem;
+  color: #a1a1aa;
   text-transform: uppercase;
 }
 
 .raise-val {
-  font-family: 'Cinzel', serif;
-  font-size: 1.05rem;
-  font-weight: 900;
+  font-family: 'Press Start 2P', monospace !important;
+  font-size: 0.85rem !important;
+  font-weight: 700;
   color: #ffd54f;
+  text-shadow: 1px 1px 0 #000;
 }
 
 .raise-unit {

@@ -8,6 +8,7 @@ import { CHIP_OPTIONS, CHIP_CONFIG } from '~/constants/ruleta'
 import BaccaratRoadmap from '~/components/baccarat/BaccaratRoadmap.vue'
 import BaccaratTable from '~/components/baccarat/BaccaratTable.vue'
 import GameRulesDialog from '~/components/common/GameRulesDialog.vue'
+import RechargeDialog from '~/components/common/RechargeDialog.vue'
 
 useHead({
   title: 'Baccarat Royale · Royal Casino',
@@ -44,6 +45,7 @@ const {
 const showRulesDialog = ref(false)
 const showExitConfirmDialog = ref(false)
 const showRefillDialog = ref(false)
+const showRechargeModal = ref(false)
 const displayedWin = ref(0)
 let counterRaf: number | null = null
 
@@ -131,10 +133,8 @@ function confirmExit() {
 }
 
 function handleRefill() {
-  store.refillChips()
-  sound.playCoinCascade(12)
-  effects.floatingText('+1,000 🪙', '#ffd54f')
   showRefillDialog.value = false
+  showRechargeModal.value = true
 }
 
 // Atajo de teclado: Barra espaciadora para repartir
@@ -210,16 +210,15 @@ onUnmounted(() => {
         <!-- Derecha: Recarga rápida + Saldo Compartido -->
         <div class="d-flex align-center ga-2">
           <v-btn
-            v-if="chips < 10"
             variant="elevated"
             color="amber-darken-2"
             size="small"
             rounded="pill"
-            prepend-icon="mdi-plus-circle"
+            prepend-icon="mdi-cash-plus"
             class="elevation-4 refill-alert-btn"
-            @click="handleRefill"
+            @click="showRechargeModal = true"
           >
-            +1,000 Fichas
+            + Recargar
           </v-btn>
 
           <div class="balance-pill">
@@ -278,27 +277,24 @@ onUnmounted(() => {
 
       <!-- ═══ Panel de Control de Fichas y Reparto ═══ -->
       <footer class="controls-panel pa-3">
-        <!-- Fila de Fichas -->
+        <!-- Fila de Fichas 8-Bit -->
         <div class="d-flex align-center justify-center flex-wrap ga-3 mb-3">
           <div
             v-for="chip in CHIP_OPTIONS"
             :key="chip"
             class="chip-selector-item"
             :class="{
-              'chip-selector-item--active': selectedChip === chip,
               'chip-selector-item--disabled': chip > chips && !isDealing,
             }"
-            :style="{
-              '--c-bg': CHIP_CONFIG[chip].color,
-              '--c-border': CHIP_CONFIG[chip].border,
-              '--c-text': CHIP_CONFIG[chip].textColor,
-            }"
+            :title="`Ficha de ${chip}`"
             @click="sound.playChipClick(); store.selectChip(chip)"
           >
-            <div class="chip-inner">
-              <v-icon size="14" class="mr-0.5">mdi-poker-chip</v-icon>
-              <span>{{ chip }}</span>
-            </div>
+            <PixelChip
+              :value="chip"
+              size="md"
+              :active="selectedChip === chip"
+              :disabled="chip > chips && !isDealing"
+            />
           </div>
         </div>
 
@@ -405,30 +401,34 @@ onUnmounted(() => {
       </v-card>
     </v-dialog>
 
-    <!-- Diálogo de Recarga Gratuita -->
-    <v-dialog v-model="showRefillDialog" max-width="400">
+    <!-- Diálogo de Saldo Insuficiente -->
+    <v-dialog v-model="showRefillDialog" max-width="440">
       <v-card class="dialog-card pa-4 text-center" rounded="xl">
         <v-card-title class="justify-center">
-          <v-icon color="amber" size="48">mdi-gift</v-icon>
+          <v-icon color="amber" size="48">mdi-cash-remove</v-icon>
         </v-card-title>
-        <h2 class="dialog-heading mb-2">¡Bono de Fichas Gratis!</h2>
+        <h2 class="dialog-heading mb-2">¡Fichas Insuficientes!</h2>
         <v-card-text>
-          Te has quedado sin fichas. En Royal Casino recibe <strong>1,000 fichas gratis</strong> para seguir jugando.
+          Te has quedado sin fichas en tu cuenta. Para continuar jugando en el Baccarat Royale, canjea un código de recarga en el cajero.
         </v-card-text>
-        <v-card-actions class="justify-center mt-2">
+        <v-card-actions class="justify-center mt-2 ga-2">
+          <v-btn variant="text" @click="showRefillDialog = false">Cerrar</v-btn>
           <v-btn
             size="large"
             color="amber-darken-2"
             variant="elevated"
             rounded="pill"
-            prepend-icon="mdi-poker-chip"
+            prepend-icon="mdi-cash-plus"
             @click="handleRefill"
           >
-            Reclamar 1,000 Fichas
+            Abrir Cajero
           </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- Diálogo de Recarga por Códigos -->
+    <RechargeDialog v-model="showRechargeModal" />
   </div>
 </template>
 
@@ -480,152 +480,145 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(14, 20, 32, 0.75);
-  border: 1px solid rgba(255, 213, 79, 0.2);
-  border-radius: 30px;
-  backdrop-filter: blur(10px);
+  background: #0d121c;
+  border: 2px solid #ffd54f;
+  border-radius: 0;
+  box-shadow: 3px 3px 0 #000;
 }
 
 .back-btn {
-  font-family: 'Cinzel', serif;
-  font-weight: 700;
-  letter-spacing: 0.5px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0;
 }
 
 .header-center {
-  background: rgba(0, 0, 0, 0.35);
-  border: 1px solid rgba(255, 213, 79, 0.15);
-  border-radius: 20px;
-  padding: 3px 14px;
+  background: #06090f;
+  border: 1px solid rgba(255, 213, 79, 0.4);
+  border-radius: 0;
+  padding: 4px 12px;
 }
 
 .compact-title {
-  font-family: 'Cinzel', serif;
-  font-weight: 900;
-  letter-spacing: 1.5px;
+  font-family: 'Press Start 2P', monospace;
+  font-weight: 700;
+  letter-spacing: 0;
   color: #ffd54f;
-  font-size: 0.85rem;
+  font-size: 0.68rem;
 }
 
 .divider-v {
-  width: 1px;
+  width: 2px;
   height: 18px;
-  background: rgba(255, 213, 79, 0.25);
+  background: rgba(255, 213, 79, 0.4);
 }
 
 .rules-btn {
-  letter-spacing: 0.5px;
-  font-size: 0.72rem;
+  font-family: 'Press Start 2P', monospace;
+  letter-spacing: 0;
+  font-size: 0.52rem;
 }
 
 .balance-pill {
   display: flex;
   align-items: center;
-  background: rgba(0, 0, 0, 0.55);
-  border: 1.5px solid rgba(255, 213, 79, 0.4);
-  border-radius: 20px;
-  padding: 4px 14px;
+  background: #000;
+  border: 2px solid #ffd54f;
+  border-radius: 0;
+  padding: 4px 10px;
+  box-shadow: 2px 2px 0 #000;
 }
 
 .balance-value {
-  font-family: 'Cinzel', serif;
-  font-size: 1.15rem;
-  font-weight: 900;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.78rem;
+  font-weight: 700;
   color: #ffd54f;
-  text-shadow: 0 0 8px rgba(255, 213, 79, 0.5);
+  text-shadow: 1px 1px 0 #000;
 }
 
 .balance-label {
-  font-size: 0.7rem;
-  color: rgba(255, 255, 255, 0.5);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.48rem;
+  color: rgba(255, 255, 255, 0.6);
 }
 
 /* ═══ Banner de Resultado ═══ */
 .result-banner {
-  border-radius: 14px;
-  backdrop-filter: blur(10px);
+  border-radius: 0;
+  border: 3px solid #ffe600;
+  box-shadow: 4px 4px 0 #000;
 }
 
 .result-banner--win {
-  background: linear-gradient(135deg, rgba(27, 94, 32, 0.9) 0%, rgba(13, 50, 20, 0.95) 100%);
-  border: 2px solid #69f0ae;
-  box-shadow: 0 0 25px rgba(105, 240, 174, 0.35);
+  background: #05260f;
+  border-color: #22c55e;
+  box-shadow: 0 0 16px rgba(34, 197, 94, 0.4), 4px 4px 0 #000;
 }
 
 .result-banner--lose {
-  background: linear-gradient(135deg, rgba(38, 50, 56, 0.9) 0%, rgba(20, 28, 32, 0.95) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: #1e1115;
+  border-color: #ef4444;
+  box-shadow: 4px 4px 0 #000;
 }
 
 .result-headline {
-  font-family: 'Cinzel', serif;
-  font-size: 1.2rem;
-  font-weight: 900;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
   color: #ffd54f;
-  letter-spacing: 2px;
+  letter-spacing: 0;
 }
 
 .result-score-tag {
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 213, 79, 0.4);
-  border-radius: 12px;
-  padding: 2px 10px;
-  font-size: 0.8rem;
-  font-weight: 800;
+  background: #000;
+  border: 2px solid #ffd54f;
+  border-radius: 0;
+  padding: 3px 8px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.62rem;
+  font-weight: 700;
   color: #fff;
 }
 
 .win-chips {
-  font-family: 'Cinzel', serif;
-  font-size: 1.4rem;
-  font-weight: 900;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.95rem;
+  font-weight: 700;
   color: #69f0ae;
-  text-shadow: 0 0 10px rgba(105, 240, 174, 0.5);
+  text-shadow: 2px 2px 0 #000;
 }
 
 .lose-sub {
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.6);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.58rem;
+  color: rgba(255, 255, 255, 0.7);
 }
 
 /* ═══ Panel de Control ═══ */
 .controls-panel {
-  background: rgba(13, 20, 32, 0.75);
-  border: 1px solid rgba(255, 213, 79, 0.2);
-  border-radius: 16px;
-  backdrop-filter: blur(10px);
+  background: #0b111c;
+  border: 2px solid #ffd54f;
+  border-radius: 0;
+  box-shadow: 4px 4px 0 #000;
 }
 
 .chip-selector-item {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, var(--c-bg), #0a0e14);
-  border: 3px dashed var(--c-border);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   user-select: none;
-}
-
-.chip-selector-item:hover:not(.chip-selector-item--disabled) {
-  transform: translateY(-3px) scale(1.08);
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.7), 0 0 12px var(--c-bg);
-}
-
-.chip-selector-item--active {
-  transform: translateY(-5px) scale(1.15) !important;
-  border-color: #ffffff !important;
-  box-shadow: 0 8px 25px rgba(255, 213, 79, 0.7), 0 0 16px var(--c-bg) !important;
+  background: none;
+  border: none;
+  padding: 0;
+  transition: transform 0.15s ease;
 }
 
 .chip-selector-item--disabled {
   opacity: 0.35;
   cursor: not-allowed;
-  filter: grayscale(0.8);
+  pointer-events: none;
 }
 
 .chip-inner {
@@ -633,63 +626,73 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   color: var(--c-text);
-  font-family: 'Cinzel', serif;
-  font-size: 0.85rem;
-  font-weight: 900;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.58rem;
+  font-weight: 700;
 }
 
 .total-bet-display {
   display: flex;
   flex-direction: column;
-  background: rgba(0, 0, 0, 0.45);
-  border: 1px solid rgba(255, 213, 79, 0.3);
-  border-radius: 12px;
-  padding: 4px 16px;
+  background: #000;
+  border: 2px solid #ffd54f;
+  border-radius: 0;
+  box-shadow: 2px 2px 0 #000;
+  padding: 4px 12px;
 }
 
 .total-bet-label {
-  font-size: 0.62rem;
-  letter-spacing: 1.5px;
-  color: rgba(255, 255, 255, 0.6);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.48rem;
+  letter-spacing: 0;
+  color: rgba(255, 255, 255, 0.7);
   font-weight: 700;
 }
 
 .total-bet-val {
-  font-family: 'Cinzel', serif;
-  font-size: 1.3rem;
-  font-weight: 900;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.85rem;
+  font-weight: 700;
   color: #ffd54f;
-  text-shadow: 0 0 8px rgba(255, 213, 79, 0.4);
+  text-shadow: 1px 1px 0 #000;
 }
 
 .total-bet-sub {
-  font-size: 0.75rem;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.48rem;
   color: rgba(255, 255, 255, 0.5);
 }
 
 .deal-btn {
-  font-family: 'Cinzel', serif;
-  font-weight: 900;
-  letter-spacing: 2px;
-  background: linear-gradient(135deg, #ffb300 0%, #ff8f00 50%, #f57f17 100%) !important;
-  color: #120c02 !important;
-  min-height: 50px;
+  font-family: 'Press Start 2P', monospace !important;
+  font-size: 0.72rem !important;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  background: #ffd54f !important;
+  color: #000 !important;
+  border: 2px solid #000 !important;
+  box-shadow: 4px 4px 0 #000 !important;
+  border-radius: 0 !important;
+  min-height: 48px;
 }
 
 .deal-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 0 25px rgba(255, 179, 0, 0.7) !important;
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 #000 !important;
 }
 
 .dialog-card {
-  background: #101624 !important;
-  border: 1px solid rgba(255, 213, 79, 0.3);
+  background: #0c1017 !important;
+  border: 3px solid #ffd54f !important;
+  box-shadow: 6px 6px 0 #000 !important;
+  border-radius: 0 !important;
   color: #fff;
 }
 
 .dialog-heading {
-  font-family: 'Cinzel', serif;
-  font-weight: 800;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
   color: #ffd54f;
 }
 

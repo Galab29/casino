@@ -550,39 +550,40 @@ onUnmounted(() => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 84px;
-  height: 84px;
-  border-radius: 50%;
+  width: 90px;
+  height: 90px;
+  border-radius: 0;
   border: 3px solid #ffd54f;
-  box-shadow: 0 0 25px rgba(255, 213, 79, 0.8), 0 8px 25px rgba(0, 0, 0, 0.9);
+  box-shadow: 4px 4px 0 #000, 0 0 20px rgba(255, 213, 79, 0.8);
   color: #fff;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+  text-shadow: 2px 2px 0 #000;
 }
 
 .winner-badge--green {
-  background: radial-gradient(circle, #2e7d32 0%, #1b5e20 80%);
+  background: #15803d;
 }
 
 .winner-badge--red {
-  background: radial-gradient(circle, #e53935 0%, #b71c1c 80%);
+  background: #b91c1c;
 }
 
 .winner-badge--black {
-  background: radial-gradient(circle, #37474f 0%, #1a202c 80%);
+  background: #18181b;
 }
 
 .winner-num {
-  font-family: 'Cinzel', serif;
-  font-size: 2.2rem;
-  font-weight: 900;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 1.35rem;
+  font-weight: 700;
   line-height: 1;
 }
 
 .winner-label {
-  font-size: 0.65rem;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.48rem;
   font-weight: 700;
-  letter-spacing: 1.5px;
-  margin-top: 2px;
+  letter-spacing: 0;
+  margin-top: 4px;
 }
 
 @keyframes popIn {

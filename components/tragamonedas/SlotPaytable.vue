@@ -68,18 +68,20 @@ const rtp = computed(() => getRTP(props.machine))
 
 <style scoped>
 .paytable {
-  background: rgba(0, 0, 0, 0.45) !important;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #09090e !important;
+  border: 2px solid var(--m-primary) !important;
+  border-radius: 0 !important;
+  box-shadow: 3px 3px 0 #000 !important;
   color: #fff;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Press Start 2P', monospace;
 }
 
 .paytable-title {
-  font-family: 'Cinzel', serif;
+  font-family: 'Press Start 2P', monospace;
   font-weight: 700;
-  font-size: 0.85rem;
-  letter-spacing: 3px;
-  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.62rem;
+  letter-spacing: 0;
+  color: var(--m-primary);
   display: flex;
   align-items: center;
 }
@@ -88,12 +90,12 @@ const rtp = computed(() => getRTP(props.machine))
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 7px 10px;
-  border-radius: 10px;
+  padding: 6px 8px;
+  border-radius: 0;
   margin-bottom: 4px;
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid transparent;
-  transition: background 0.3s ease, border-color 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
 
 .pay-row--hit {
@@ -114,10 +116,10 @@ const rtp = computed(() => getRTP(props.machine))
 }
 
 .pay-text {
-  font-family: 'Cinzel', serif;
-  font-weight: 900;
-  font-size: 1.1rem;
-  width: 20px;
+  font-family: 'Press Start 2P', monospace;
+  font-weight: 700;
+  font-size: 0.65rem;
+  width: 18px;
   text-align: center;
 }
 
@@ -128,22 +130,25 @@ const rtp = computed(() => getRTP(props.machine))
 }
 
 .pay-amount {
+  font-family: 'Press Start 2P', monospace;
   font-weight: 700;
   color: var(--m-primary);
-  font-size: 0.95rem;
+  font-size: 0.65rem;
 }
 
 .pay-mult {
-  font-size: 0.68rem;
-  color: rgba(255, 255, 255, 0.45);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.42rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 2px;
 }
 
 .paytable-footer {
   display: flex;
   justify-content: space-between;
   padding-top: 10px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  font-size: 0.85rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 0.65rem;
 }
 
 .paytable-footer > div {
@@ -152,14 +157,23 @@ const rtp = computed(() => getRTP(props.machine))
 }
 
 .footer-label {
-  font-size: 0.65rem;
-  letter-spacing: 1px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.42rem;
+  letter-spacing: 0;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.paytable-footer strong {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.55rem;
+  margin-top: 3px;
 }
 
 .paytable-note {
-  font-size: 0.7rem;
-  color: rgba(255, 255, 255, 0.35);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.42rem;
+  color: rgba(255, 255, 255, 0.4);
+  line-height: 1.4;
 }
 </style>

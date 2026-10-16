@@ -59,27 +59,24 @@ function handleRebet() {
 
 <template>
   <div class="dados-controls-panel">
-    <!-- Selector de Fichas -->
+    <!-- Selector de Fichas 8-Bit -->
     <div class="d-flex align-center justify-center flex-wrap ga-3 mb-4">
       <div
         v-for="chip in CHIP_OPTIONS"
         :key="chip"
         class="chip-selector-item"
         :class="{
-          'chip-selector-item--active': selectedChip === chip,
           'chip-selector-item--disabled': chip > chips && !isRolling,
         }"
-        :style="{
-          '--c-bg': CHIP_CONFIG[chip].color,
-          '--c-border': CHIP_CONFIG[chip].border,
-          '--c-text': CHIP_CONFIG[chip].textColor,
-        }"
+        :title="`Ficha de ${chip}`"
         @click="handleSelect(chip)"
       >
-        <div class="chip-inner">
-          <v-icon size="16" class="mr-1">mdi-poker-chip</v-icon>
-          <span class="chip-val">{{ CHIP_CONFIG[chip].label }}</span>
-        </div>
+        <PixelChip
+          :value="chip"
+          size="md"
+          :active="selectedChip === chip"
+          :disabled="chip > chips && !isRolling"
+        />
       </div>
     </div>
 
@@ -180,42 +177,21 @@ function handleRebet() {
 
 /* Fichas */
 .chip-selector-item {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  background: var(--c-bg);
-  border: 3px dashed var(--c-border);
-  box-shadow:
-    0 4px 10px rgba(0, 0, 0, 0.6),
-    inset 0 2px 4px rgba(255, 255, 255, 0.35);
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
   user-select: none;
-}
-
-.chip-selector-item:hover:not(.chip-selector-item--disabled) {
-  transform: translateY(-4px) scale(1.08);
-  box-shadow:
-    0 8px 16px rgba(0, 0, 0, 0.8),
-    0 0 16px var(--c-border);
-}
-
-.chip-selector-item--active {
-  transform: translateY(-6px) scale(1.14);
-  border-style: solid;
-  border-width: 3.5px;
-  box-shadow:
-    0 10px 20px rgba(0, 0, 0, 0.8),
-    0 0 22px rgba(255, 213, 79, 0.85);
+  background: none;
+  border: none;
+  padding: 0;
+  transition: transform 0.15s ease;
 }
 
 .chip-selector-item--disabled {
   opacity: 0.35;
   cursor: not-allowed;
-  filter: grayscale(0.8);
+  pointer-events: none;
 }
 
 .chip-inner {
@@ -223,45 +199,49 @@ function handleRebet() {
   align-items: center;
   justify-content: center;
   color: var(--c-text);
-  font-family: 'Cinzel', serif;
-  font-weight: 900;
-  font-size: 0.82rem;
+  font-family: 'Press Start 2P', monospace !important;
+  font-weight: 700;
+  font-size: 0.52rem;
+  letter-spacing: -0.5px;
 }
 
 /* Display Apuesta Total */
 .total-bet-display {
-  background: rgba(0, 0, 0, 0.45);
-  border: 1px solid rgba(255, 213, 79, 0.35);
-  border-radius: 12px;
+  background: #14141d;
+  border: 2px solid #000;
+  box-shadow: 0 3px 0 #000;
+  border-radius: 4px;
   padding: 6px 14px;
 }
 
 .total-bet-label {
-  font-size: 0.65rem;
-  font-weight: 800;
-  letter-spacing: 1.5px;
+  font-family: 'Press Start 2P', monospace !important;
+  font-size: 0.5rem;
+  font-weight: 700;
+  letter-spacing: 0px;
   color: rgba(255, 255, 255, 0.6);
   display: block;
 }
 
 .total-bet-value {
-  font-family: 'Cinzel', serif;
-  font-size: 1.25rem;
-  font-weight: 900;
+  font-family: 'Press Start 2P', monospace !important;
+  font-size: 0.85rem;
+  font-weight: 700;
   color: #ffd54f;
+  text-shadow: 1px 1px 0 #000;
 }
 
 .total-bet-sub {
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   color: rgba(255, 255, 255, 0.6);
 }
 
 /* Botones Auxiliares */
 .action-sub-btn {
-  text-transform: none;
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  font-family: 'Press Start 2P', monospace !important;
+  font-size: 0.58rem;
+  letter-spacing: -0.5px;
   background: rgba(255, 255, 255, 0.03);
 }
 
@@ -269,20 +249,21 @@ function handleRebet() {
 .roll-main-btn {
   min-width: 190px;
   height: 48px;
-  font-family: 'Cinzel', serif;
-  font-weight: 900;
-  letter-spacing: 1px;
-  box-shadow: 0 4px 18px rgba(255, 143, 0, 0.45);
-  transition: all 0.3s ease;
+  font-family: 'Press Start 2P', monospace !important;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  box-shadow: 0 4px 0 #000 !important;
+  border: 2px solid #000 !important;
+  transition: all 0.1s ease;
 }
 
 .roll-main-btn:not(:disabled):hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 24px rgba(255, 143, 0, 0.7);
+  box-shadow: 0 6px 0 #000 !important;
 }
 
 .roll-btn-text {
-  font-size: 0.95rem;
-  letter-spacing: 1.5px;
+  font-size: 0.72rem;
+  letter-spacing: -0.5px;
 }
 </style>

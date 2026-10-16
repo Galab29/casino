@@ -138,35 +138,38 @@ const theoreticalPct: Record<number, number> = {
 
 <style scoped>
 .dados-stats-card {
-  background: radial-gradient(circle at 50% 0%, #1a232b 0%, #0d1217 100%);
-  border: 1px solid rgba(255, 213, 79, 0.3);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8);
+  background: #0c1218 !important;
+  border: 3px solid #ffd54f !important;
+  border-radius: 0 !important;
+  box-shadow: 6px 6px 0 #000;
   color: #fff;
 }
 
 .stats-icon-wrap {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  background: rgba(255, 213, 79, 0.1);
-  border: 1px solid #ffd54f;
+  width: 40px;
+  height: 40px;
+  border-radius: 0;
+  background: #000;
+  border: 2px solid #ffd54f;
+  box-shadow: 2px 2px 0 #000;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .stats-title {
-  font-family: 'Cinzel', serif;
-  font-size: 1.15rem;
-  font-weight: 900;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
   color: #ffd54f;
-  line-height: 1.2;
+  line-height: 1.3;
 }
 
 .stats-subtitle {
-  font-size: 0.75rem;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.45rem;
   color: rgba(255, 255, 255, 0.6);
-  margin: 0;
+  margin-top: 3px;
 }
 
 .stats-grid {
@@ -176,32 +179,35 @@ const theoreticalPct: Record<number, number> = {
 }
 
 .stat-box {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  padding: 10px 14px;
+  background: #111827;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0;
+  padding: 8px 10px;
 }
 
 .stat-label {
   display: block;
-  font-size: 0.65rem;
-  font-weight: 800;
-  letter-spacing: 1px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.45rem;
+  font-weight: 700;
+  letter-spacing: 0;
   color: rgba(255, 255, 255, 0.6);
 }
 
 .stat-val {
-  font-family: 'Cinzel', serif;
-  font-size: 1.25rem;
-  font-weight: 900;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  margin-top: 4px;
 }
 
 /* Gráfico de Frecuencias */
 .frequency-section {
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 213, 79, 0.2);
-  border-radius: 12px;
-  padding: 14px;
+  background: #000;
+  border: 2px solid #ffd54f;
+  border-radius: 0;
+  box-shadow: 2px 2px 0 #000;
+  padding: 12px;
 }
 
 .frequency-title-bar {
@@ -210,16 +216,18 @@ const theoreticalPct: Record<number, number> = {
 }
 
 .freq-heading {
-  font-family: 'Cinzel', serif;
-  font-size: 0.78rem;
-  font-weight: 800;
-  letter-spacing: 1px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.52rem;
+  font-weight: 700;
+  letter-spacing: 0;
   color: #ffd54f;
 }
 
 .freq-sub {
-  font-size: 0.7rem;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.42rem;
   color: rgba(255, 255, 255, 0.6);
+  margin-top: 2px;
 }
 
 .frequency-chart {
@@ -243,7 +251,7 @@ const theoreticalPct: Record<number, number> = {
   flex: 1;
   width: 100%;
   background: rgba(255, 255, 255, 0.05);
-  border-radius: 6px;
+  border-radius: 0;
   display: flex;
   align-items: flex-end;
   overflow: hidden;
@@ -252,36 +260,40 @@ const theoreticalPct: Record<number, number> = {
 
 .bar-fill {
   width: 100%;
-  background: linear-gradient(180deg, #ffd54f 0%, #ff8f00 100%);
-  border-radius: 6px 6px 0 0;
+  background: #ffd54f;
+  border-radius: 0;
   transition: height 0.4s ease;
   min-height: 2px;
 }
 
 .bar-fill--peak {
-  background: linear-gradient(180deg, #ff5252 0%, #d32f2f 100%);
+  background: #dc2626;
 }
 
 .freq-count {
-  font-size: 0.68rem;
-  font-weight: 800;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.45rem;
+  font-weight: 700;
   color: #ffd54f;
   margin-top: 4px;
 }
 
 .freq-label {
-  font-family: 'Cinzel', serif;
-  font-size: 0.85rem;
-  font-weight: 900;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.55rem;
+  font-weight: 700;
   color: #ffffff;
+  margin-top: 2px;
 }
 
 .freq-label--seven {
-  color: #ff5252;
+  color: #ef4444;
 }
 
 .freq-theo {
-  font-size: 0.6rem;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.4rem;
   color: rgba(255, 255, 255, 0.45);
+  margin-top: 2px;
 }
 </style>

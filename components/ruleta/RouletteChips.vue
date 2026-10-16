@@ -58,27 +58,24 @@ function handleRebet() {
 
 <template>
   <div class="roulette-controls-panel">
-    <!-- Fila Superior: Selector de Fichas -->
+    <!-- Fila Superior: Selector de Fichas 8-Bit -->
     <div class="d-flex align-center justify-center flex-wrap ga-3 mb-4">
       <div
         v-for="chip in CHIP_OPTIONS"
         :key="chip"
         class="chip-selector-item"
         :class="{
-          'chip-selector-item--active': selectedChip === chip,
           'chip-selector-item--disabled': chip > chips && !isSpinning,
         }"
-        :style="{
-          '--c-bg': CHIP_CONFIG[chip].color,
-          '--c-border': CHIP_CONFIG[chip].border,
-          '--c-text': CHIP_CONFIG[chip].textColor,
-        }"
+        :title="`Ficha de ${chip}`"
         @click="handleSelect(chip)"
       >
-        <div class="chip-inner">
-          <v-icon size="16" class="mr-1">mdi-poker-chip</v-icon>
-          <span class="chip-val">{{ chip }}</span>
-        </div>
+        <PixelChip
+          :value="chip"
+          size="md"
+          :active="selectedChip === chip"
+          :disabled="chip > chips && !isSpinning"
+        />
       </div>
     </div>
 
@@ -179,47 +176,23 @@ function handleRebet() {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
-/* ═══ Fichas Selectoras ═══ */
+/* ═══ Fichas Selectoras 8-Bit ═══ */
 .chip-selector-item {
-  width: 58px;
-  height: 58px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, var(--c-bg), #0a0e14);
-  border: 3px dashed var(--c-border);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   user-select: none;
-}
-
-.chip-selector-item:hover:not(.chip-selector-item--disabled) {
-  transform: translateY(-4px) scale(1.08);
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.7), 0 0 12px var(--c-bg);
-}
-
-.chip-selector-item--active {
-  transform: translateY(-6px) scale(1.15) !important;
-  border-color: #ffffff !important;
-  box-shadow: 0 8px 25px rgba(255, 213, 79, 0.7), 0 0 16px var(--c-bg) !important;
-  animation: chipActivePulse 1.8s ease-in-out infinite alternate;
-}
-
-@keyframes chipActivePulse {
-  0% {
-    box-shadow: 0 8px 25px rgba(255, 213, 79, 0.7), 0 0 14px var(--c-bg);
-  }
-  100% {
-    box-shadow: 0 10px 30px rgba(255, 255, 255, 0.8), 0 0 22px var(--c-bg);
-  }
+  background: none;
+  border: none;
+  padding: 0;
+  transition: transform 0.15s ease;
 }
 
 .chip-selector-item--disabled {
   opacity: 0.35;
   cursor: not-allowed;
-  filter: grayscale(0.8);
+  pointer-events: none;
 }
 
 .chip-inner {
@@ -227,59 +200,65 @@ function handleRebet() {
   align-items: center;
   justify-content: center;
   color: var(--c-text);
-  font-family: 'Cinzel', serif;
-  font-size: 0.95rem;
-  font-weight: 900;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+  font-family: 'Press Start 2P', monospace !important;
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  text-shadow: 1px 1px 0 #000;
 }
 
 /* ═══ Apuesta Total ═══ */
 .total-bet-display {
   display: flex;
   flex-direction: column;
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 213, 79, 0.3);
-  border-radius: 12px;
-  padding: 6px 18px;
+  background: #14141d;
+  border: 2px solid #000;
+  box-shadow: 0 3px 0 #000;
+  border-radius: 4px;
+  padding: 6px 14px;
 }
 
 .total-bet-label {
-  font-size: 0.65rem;
-  letter-spacing: 2px;
+  font-family: 'Press Start 2P', monospace !important;
+  font-size: 0.5rem;
+  letter-spacing: 0px;
   color: rgba(255, 255, 255, 0.6);
   font-weight: 700;
 }
 
 .total-bet-value {
-  font-family: 'Cinzel', serif;
-  font-size: 1.5rem;
-  font-weight: 900;
+  font-family: 'Press Start 2P', monospace !important;
+  font-size: 0.85rem;
+  font-weight: 700;
   color: #ffd54f;
-  text-shadow: 0 0 10px rgba(255, 213, 79, 0.4);
+  text-shadow: 1px 1px 0 #000;
 }
 
 .total-bet-sub {
-  font-size: 0.8rem;
+  font-size: 0.68rem;
   color: rgba(255, 255, 255, 0.5);
 }
 
 /* ═══ Botón de Giro ═══ */
 .spin-btn {
-  font-family: 'Cinzel', serif;
-  font-weight: 900;
-  letter-spacing: 2px;
-  background: linear-gradient(135deg, #ffb300 0%, #ff8f00 50%, #f57f17 100%) !important;
-  color: #120c02 !important;
-  min-height: 56px;
-  transition: all 0.3s ease;
+  font-family: 'Press Start 2P', monospace !important;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  background: var(--pixel-gold) !important;
+  color: #000 !important;
+  min-height: 50px;
+  border: 2px solid #000 !important;
+  box-shadow: 0 4px 0 #000 !important;
+  border-radius: 4px !important;
+  transition: all 0.1s ease;
 }
 
 .spin-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 0 25px rgba(255, 179, 0, 0.7) !important;
+  box-shadow: 0 6px 0 #000 !important;
 }
 
 .spin-btn-text {
-  font-size: 1.15rem;
+  font-size: 0.75rem;
 }
 </style>

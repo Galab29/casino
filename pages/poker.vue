@@ -8,6 +8,7 @@ import { useConfetti } from '~/composables/useConfetti'
 import PokerTable from '~/components/poker/PokerTable.vue'
 import PokerControls from '~/components/poker/PokerControls.vue'
 import GameRulesDialog from '~/components/common/GameRulesDialog.vue'
+import RechargeDialog from '~/components/common/RechargeDialog.vue'
 
 useHead({
   title: 'Texas Hold\'em Poker · Royal Casino',
@@ -29,6 +30,7 @@ const confetti = useConfetti()
 const showRulesDialog = ref<boolean>(false)
 const showExitConfirmDialog = ref<boolean>(false)
 const showRefillDialog = ref<boolean>(false)
+const showRechargeModal = ref<boolean>(false)
 const showStatsDialog = ref<boolean>(false)
 
 // Chips
@@ -75,9 +77,8 @@ function confirmExit() {
 }
 
 function handleRefill() {
-  wallet.refillChips(1000)
-  sound.playCoinCascade(10)
   showRefillDialog.value = false
+  showRechargeModal.value = true
 }
 
 // Keyboard shortcuts: Space/Enter = Start hand or Next hand
@@ -182,16 +183,15 @@ onUnmounted(() => {
         <!-- Right: Refill + Centralized Balance -->
         <div class="d-flex align-center ga-2">
           <v-btn
-            v-if="chips < store.bigBlind"
             variant="elevated"
             color="amber-darken-2"
             size="small"
             rounded="pill"
-            prepend-icon="mdi-gift"
+            prepend-icon="mdi-cash-plus"
             class="elevation-4 refill-btn"
-            @click="showRefillDialog = true"
+            @click="showRechargeModal = true"
           >
-            +1,000 Fichas
+            + Recargar
           </v-btn>
 
           <div class="balance-pill">
@@ -278,23 +278,27 @@ onUnmounted(() => {
       </v-card>
     </v-dialog>
 
-    <!-- ═══ MODAL: RECARGAR FICHAS ═══ -->
+    <!-- ═══ MODAL: SALDO INSUFICIENTE ═══ -->
     <v-dialog v-model="showRefillDialog" max-width="440">
-      <v-card class="dialog-card pa-4" rounded="xl">
-        <v-card-title class="d-flex align-center ga-2 text-amber">
-          <v-icon color="amber">mdi-gift</v-icon>
-          <span>Recarga de Cortesía</span>
+      <v-card class="dialog-card pa-4 text-center" rounded="xl">
+        <v-card-title class="justify-center text-amber">
+          <v-icon color="amber" size="48">mdi-cash-remove</v-icon>
         </v-card-title>
+        <h2 class="dialog-heading mb-2">¡Fichas Insuficientes!</h2>
         <v-card-text class="dialog-text">
-          ¡El Royal Casino te otorga <strong>1,000 fichas de cortesía</strong> para continuar en la mesa de Poker!
+          No tienes suficientes fichas para pagar la ciega. Canjea un código de recarga en el cajero para continuar en la mesa.
         </v-card-text>
-        <v-card-actions class="d-flex justify-end ga-2 pt-2">
-          <v-btn color="amber-darken-2" variant="elevated" rounded="pill" @click="handleRefill">
-            Recibir 1,000 Fichas
+        <v-card-actions class="justify-center ga-2 pt-2">
+          <v-btn variant="text" color="grey-lighten-1" @click="showRefillDialog = false">Cerrar</v-btn>
+          <v-btn color="amber-darken-2" variant="elevated" rounded="pill" prepend-icon="mdi-cash-plus" @click="handleRefill">
+            Abrir Cajero
           </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- Diálogo de Recarga por Códigos -->
+    <RechargeDialog v-model="showRechargeModal" />
 
     <!-- ═══ MODAL: ESTADÍSTICAS ═══ -->
     <v-dialog v-model="showStatsDialog" max-width="460">
@@ -384,8 +388,6 @@ onUnmounted(() => {
   position: relative;
   z-index: 1;
 }
-
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Press+Start+2P&family=Outfit:wght@400;600;700;800;900&display=swap');
 
 .poker-topbar {
   background: rgba(14, 5, 8, 0.92);

@@ -11,6 +11,7 @@ import DadosControls from '~/components/dados/DadosControls.vue'
 import DadosHistory from '~/components/dados/DadosHistory.vue'
 import DadosStatsDialog from '~/components/dados/DadosStatsDialog.vue'
 import GameRulesDialog from '~/components/common/GameRulesDialog.vue'
+import RechargeDialog from '~/components/common/RechargeDialog.vue'
 
 useHead({
   title: 'Dados (Craps) · Royal Casino',
@@ -47,6 +48,7 @@ const {
 const showRulesDialog = ref(false)
 const showExitConfirmDialog = ref(false)
 const showRefillDialog = ref(false)
+const showRechargeModal = ref(false)
 const showStatsDialog = ref(false)
 
 // Dados preparados para el tiro
@@ -145,10 +147,8 @@ function confirmExit() {
 }
 
 function handleRefill() {
-  store.refillChips()
-  sound.playCoinCascade(12)
-  effects.floatingText('+1,000 🪙', '#ffd54f')
   showRefillDialog.value = false
+  showRechargeModal.value = true
 }
 </script>
 
@@ -194,17 +194,16 @@ function handleRefill() {
             <span class="balance-curr ml-1">fichas</span>
           </div>
 
-          <!-- Botón Recarga si bajo -->
+          <!-- Botón Recarga -->
           <v-btn
-            v-if="chips < 100"
             variant="elevated"
             color="amber-darken-2"
             size="small"
             rounded="pill"
-            prepend-icon="mdi-gift"
-            @click="handleRefill"
+            prepend-icon="mdi-cash-plus"
+            @click="showRechargeModal = true"
           >
-            +1,000
+            + Recargar
           </v-btn>
 
           <!-- Estadísticas -->
@@ -304,23 +303,27 @@ function handleRefill() {
       </v-card>
     </v-dialog>
 
-    <!-- Diálogo Recarga Gratuita -->
+    <!-- Diálogo Saldo Insuficiente -->
     <v-dialog v-model="showRefillDialog" max-width="440">
-      <v-card class="pa-4 modal-theme-card" rounded="xl">
-        <v-card-title class="d-flex align-center ga-2">
-          <v-icon color="amber">mdi-gift</v-icon>
-          <span class="text-h6 font-weight-bold text-amber">¡Fichas Agotadas!</span>
+      <v-card class="pa-4 modal-theme-card text-center" rounded="xl">
+        <v-card-title class="justify-center">
+          <v-icon color="amber" size="48">mdi-cash-remove</v-icon>
         </v-card-title>
+        <h2 class="text-h6 font-weight-bold text-amber mb-2">¡Fichas Insuficientes!</h2>
         <v-card-text>
-          Te has quedado sin fichas en el casino. ¡Toma 1,000 fichas gratis de cortesía y continúa la diversión en la mesa de dados!
+          Te has quedado sin fichas en el casino. Abre el cajero y canjea un código de recarga para continuar en la mesa de Dados.
         </v-card-text>
-        <v-card-actions class="d-flex justify-end">
-          <v-btn color="amber-darken-2" variant="elevated" rounded="lg" @click="handleRefill">
-            Recibir 1,000 Fichas
+        <v-card-actions class="justify-center ga-2 mt-2">
+          <v-btn variant="text" @click="showRefillDialog = false">Cerrar</v-btn>
+          <v-btn color="amber-darken-2" variant="elevated" rounded="lg" prepend-icon="mdi-cash-plus" @click="handleRefill">
+            Abrir Cajero
           </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- Diálogo de Recarga por Códigos -->
+    <RechargeDialog v-model="showRechargeModal" />
   </div>
 </template>
 
@@ -367,72 +370,80 @@ function handleRefill() {
 
 /* Barra de Navegación */
 .top-nav-bar {
-  background: rgba(10, 20, 15, 0.7);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 213, 79, 0.25);
-  border-radius: 16px;
+  background: #08170f;
+  border: 2px solid #ffd54f;
+  border-radius: 0;
+  box-shadow: 3px 3px 0 #000;
   padding: 10px 18px;
 }
 
 .nav-btn {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.52rem;
+  letter-spacing: 0;
   text-transform: none;
-  font-weight: 700;
-  letter-spacing: 0.5px;
 }
 
 .brand-icon-wrap {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  background: rgba(255, 213, 79, 0.12);
-  border: 1px solid #ffd54f;
+  width: 38px;
+  height: 38px;
+  border-radius: 0;
+  background: #000;
+  border: 2px solid #ffd54f;
+  box-shadow: 2px 2px 0 #000;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .brand-title {
-  font-family: 'Cinzel', serif;
-  font-size: 1.15rem;
-  font-weight: 900;
-  letter-spacing: 2px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0;
   color: #ffd54f;
-  line-height: 1.1;
+  line-height: 1.2;
   margin: 0;
 }
 
 .brand-sub {
-  font-size: 0.65rem;
-  font-weight: 800;
-  letter-spacing: 1.5px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.48rem;
+  font-weight: 700;
+  letter-spacing: 0;
   color: rgba(255, 255, 255, 0.6);
-  margin: 0;
+  margin-top: 3px;
 }
 
 .balance-pill-badge {
-  background: rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(255, 213, 79, 0.4);
-  border-radius: 20px;
-  padding: 6px 14px;
+  background: #000;
+  border: 2px solid #ffd54f;
+  border-radius: 0;
+  box-shadow: 2px 2px 0 #000;
+  padding: 4px 10px;
   display: flex;
   align-items: center;
 }
 
 .balance-val {
-  font-family: 'Cinzel', serif;
-  font-size: 1rem;
-  font-weight: 900;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.78rem;
+  font-weight: 700;
   color: #ffd54f;
+  text-shadow: 1px 1px 0 #000;
 }
 
 .balance-curr {
-  font-size: 0.72rem;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.48rem;
   color: rgba(255, 255, 255, 0.65);
 }
 
 .modal-theme-card {
-  background: #101915 !important;
-  border: 1.5px solid rgba(255, 213, 79, 0.4);
+  background: #0c1510 !important;
+  border: 3px solid #ffd54f !important;
+  border-radius: 0 !important;
+  box-shadow: 6px 6px 0 #000 !important;
   color: #fff;
 }
 </style>
