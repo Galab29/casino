@@ -13,23 +13,24 @@ import {
   PAYOUT_MULTIPLIERS,
   CHIP_OPTIONS,
 } from '~/constants/ruleta'
-import { useBlackjackStore } from '~/stores/blackjack'
+import { useWalletStore } from '~/stores/wallet'
+import { createStatsPersistence } from '~/services/stats.api'
 
-const STATS_STORAGE_KEY = 'ruleta_game_stats_v1'
+const LEGACY_STATS_STORAGE_KEY = 'ruleta_game_stats_v1'
 const HISTORY_LIMIT = 15
 
 export const useRuletaStore = defineStore('ruleta', () => {
-  // ─── Billetera compartida centralizada ─────────────────────
-  const wallet = useBlackjackStore()
+  // ─── Billetera compartida centralizada (Servidor) ───────────
+  const wallet = useWalletStore()
 
-  const chips = computed(() => wallet.player.chips)
+  const chips = computed(() => wallet.chips)
 
   function setChips(value: number) {
     wallet.setChips(value)
   }
 
   function refillChips() {
-    wallet.refillChips(1000)
+    wallet.openRecharge()
   }
 
   // ─── Ficha seleccionada ────────────────────────────────────
@@ -72,32 +73,27 @@ export const useRuletaStore = defineStore('ruleta', () => {
   const history = ref<SpinResult[]>([])
   let spinCounter = 0
 
-  function loadStats() {
-    if (typeof window === 'undefined') return
-    try {
-      const raw = localStorage.getItem(STATS_STORAGE_KEY)
-      if (raw) {
-        const parsed = JSON.parse(raw)
-        stats.value = {
-          spins: Number(parsed.spins) || 0,
-          wins: Number(parsed.wins) || 0,
-          totalBet: Number(parsed.totalBet) || 0,
-          totalWon: Number(parsed.totalWon) || 0,
-          biggestWin: Number(parsed.biggestWin) || 0,
-        }
+  const persistence = createStatsPersistence<RuletaStats>({
+    game: 'ruleta',
+    legacyKey: LEGACY_STATS_STORAGE_KEY,
+    getState: () => stats.value,
+    applyState: (parsed) => {
+      stats.value = {
+        spins: Number(parsed?.spins) || 0,
+        wins: Number(parsed?.wins) || 0,
+        totalBet: Number(parsed?.totalBet) || 0,
+        totalWon: Number(parsed?.totalWon) || 0,
+        biggestWin: Number(parsed?.biggestWin) || 0,
       }
-    } catch (e) {
-      console.error('Error loading ruleta stats:', e)
-    }
+    },
+  })
+
+  function loadStats() {
+    return persistence.load()
   }
 
   function saveStats() {
-    if (typeof window === 'undefined') return
-    try {
-      localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(stats.value))
-    } catch (e) {
-      console.error('Error saving ruleta stats:', e)
-    }
+    persistence.save()
   }
 
   function resetStats() {
@@ -109,7 +105,7 @@ export const useRuletaStore = defineStore('ruleta', () => {
       biggestWin: 0,
     }
     history.value = []
-    saveStats()
+    persistence.reset()
   }
 
   loadStats()

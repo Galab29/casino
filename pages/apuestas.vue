@@ -1,13 +1,27 @@
 <script setup lang="ts">
-import type { BetEntry } from '~/components/common/BetHistory.vue'
+import { ref, computed, onMounted } from 'vue'
+import { useApuestasStore } from '~/stores/apuestas'
+import { useSoundEngine } from '~/composables/useSoundEngine'
+import { useConfetti } from '~/composables/useConfetti'
 
-useHead({ title: 'Apuestas' })
+useHead({ title: 'Apuestas · Royal Casino' })
 
-const amount = ref(0)
-const allIn = ref(false)
-const history = ref<BetEntry[]>([])
+const store = useApuestasStore()
+const sound = useSoundEngine()
+const effects = useConfetti()
+
 const pot = ref<{ download: (withText?: boolean) => void } | null>(null)
-let nextId = 1
+
+const amount = computed(() => store.amount)
+const allIn = computed(() => store.allIn)
+const chipsBalance = computed(() => store.chips)
+const history = computed(() => store.historyEntries)
+const error = computed(() => store.error)
+const isSaving = computed(() => store.isSaving)
+
+onMounted(() => {
+  store.loadHistory()
+})
 
 const chips = [
   { v: 10, bg: '#008075' }, { v: 25, bg: '#388e3c' }, { v: 50, bg: '#1976d2' },
@@ -17,27 +31,51 @@ const chips = [
 ]
 
 function add(v: number) {
-  allIn.value = false
-  amount.value += v
+  sound.playChipClick()
+  store.addAmount(v)
 }
 function clear() {
-  allIn.value = false
-  amount.value = 0
+  sound.playButtonClick()
+  store.clearAmount()
 }
 function onInput(e: Event) {
-  allIn.value = false
-  amount.value = parseInt((e.target as HTMLInputElement).value.replace(/\D/g, ''), 10) || 0
+  const val = parseInt((e.target as HTMLInputElement).value.replace(/\D/g, ''), 10) || 0
+  store.setAmount(val)
 }
-function placeBet() {
-  if (amount.value <= 0) return
-  history.value.unshift({ id: nextId++, cantidad: amount.value })
-  clear()
+function handleAllIn() {
+  sound.playChipStack()
+  store.setAllIn()
+}
+async function handlePlaceBet() {
+  const betVal = allIn.value ? chipsBalance.value : amount.value
+  const ok = await store.placeBet()
+  if (ok) {
+    sound.playBetPlace()
+    effects.floatingText(`-${betVal.toLocaleString()} 🪙`, '#ef4444')
+  } else {
+    sound.playBust()
+  }
 }
 </script>
 
 <template>
   <main class="apuestas">
     <h1>MANOJO DE FICHAS</h1>
+
+    <!-- Saldo del Usuario en el Servidor -->
+    <div class="balance-card">
+      <div class="d-flex align-center ga-2">
+        <span class="coin-icon">🪙</span>
+        <span class="balance-label">SALDO:</span>
+        <span class="balance-num">{{ chipsBalance.toLocaleString() }}</span>
+        <span class="balance-unit">FICHAS</span>
+      </div>
+      <button class="recharge-link-btn" @click="store.openRecharge()">+ RECARGAR</button>
+    </div>
+
+    <div v-if="error" class="error-banner">
+      ⚠ {{ error }}
+    </div>
 
     <div class="stage">
       <BetPot ref="pot" :amount="amount" :all-in="allIn" />
@@ -50,7 +88,9 @@ function placeBet() {
                :value="allIn ? 'ALL IN' : amount" @input="onInput">
       </label>
       <button id="bet-clear" class="btn alt" @click="clear">LIMPIAR</button>
-      <button id="bet-place" class="btn" @click="placeBet">APOSTAR</button>
+      <button id="bet-place" class="btn" :disabled="isSaving || (amount <= 0 && !allIn)" @click="handlePlaceBet">
+        {{ isSaving ? 'GUARDANDO...' : 'APOSTAR' }}
+      </button>
     </div>
 
     <div class="row">
@@ -58,7 +98,7 @@ function placeBet() {
               :style="{ background: c.bg, color: c.v === 50000 ? '#000' : '#fff' }"
               @click="add(c.v)">+{{ c.v >= 1000 ? c.v / 1000 + 'K' : c.v }}</button>
       <button id="bet-allin" class="chip" style="background:#7f0000;color:#ffd54f"
-              @click="allIn = true">ALL IN</button>
+              @click="handleAllIn">ALL IN</button>
     </div>
 
     <div class="row">
@@ -84,6 +124,58 @@ h1 {
   font-size: 14px;
   color: #ffd54f;
   text-shadow: 2px 2px 0 #000;
+}
+.balance-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background: #111827;
+  border: 3px solid #ffd54f;
+  padding: 10px 16px;
+  box-shadow: 4px 4px 0 #000;
+  width: 100%;
+  max-width: 520px;
+}
+.coin-icon {
+  font-size: 16px;
+}
+.balance-label {
+  font-size: 10px;
+  color: #9ca3af;
+}
+.balance-num {
+  font-size: 12px;
+  color: #ffd54f;
+  text-shadow: 1px 1px 0 #000;
+}
+.balance-unit {
+  font-size: 9px;
+  color: #6b7280;
+}
+.recharge-link-btn {
+  background: #059669;
+  color: #fff;
+  border: 2px solid #34d399;
+  font-family: inherit;
+  font-size: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 #000;
+}
+.recharge-link-btn:active {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+.error-banner {
+  background: #7f1d1d;
+  color: #fca5a5;
+  border: 2px solid #ef4444;
+  padding: 8px 12px;
+  font-size: 9px;
+  text-align: center;
+  max-width: 520px;
+  width: 100%;
 }
 .stage {
   background: radial-gradient(circle, #1e4d26 0%, #112a15 100%);

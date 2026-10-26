@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia'
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
 import type { Card, Suit, PlayerState, DealerState, GameStatus, GameStats } from '~/types/blackjack'
+import { useWalletStore } from '~/stores/wallet'
+import { createStatsPersistence } from '~/services/stats.api'
 
 // ─── Helpers ─────────────────────────────────────────────────
 
@@ -64,8 +66,8 @@ function calculateScore(hand: Card[]): number {
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
-const STATS_STORAGE_KEY = 'blackjack_game_stats_v1'
-const CHIPS_STORAGE_KEY = 'blackjack_player_chips_v1'
+/** Clave antigua de localStorage (solo para migrar datos al servidor) */
+const LEGACY_STATS_KEY = 'blackjack_game_stats_v1'
 
 // ─── Sound event types ──────────────────────────────────────
 export type SoundEvent =
@@ -85,6 +87,10 @@ export type SoundEvent =
 // ─── Store ───────────────────────────────────────────────────
 
 export const useBlackjackStore = defineStore('blackjack', () => {
+  // ── Billetera compartida (saldo en el servidor) ──
+  const wallet = useWalletStore()
+  const chips = computed(() => wallet.chips)
+
   // ── Sound callback ────────────────────────
   const onSoundEvent = ref<((event: SoundEvent) => void) | null>(null)
 
@@ -104,40 +110,29 @@ export const useBlackjackStore = defineStore('blackjack', () => {
   const currentStreak = ref<number>(0) // positive = win streak, negative = loss streak
   const lastResult = ref<'win' | 'lose' | 'draw' | null>(null)
 
-  function loadSavedData() {
-    if (typeof window === 'undefined') return
-    try {
-      const savedStats = localStorage.getItem(STATS_STORAGE_KEY)
-      if (savedStats) {
-        const parsed = JSON.parse(savedStats)
-        stats.value = {
-          playerWins: Number(parsed.playerWins) || 0,
-          dealerWins: Number(parsed.dealerWins) || 0,
-          draws: Number(parsed.draws) || 0,
-          totalGames: Number(parsed.totalGames) || 0,
-        }
+  // ── Persistencia en el servidor ──────────
+  const persistence = createStatsPersistence<GameStats>({
+    game: 'blackjack',
+    legacyKey: LEGACY_STATS_KEY,
+    getState: () => stats.value,
+    applyState: (raw) => {
+      stats.value = {
+        playerWins: Number(raw?.playerWins) || 0,
+        dealerWins: Number(raw?.dealerWins) || 0,
+        draws: Number(raw?.draws) || 0,
+        totalGames: Number(raw?.totalGames) || 0,
       }
+    },
+  })
 
-      const savedChips = localStorage.getItem(CHIPS_STORAGE_KEY)
-      if (savedChips !== null) {
-        const parsedChips = Number(savedChips)
-        if (!isNaN(parsedChips) && parsedChips >= 0) {
-          player.value.chips = parsedChips
-        }
-      }
-    } catch (e) {
-      console.error('Error loading saved blackjack data:', e)
-    }
+  /** Pide al servidor las estadísticas guardadas */
+  function loadSavedData() {
+    return persistence.load()
   }
 
+  /** Envía las estadísticas al servidor */
   function saveStats() {
-    if (typeof window === 'undefined') return
-    try {
-      localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(stats.value))
-      localStorage.setItem(CHIPS_STORAGE_KEY, player.value.chips.toString())
-    } catch (e) {
-      console.error('Error saving blackjack data:', e)
-    }
+    persistence.save()
   }
 
   function resetStats() {
@@ -149,7 +144,7 @@ export const useBlackjackStore = defineStore('blackjack', () => {
     }
     currentStreak.value = 0
     lastResult.value = null
-    saveStats()
+    persistence.reset()
   }
 
   // ── Deck ─────────────────────────────────
@@ -159,88 +154,9 @@ export const useBlackjackStore = defineStore('blackjack', () => {
   const player = ref<PlayerState>({
     hand: [],
     score: 0,
-    chips: 1000,
     currentBet: 0,
     status: 'playing',
   })
-
-  // Diálogo de recarga global
-  const isRechargeOpen = ref(false)
-  function openRecharge() {
-    isRechargeOpen.value = true
-  }
-  function closeRecharge() {
-    isRechargeOpen.value = false
-  }
-
-  // Sincronización con el servidor
-  let syncTimeout: any = null
-  function syncChipsWithServer(chipsAmount: number) {
-    if (typeof window === 'undefined') return
-    if (syncTimeout) clearTimeout(syncTimeout)
-    syncTimeout = setTimeout(async () => {
-      try {
-        await $fetch('/api/user/sync-chips', {
-          method: 'POST',
-          body: { chips: chipsAmount },
-        })
-      } catch (e) {
-        // Ignorar errores de red temporales
-      }
-    }, 400)
-  }
-
-  async function syncWithServer() {
-    if (typeof window === 'undefined') return
-    try {
-      const data = await $fetch<{ success: boolean; user: { chips: number } }>('/api/auth/me')
-      if (data?.user?.chips !== undefined && data.user.chips !== null) {
-        player.value.chips = data.user.chips
-        localStorage.setItem(CHIPS_STORAGE_KEY, data.user.chips.toString())
-      }
-    } catch (e) {
-      console.warn('Could not sync chips with server:', e)
-    }
-  }
-
-  // Auto-sync chips with localStorage whenever they change
-  watch(
-    () => player.value.chips,
-    (val) => {
-      if (typeof window !== 'undefined') {
-        try {
-          localStorage.setItem(CHIPS_STORAGE_KEY, val.toString())
-          syncChipsWithServer(val)
-        } catch (e) {
-          console.error('Error auto-saving chips:', e)
-        }
-      }
-    },
-    { immediate: false },
-  )
-
-  function setChips(value: number) {
-    player.value.chips = Math.max(0, Math.floor(value))
-    saveStats()
-    syncChipsWithServer(player.value.chips)
-  }
-
-  function addChips(amount: number) {
-    player.value.chips = Math.max(0, player.value.chips + Math.floor(amount))
-    saveStats()
-    syncChipsWithServer(player.value.chips)
-  }
-
-  function removeChips(amount: number) {
-    player.value.chips = Math.max(0, player.value.chips - Math.floor(amount))
-    saveStats()
-    syncChipsWithServer(player.value.chips)
-  }
-
-  function refillChips() {
-    // Ya no se recargan fichas automáticamente; se abre el cajero de recarga
-    openRecharge()
-  }
 
   // ── Dealer ───────────────────────────────
   const dealer = ref<DealerState>({
@@ -277,7 +193,7 @@ export const useBlackjackStore = defineStore('blackjack', () => {
       gameStatus.value === 'player_turn' &&
       player.value.status === 'playing' &&
       player.value.hand.length === 2 &&
-      player.value.chips >= player.value.currentBet &&
+      wallet.chips >= player.value.currentBet &&
       !isDealing.value,
   )
 
@@ -319,7 +235,7 @@ export const useBlackjackStore = defineStore('blackjack', () => {
     dealer.value.score = dealerScore.value
   }
 
-  // Initialize data
+  // Pedir al servidor las estadísticas guardadas
   loadSavedData()
 
   // ── Actions ──────────────────────────────
@@ -331,8 +247,8 @@ export const useBlackjackStore = defineStore('blackjack', () => {
     player.value.score = 0
     player.value.currentBet = 0
     player.value.status = 'playing'
-    if (player.value.chips <= 0) {
-      openRecharge()
+    if (wallet.chips <= 0) {
+      wallet.openRecharge()
     }
     dealer.value = {
       hand: [],
@@ -342,16 +258,15 @@ export const useBlackjackStore = defineStore('blackjack', () => {
     gameStatus.value = 'betting'
     resultMessage.value = ''
     isDealing.value = false
-    saveStats()
   }
 
   async function placeBet(amount: number) {
     if (gameStatus.value !== 'betting') return
-    if (amount > player.value.chips || amount <= 0) return
+    if (amount > wallet.chips || amount <= 0) return
 
     emitSound('bet_place')
     player.value.currentBet = amount
-    player.value.chips -= amount
+    wallet.removeChips(amount)
     gameStatus.value = 'dealing'
     isDealing.value = true
     resultMessage.value = ''
@@ -423,7 +338,7 @@ export const useBlackjackStore = defineStore('blackjack', () => {
 
     emitSound('chip_click')
     // Double the bet
-    player.value.chips -= player.value.currentBet
+    wallet.removeChips(player.value.currentBet)
     player.value.currentBet *= 2
     player.value.status = 'doubled_down'
 
@@ -517,28 +432,28 @@ export const useBlackjackStore = defineStore('blackjack', () => {
       emitSound('bust')
     } else if (player.value.status === 'blackjack' && ds !== 21) {
       resultMessage.value = '🎰 ¡BLACKJACK! ¡Ganaste x2.5!'
-      player.value.chips += Math.floor(player.value.currentBet * 2.5)
+      wallet.addChips(Math.floor(player.value.currentBet * 2.5))
       stats.value.playerWins++
       lastResult.value = 'win'
       currentStreak.value = currentStreak.value > 0 ? currentStreak.value + 1 : 1
       emitSound('blackjack')
     } else if (player.value.status === 'blackjack' && ds === 21) {
       resultMessage.value = '🤝 ¡Empate de Blackjack! Se devuelve tu apuesta.'
-      player.value.chips += player.value.currentBet
+      wallet.addChips(player.value.currentBet)
       stats.value.draws++
       lastResult.value = 'draw'
       currentStreak.value = 0
       emitSound('draw')
     } else if (dealer.value.status === 'busted') {
       resultMessage.value = '🎉 ¡El Dealer se pasó! ¡Ganaste!'
-      player.value.chips += player.value.currentBet * 2
+      wallet.addChips(player.value.currentBet * 2)
       stats.value.playerWins++
       lastResult.value = 'win'
       currentStreak.value = currentStreak.value > 0 ? currentStreak.value + 1 : 1
       emitSound('win')
     } else if (ps > ds) {
       resultMessage.value = '🏆 ¡Ganaste la ronda!'
-      player.value.chips += player.value.currentBet * 2
+      wallet.addChips(player.value.currentBet * 2)
       stats.value.playerWins++
       lastResult.value = 'win'
       currentStreak.value = currentStreak.value > 0 ? currentStreak.value + 1 : 1
@@ -551,7 +466,7 @@ export const useBlackjackStore = defineStore('blackjack', () => {
       emitSound('bust')
     } else {
       resultMessage.value = '🤝 ¡Empate! Se devuelve tu apuesta.'
-      player.value.chips += player.value.currentBet
+      wallet.addChips(player.value.currentBet)
       stats.value.draws++
       lastResult.value = 'draw'
       currentStreak.value = 0
@@ -572,8 +487,8 @@ export const useBlackjackStore = defineStore('blackjack', () => {
     resultMessage.value = ''
     isDealing.value = false
 
-    if (player.value.chips <= 0) {
-      openRecharge()
+    if (wallet.chips <= 0) {
+      wallet.openRecharge()
     }
 
     gameStatus.value = 'betting'
@@ -590,8 +505,8 @@ export const useBlackjackStore = defineStore('blackjack', () => {
     isDealing,
     currentStreak,
     lastResult,
-    isRechargeOpen,
     // computed
+    chips,
     playerScore,
     dealerScore,
     dealerVisibleScore,
@@ -605,13 +520,6 @@ export const useBlackjackStore = defineStore('blackjack', () => {
     loadSavedData,
     saveStats,
     resetStats,
-    syncWithServer,
-    setChips,
-    addChips,
-    removeChips,
-    refillChips,
-    openRecharge,
-    closeRecharge,
     startNewGame,
     placeBet,
     hit,

@@ -11,11 +11,11 @@ import type {
   WinLevel,
 } from '~/types/slots'
 import { SLOT_MACHINES } from '~/constants/slotMachines'
-import { useBlackjackStore } from '~/stores/blackjack'
+import { useWalletStore } from '~/stores/wallet'
+import { createStatsPersistence } from '~/services/stats.api'
 
 // ─── Constantes ──────────────────────────────────────────────
-const STATS_STORAGE_KEY = 'slots_machine_stats_v1'
-const REFILL_CHIPS = 1000
+const LEGACY_STATS_STORAGE_KEY = 'slots_machine_stats_v1'
 const HISTORY_LIMIT = 12
 
 function emptyStats(): MachineStats {
@@ -69,15 +69,12 @@ function getWinLevel(machine: SlotMachineConfig, rule: PayoutRule): WinLevel {
 // ─── Store ───────────────────────────────────────────────────
 
 export const useSlotsStore = defineStore('slots', () => {
-  // ── Billetera compartida con el Blackjack ──
-  // Las fichas viven en un solo lugar para que el saldo del casino sea único.
-  const wallet = useBlackjackStore()
-
-  const chips = computed(() => wallet.player.chips)
+  // ── Billetera centralizada (Servidor) ──
+  const wallet = useWalletStore()
+  const chips = computed(() => wallet.chips)
 
   function setChips(value: number) {
-    wallet.player.chips = Math.max(0, Math.floor(value))
-    wallet.saveStats() // persiste las fichas en localStorage
+    wallet.setChips(value)
   }
 
   // ── Máquinas ──
@@ -100,6 +97,43 @@ export const useSlotsStore = defineStore('slots', () => {
   const history = ref<SpinHistoryEntry[]>([])
   let historyCounter = 0
 
+  // ── Persistencia con el Servidor ──
+  const persistence = createStatsPersistence<Record<MachineTier, MachineStats>>({
+    game: 'slots',
+    legacyKey: LEGACY_STATS_STORAGE_KEY,
+    getState: () => stats.value,
+    applyState: (raw) => {
+      const base = emptyStatsRecord()
+      for (const tier of Object.keys(base) as MachineTier[]) {
+        const s = raw?.[tier] ?? {}
+        base[tier] = {
+          spins: Number(s.spins) || 0,
+          wins: Number(s.wins) || 0,
+          totalBet: Number(s.totalBet) || 0,
+          totalWon: Number(s.totalWon) || 0,
+          biggestWin: Number(s.biggestWin) || 0,
+        }
+      }
+      stats.value = base
+    },
+  })
+
+  function loadStats() {
+    return persistence.load()
+  }
+
+  function saveStats() {
+    persistence.save()
+  }
+
+  function resetStats() {
+    stats.value = emptyStatsRecord()
+    history.value = []
+    persistence.reset()
+  }
+
+  loadStats()
+
   // ── Computed ──
   const isSpinning = computed(() => status.value === 'spinning')
   const canAfford = computed(() => chips.value >= machine.value.cost)
@@ -110,41 +144,6 @@ export const useSlotsStore = defineStore('slots', () => {
   const sessionNet = computed(() => {
     return Object.values(stats.value).reduce((acc, s) => acc + s.totalWon - s.totalBet, 0)
   })
-
-  // ── Persistencia ──
-  function loadStats() {
-    if (typeof window === 'undefined') return
-    try {
-      const raw = localStorage.getItem(STATS_STORAGE_KEY)
-      if (!raw) return
-      const parsed = JSON.parse(raw)
-      const base = emptyStatsRecord()
-      for (const tier of Object.keys(base) as MachineTier[]) {
-        const s = parsed?.[tier] ?? {}
-        base[tier] = {
-          spins: Number(s.spins) || 0,
-          wins: Number(s.wins) || 0,
-          totalBet: Number(s.totalBet) || 0,
-          totalWon: Number(s.totalWon) || 0,
-          biggestWin: Number(s.biggestWin) || 0,
-        }
-      }
-      stats.value = base
-    } catch (e) {
-      console.error('Error loading slots stats:', e)
-    }
-  }
-
-  function saveStats() {
-    if (typeof window === 'undefined') return
-    try {
-      localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(stats.value))
-    } catch (e) {
-      console.error('Error saving slots stats:', e)
-    }
-  }
-
-  loadStats()
 
   // ── Acciones ──
 
@@ -229,13 +228,7 @@ export const useSlotsStore = defineStore('slots', () => {
   }
 
   function refillChips() {
-    if (chips.value < minCost) setChips(REFILL_CHIPS)
-  }
-
-  function resetStats() {
-    stats.value = emptyStatsRecord()
-    history.value = []
-    saveStats()
+    wallet.openRecharge()
   }
 
   return {

@@ -2,13 +2,12 @@
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { usePokerStore } from '~/stores/poker'
-import { useBlackjackStore } from '~/stores/blackjack'
+import { useWalletStore } from '~/stores/wallet'
 import { useSoundEngine } from '~/composables/useSoundEngine'
 import { useConfetti } from '~/composables/useConfetti'
 import PokerTable from '~/components/poker/PokerTable.vue'
 import PokerControls from '~/components/poker/PokerControls.vue'
 import GameRulesDialog from '~/components/common/GameRulesDialog.vue'
-import RechargeDialog from '~/components/common/RechargeDialog.vue'
 
 useHead({
   title: 'Texas Hold\'em Poker · Royal Casino',
@@ -22,7 +21,7 @@ useHead({
 
 const router = useRouter()
 const store = usePokerStore()
-const wallet = useBlackjackStore()
+const wallet = useWalletStore()
 const sound = useSoundEngine()
 const confetti = useConfetti()
 
@@ -30,11 +29,10 @@ const confetti = useConfetti()
 const showRulesDialog = ref<boolean>(false)
 const showExitConfirmDialog = ref<boolean>(false)
 const showRefillDialog = ref<boolean>(false)
-const showRechargeModal = ref<boolean>(false)
 const showStatsDialog = ref<boolean>(false)
 
 // Chips
-const chips = computed(() => wallet.player.chips)
+const chips = computed(() => wallet.chips)
 
 // Sound & animations on round finish
 watch(

@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { useBlackjackStore } from './blackjack'
+import { useWalletStore } from '~/stores/wallet'
+import { createStatsPersistence } from '~/services/stats.api'
 import type { Card } from '~/types/blackjack'
 import type {
   Street,
@@ -15,8 +16,10 @@ import {
   DEALER_QUOTES,
 } from '~/constants/poker'
 
+const LEGACY_STATS_KEY = 'poker_royal_stats_v1'
+
 export const usePokerStore = defineStore('poker', () => {
-  const wallet = useBlackjackStore()
+  const wallet = useWalletStore()
 
   // ─── Stakes & Configuration ─────────────────────────────────────
   const smallBlind = ref<number>(25)
@@ -64,25 +67,43 @@ export const usePokerStore = defineStore('poker', () => {
     biggestPotWon: 0,
   })
 
-  // Load stats from localStorage
-  if (typeof window !== 'undefined') {
-    try {
-      const saved = localStorage.getItem('poker_royal_stats_v1')
-      if (saved) stats.value = { ...stats.value, ...JSON.parse(saved) }
-    } catch {
-      // ignore
-    }
+  const persistence = createStatsPersistence<typeof stats.value>({
+    game: 'poker',
+    legacyKey: LEGACY_STATS_KEY,
+    getState: () => stats.value,
+    applyState: (saved) => {
+      stats.value = {
+        handsPlayed: Number(saved?.handsPlayed) || 0,
+        handsWon: Number(saved?.handsWon) || 0,
+        handsLost: Number(saved?.handsLost) || 0,
+        handsTied: Number(saved?.handsTied) || 0,
+        totalProfit: Number(saved?.totalProfit) || 0,
+        biggestPotWon: Number(saved?.biggestPotWon) || 0,
+      }
+    },
+  })
+
+  function loadStats() {
+    return persistence.load()
   }
 
   function saveStats() {
-    if (typeof window !== 'undefined') {
-      try {
-        localStorage.setItem('poker_royal_stats_v1', JSON.stringify(stats.value))
-      } catch {
-        // ignore
-      }
-    }
+    persistence.save()
   }
+
+  function resetStats() {
+    stats.value = {
+      handsPlayed: 0,
+      handsWon: 0,
+      handsLost: 0,
+      handsTied: 0,
+      totalProfit: 0,
+      biggestPotWon: 0,
+    }
+    persistence.reset()
+  }
+
+  loadStats()
 
   // ─── Timers (invalidated when a new hand starts / hand is abandoned) ──
   let handId = 0
@@ -104,7 +125,7 @@ export const usePokerStore = defineStore('poker', () => {
   }
 
   // ─── Computed Properties ────────────────────────────────────────
-  const playerChips = computed(() => wallet.player.chips)
+  const playerChips = computed(() => wallet.chips)
 
   const isHandActive = computed(
     () => street.value !== 'idle' && street.value !== 'showdown',
@@ -858,5 +879,6 @@ export const usePokerStore = defineStore('poker', () => {
     playerBetOrRaise,
     forfeitHand,
     setStakes,
+    resetStats,
   }
 })

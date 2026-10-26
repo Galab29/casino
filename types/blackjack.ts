@@ -15,7 +15,6 @@ export type HandStatus = 'playing' | 'stand' | 'busted' | 'blackjack' | 'doubled
 export interface PlayerState {
   hand: Card[]
   score: number
-  chips: number
   currentBet: number
   status: HandStatus
 }

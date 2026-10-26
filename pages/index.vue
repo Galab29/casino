@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useBlackjackStore } from '~/stores/blackjack'
+import { useWalletStore } from '~/stores/wallet'
 import RechargeDialog from '~/components/common/RechargeDialog.vue'
 
 const nuxtApp = useNuxtApp()
-const wallet = useBlackjackStore(nuxtApp.$pinia)
-const chips = computed(() => wallet.player.chips)
+const wallet = useWalletStore(nuxtApp.$pinia)
+const chips = computed(() => wallet.chips)
 const showRechargeModal = ref(false)
 const showMenuDrawer = ref(false)
 
 onMounted(() => {
-  wallet.syncWithServer()
+  wallet.fetchWallet()
 })
 
 interface GameItem {

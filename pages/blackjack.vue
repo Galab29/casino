@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useBlackjackStore } from '~/stores/blackjack'
+import { useWalletStore } from '~/stores/wallet'
 import type { SoundEvent } from '~/stores/blackjack'
 import { useSoundEngine } from '~/composables/useSoundEngine'
 import { useConfetti } from '~/composables/useConfetti'
@@ -12,8 +13,11 @@ import { getPixelCardUrl } from '~/utils/pixelDeck'
 const router = useRouter()
 const nuxtApp = useNuxtApp()
 const store = useBlackjackStore(nuxtApp.$pinia)
+const wallet = useWalletStore(nuxtApp.$pinia)
 const sound = useSoundEngine()
 const effects = useConfetti()
+
+const chips = computed(() => wallet.chips)
 
 const {
   player,
@@ -32,7 +36,6 @@ const {
   streakText,
   lastResult,
   currentStreak,
-  isRechargeOpen,
 } = storeToRefs(store)
 
 const betAmount = ref<number>(0)
@@ -301,7 +304,7 @@ const resultIconColor = computed(() => {
             rounded="pill"
             prepend-icon="mdi-cash-plus"
             class="rules-btn font-weight-bold ml-1"
-            @click="store.openRecharge()"
+            @click="wallet.openRecharge()"
           >
             + Recargar
           </v-btn>
@@ -325,7 +328,7 @@ const resultIconColor = computed(() => {
           <GameScoreboard
             :dealer-score="dealerVisibleScore"
             :player-score="playerScore"
-            :chips="player.chips"
+            :chips="chips"
             :current-bet="player.currentBet"
             :status-message="statusText"
             :dealer-wins="stats.dealerWins"
@@ -427,7 +430,7 @@ const resultIconColor = computed(() => {
           <BetControls
             v-if="gameStatus === 'betting'"
             v-model="betAmount"
-            :max-bet="player.chips"
+            :max-bet="chips"
             :disabled="gameStatus !== 'betting'"
             @place-bet="handlePlaceBet"
             @clear-bet="handleClearBet"
@@ -478,7 +481,7 @@ const resultIconColor = computed(() => {
           <div class="result-stats-summary pa-3 mb-4 rounded-lg">
             <div class="d-flex justify-space-between mb-1">
               <span class="text-grey-lighten-2">Fichas restantes:</span>
-              <strong class="text-amber">{{ player.chips }}</strong>
+              <strong class="text-amber">{{ chips }}</strong>
             </div>
             <div class="d-flex justify-space-between">
               <span class="text-grey-lighten-2">Record Actual:</span>
@@ -496,7 +499,7 @@ const resultIconColor = computed(() => {
             class="next-round-dialog-btn"
             @click="handleNextRound"
           >
-            {{ player.chips <= 0 ? 'Recargar Fichas (Nuevo Juego)' : 'Siguiente Ronda' }}
+            {{ chips <= 0 ? 'Recargar Fichas (Nuevo Juego)' : 'Siguiente Ronda' }}
           </v-btn>
         </v-card>
       </v-dialog>
@@ -575,7 +578,7 @@ const resultIconColor = computed(() => {
       <GameRulesDialog v-model="showRulesDialog" game="blackjack" />
 
       <!-- Diálogo de Recarga por Códigos -->
-      <RechargeDialog v-model="isRechargeOpen" />
+      <RechargeDialog v-model="wallet.isRechargeOpen" />
     </v-container>
   </div>
 </template>

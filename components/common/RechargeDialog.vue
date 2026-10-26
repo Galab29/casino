@@ -121,7 +121,8 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { useBlackjackStore } from '~/stores/blackjack'
+import { useWalletStore } from '~/stores/wallet'
+import { useRechargeStore } from '~/stores/recharge'
 import { useSoundEngine } from '~/composables/useSoundEngine'
 import { useConfetti } from '~/composables/useConfetti'
 
@@ -134,7 +135,8 @@ const emit = defineEmits<{
   (e: 'recharged', amount: number): void
 }>()
 
-const wallet = useBlackjackStore()
+const wallet = useWalletStore()
+const recharge = useRechargeStore()
 const sound = useSoundEngine()
 const effects = useConfetti()
 
@@ -143,30 +145,20 @@ const isOpen = computed({
   set: (val: boolean) => emit('update:modelValue', val),
 })
 
-const chips = computed(() => wallet.player.chips)
+const chips = computed(() => wallet.chips)
 
 const activeTab = ref<'redeem' | 'history'>('redeem')
 const inputCode = ref('')
-const loading = ref(false)
-const feedbackMessage = ref('')
-const feedbackType = ref<'success' | 'error'>('success')
 
-interface Transaction {
-  id: number
-  amount: number
-  type: string
-  description: string
-  balanceAfter: number
-  createdAt: number
-  code?: string
-}
-
-const transactions = ref<Transaction[]>([])
-const loadingHistory = ref(false)
+const loading = computed(() => recharge.isRedeeming)
+const feedbackMessage = computed(() => recharge.feedbackMessage)
+const feedbackType = computed(() => recharge.feedbackType)
+const transactions = computed(() => recharge.transactions)
+const loadingHistory = computed(() => recharge.isLoadingHistory)
 
 function close() {
   isOpen.value = false
-  feedbackMessage.value = ''
+  recharge.clearFeedback()
 }
 
 function formatCodeInput() {
@@ -178,56 +170,23 @@ async function handleRedeem() {
   const code = inputCode.value.trim()
   if (!code || loading.value) return
 
-  loading.value = true
-  feedbackMessage.value = ''
+  const amount = await recharge.redeem(code)
 
-  try {
-    const res = await $fetch<{
-      success: boolean
-      message: string
-      amount: number
-      newBalance: number
-    }>('/api/codes/redeem', {
-      method: 'POST',
-      body: { code },
-    })
-
-    if (res && res.success) {
-      feedbackType.value = 'success'
-      feedbackMessage.value = res.message
-      wallet.setChips(res.newBalance)
-      inputCode.value = ''
-
-      sound.playWin()
-      sound.playCoinCascade(12)
-      effects.launchConfetti(2500)
-      effects.floatingText(`+${res.amount.toLocaleString()} 🪙`, '#69f0ae')
-
-      emit('recharged', res.amount)
-    }
-  } catch (err: any) {
-    feedbackType.value = 'error'
-    const statusMsg = err?.data?.statusMessage || err?.statusMessage || 'Error al canjear el código.'
-    feedbackMessage.value = statusMsg
+  if (amount !== null) {
+    inputCode.value = ''
+    sound.playWin()
+    sound.playCoinCascade(12)
+    effects.launchConfetti(2500)
+    effects.floatingText(`+${amount.toLocaleString()} 🪙`, '#69f0ae')
+    emit('recharged', amount)
+  } else {
     sound.playBust()
-  } finally {
-    loading.value = false
   }
 }
 
 async function loadHistoryTab() {
   activeTab.value = 'history'
-  loadingHistory.value = true
-  try {
-    const res = await $fetch<{ success: boolean; transactions: Transaction[] }>('/api/user/transactions')
-    if (res && res.transactions) {
-      transactions.value = res.transactions
-    }
-  } catch (err) {
-    console.error('Error cargando historial de recargas:', err)
-  } finally {
-    loadingHistory.value = false
-  }
+  await recharge.loadTransactions()
 }
 
 function formatDate(epochSec: number) {

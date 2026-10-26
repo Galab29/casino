@@ -1,31 +1,23 @@
 import { computed } from 'vue'
+import { usePreferencesStore } from '~/stores/preferences'
+import type { DeckStyle } from '~/services/preferences.api'
 
-export type DeckStyle = 'pixel' | 'classic'
-
-const STORAGE_KEY = 'royal-casino:deck-style'
-
-function readStoredStyle(): DeckStyle {
-  if (import.meta.client) {
-    const stored = localStorage.getItem(STORAGE_KEY)
-    if (stored === 'pixel' || stored === 'classic') return stored
-  }
-  return 'pixel'
-}
+export type { DeckStyle }
 
 /**
  * Estilo global de baraja compartido por Blackjack, Baccarat y Poker.
  * - 'pixel'   → baraja 8-Bit Traditional generada en canvas (utils/pixelDeck.ts)
  * - 'classic' → imágenes PNG realistas de /public/cards
- * La preferencia se guarda en localStorage.
+ * La preferencia se guarda en el servidor a través de `usePreferencesStore`.
  */
 export function useDeckStyle() {
-  const style = useState<DeckStyle>('deck-style', readStoredStyle)
+  const store = usePreferencesStore()
 
-  const isPixel = computed(() => style.value === 'pixel')
+  const style = computed(() => store.deckStyle)
+  const isPixel = computed(() => store.isPixel)
 
   function setStyle(next: DeckStyle) {
-    style.value = next
-    if (import.meta.client) localStorage.setItem(STORAGE_KEY, next)
+    store.setDeckStyle(next)
   }
 
   function toggle() {

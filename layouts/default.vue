@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useBlackjackStore } from '~/stores/blackjack'
+import { useWalletStore } from '~/stores/wallet'
 import { useSoundEngine } from '~/composables/useSoundEngine'
 import RechargeDialog from '~/components/common/RechargeDialog.vue'
 import GameRulesDialog from '~/components/common/GameRulesDialog.vue'
@@ -9,7 +9,7 @@ import GameRulesDialog from '~/components/common/GameRulesDialog.vue'
 const route = useRoute()
 const router = useRouter()
 const nuxtApp = useNuxtApp()
-const wallet = useBlackjackStore(nuxtApp.$pinia)
+const wallet = useWalletStore(nuxtApp.$pinia)
 const sound = useSoundEngine()
 
 // Estado local del layout
@@ -18,12 +18,12 @@ const showRulesDialog = ref(false)
 const activeRuleGame = ref<'blackjack' | 'tragamonedas' | 'ruleta' | 'baccarat' | 'poker' | 'dados'>('blackjack')
 
 // Saldo reactivo conectado con la Store central
-const chips = computed(() => wallet.player.chips)
+const chips = computed(() => wallet.chips)
 const chipsFormatted = computed(() => chips.value.toLocaleString())
 
 // Sincronizar saldo con el servidor al cargar
 onMounted(() => {
-  wallet.syncWithServer()
+  wallet.fetchWallet()
 })
 
 // Catálogo de juegos para la navegación

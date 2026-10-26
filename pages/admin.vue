@@ -377,187 +377,76 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { useAdminStore } from '~/stores/admin'
 
 useHead({
   title: 'Panel Administrativo · Códigos de Recarga · Royal Casino',
 })
 
-const isAdmin = ref(false)
+const store = useAdminStore()
+
 const loginUsername = ref('admin')
 const loginPassword = ref('')
-const loginLoading = ref(false)
-const loginError = ref('')
-
-const stats = ref({
-  totalCodes: 0,
-  activeCodes: 0,
-  activeChips: 0,
-  redeemedCodes: 0,
-  redeemedChips: 0,
-  disabledCodes: 0,
-  totalUsers: 0,
-  totalUserChips: 0,
-})
-
 const genAmount = ref<number>(1000)
 const genCount = ref<number>(1)
 const genExpiresInHours = ref<number | null>(null)
-const generating = ref(false)
-const recentlyCreated = ref<any[]>([])
 
-const codes = ref<any[]>([])
-const loadingCodes = ref(false)
-const filterStatus = ref('')
-const searchQuery = ref('')
-const toastMessage = ref('')
-let toastTimer: any = null
+// Bindings reactivos desde el Store
+const isAdmin = computed(() => store.isAdmin)
+const loginLoading = computed(() => store.loginLoading)
+const loginError = computed(() => store.loginError)
+const stats = computed(() => store.stats)
+const codes = computed(() => store.codes)
+const loadingCodes = computed(() => store.loadingCodes)
+const generating = computed(() => store.generating)
+const recentlyCreated = computed(() => store.recentlyCreated)
+const toastMessage = computed(() => store.toastMessage)
 
-function showToast(msg: string) {
-  toastMessage.value = msg
-  if (toastTimer) clearTimeout(toastTimer)
-  toastTimer = setTimeout(() => {
-    toastMessage.value = ''
-  }, 2500)
-}
+const filterStatus = computed({
+  get: () => store.filterStatus,
+  set: (val) => store.setFilter(val as any),
+})
 
-async function checkSession() {
-  try {
-    const res = await $fetch<{ success: boolean; user: { role: string } }>('/api/auth/me')
-    if (res && res.user && res.user.role === 'admin') {
-      isAdmin.value = true
-      loadDashboard()
-    } else {
-      isAdmin.value = false
-    }
-  } catch {
-    isAdmin.value = false
-  }
-}
+const searchQuery = computed({
+  get: () => store.searchQuery,
+  set: (val) => {
+    store.searchQuery = val
+  },
+})
 
-async function handleLogin() {
-  loginLoading.value = true
-  loginError.value = ''
-  try {
-    const res = await $fetch<{ success: boolean; user: { role: string } }>('/api/auth/login', {
-      method: 'POST',
-      body: {
-        username: loginUsername.value,
-        password: loginPassword.value,
-      },
-    })
-    if (res && res.user && res.user.role === 'admin') {
-      isAdmin.value = true
-      loadDashboard()
-    } else {
-      loginError.value = 'Esta cuenta no tiene permisos de administrador.'
-    }
-  } catch (err: any) {
-    loginError.value = err?.data?.statusMessage || 'Usuario o contraseña incorrectos.'
-  } finally {
-    loginLoading.value = false
-  }
-}
-
-async function handleLogout() {
-  try {
-    await $fetch('/api/auth/logout', { method: 'POST' })
-  } catch {}
-  isAdmin.value = false
-}
-
-async function loadDashboard() {
-  await Promise.all([fetchStats(), fetchCodes()])
-}
-
-async function fetchStats() {
-  try {
-    const res = await $fetch<{ success: boolean; stats: any }>('/api/admin/stats')
-    if (res && res.stats) {
-      stats.value = res.stats
-    }
-  } catch (err) {
-    console.error('Error fetching admin stats:', err)
-  }
-}
-
-async function fetchCodes() {
-  loadingCodes.value = true
-  try {
-    const res = await $fetch<{ success: boolean; codes: any[] }>('/api/admin/codes', {
-      query: {
-        status: filterStatus.value || undefined,
-        search: searchQuery.value || undefined,
-      },
-    })
-    if (res && res.codes) {
-      codes.value = res.codes
-    }
-  } catch (err) {
-    console.error('Error fetching admin codes:', err)
-  } finally {
-    loadingCodes.value = false
-  }
-}
-
-let debounceTimer: any = null
 function debouncedFetch() {
-  if (debounceTimer) clearTimeout(debounceTimer)
-  debounceTimer = setTimeout(() => {
-    fetchCodes()
-  }, 350)
+  store.debouncedFetchCodes()
 }
 
 function setFilter(st: string) {
-  filterStatus.value = st
-  fetchCodes()
+  store.setFilter(st as any)
+}
+
+async function handleLogin() {
+  await store.login(loginUsername.value, loginPassword.value)
+}
+
+async function handleLogout() {
+  await store.logout()
 }
 
 async function handleGenerateCodes() {
-  if (generating.value) return
-  generating.value = true
-  try {
-    const res = await $fetch<{ success: boolean; message: string; codes: any[] }>('/api/admin/codes', {
-      method: 'POST',
-      body: {
-        amount: genAmount.value,
-        count: genCount.value,
-        expiresInHours: genExpiresInHours.value,
-      },
-    })
-    if (res && res.success) {
-      recentlyCreated.value = res.codes
-      showToast(res.message)
-      await fetchStats()
-      await fetchCodes()
-    }
-  } catch (err: any) {
-    alert(err?.data?.statusMessage || 'Error al generar códigos')
-  } finally {
-    generating.value = false
-  }
+  await store.generateCodes({
+    amount: genAmount.value,
+    count: genCount.value,
+    expiresInHours: genExpiresInHours.value,
+  })
 }
 
 async function toggleStatus(item: any, newStatus: 'active' | 'disabled') {
-  try {
-    const res = await $fetch<{ success: boolean; message: string }>(`/api/admin/codes/${item.id}/status`, {
-      method: 'PATCH',
-      body: { status: newStatus },
-    })
-    if (res && res.success) {
-      item.status = newStatus
-      showToast(res.message)
-      fetchStats()
-    }
-  } catch (err: any) {
-    alert(err?.data?.statusMessage || 'Error al modificar estado')
-  }
+  await store.setCodeStatus(item, newStatus)
 }
 
 function copyToClipboard(text: string) {
   if (navigator.clipboard) {
     navigator.clipboard.writeText(text)
-    showToast(`Copiado: ${text}`)
+    store.showToast(`Copiado: ${text}`)
   }
 }
 
@@ -565,7 +454,7 @@ function copyAllNewCodes() {
   const all = recentlyCreated.value.map((c) => `${c.code} (${c.amount} fichas)`).join('\n')
   if (navigator.clipboard) {
     navigator.clipboard.writeText(all)
-    showToast('¡Todos los códigos copiados!')
+    store.showToast('¡Todos los códigos copiados!')
   }
 }
 
@@ -597,7 +486,7 @@ function formatDate(epochSec: number) {
 }
 
 onMounted(() => {
-  checkSession()
+  store.checkSession()
 })
 </script>
 

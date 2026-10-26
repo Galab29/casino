@@ -13,22 +13,23 @@ import {
   getRollNickname,
   type ValidPoint,
 } from '~/constants/dados'
-import { useBlackjackStore } from '~/stores/blackjack'
+import { useWalletStore } from '~/stores/wallet'
+import { createStatsPersistence } from '~/services/stats.api'
 
-const STATS_STORAGE_KEY = 'craps_dados_stats_v1'
+const LEGACY_STATS_STORAGE_KEY = 'craps_dados_stats_v1'
 const HISTORY_LIMIT = 40
 
 export const useDadosStore = defineStore('dados', () => {
-  // ─── Billetera Compartida del Casino ──────────────────────────
-  const wallet = useBlackjackStore()
-  const chips = computed(() => wallet.player.chips)
+  // ─── Billetera Compartida del Casino (Servidor) ───────────────
+  const wallet = useWalletStore()
+  const chips = computed(() => wallet.chips)
 
   function setChips(val: number) {
     wallet.setChips(val)
   }
 
   function refillChips() {
-    wallet.refillChips(1000)
+    wallet.openRecharge()
   }
 
   // ─── Ficha Seleccionada ──────────────────────────────────────
@@ -117,35 +118,28 @@ export const useDadosStore = defineStore('dados', () => {
   const lastRollResult = ref<RollResult | null>(null)
   let rollCounter = 0
 
-  function loadStats() {
-    if (import.meta.client) {
-      try {
-        const raw = localStorage.getItem(STATS_STORAGE_KEY)
-        if (raw) {
-          const parsed = JSON.parse(raw)
-          stats.value = {
-            ...stats.value,
-            ...parsed,
-            numberFrequency: {
-              ...stats.value.numberFrequency,
-              ...(parsed.numberFrequency || {}),
-            },
-          }
-        }
-      } catch (err) {
-        console.warn('Error loading craps stats:', err)
+  const persistence = createStatsPersistence<DadosStats>({
+    game: 'dados',
+    legacyKey: LEGACY_STATS_STORAGE_KEY,
+    getState: () => stats.value,
+    applyState: (parsed) => {
+      stats.value = {
+        ...stats.value,
+        ...parsed,
+        numberFrequency: {
+          ...stats.value.numberFrequency,
+          ...(parsed?.numberFrequency || {}),
+        },
       }
-    }
+    },
+  })
+
+  function loadStats() {
+    return persistence.load()
   }
 
   function saveStats() {
-    if (import.meta.client) {
-      try {
-        localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(stats.value))
-      } catch (err) {
-        console.warn('Error saving craps stats:', err)
-      }
-    }
+    persistence.save()
   }
 
   function resetStats() {
@@ -174,7 +168,7 @@ export const useDadosStore = defineStore('dados', () => {
     }
     history.value = []
     lastRollResult.value = null
-    saveStats()
+    persistence.reset()
   }
 
   // ─── Gestión de Apuestas ──────────────────────────────────────

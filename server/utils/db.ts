@@ -83,6 +83,33 @@ export function getDatabase(): DatabaseSync {
       created_at INTEGER NOT NULL
     );
 
+    -- Estadísticas por juego (un JSON por usuario y juego)
+    CREATE TABLE IF NOT EXISTS game_stats (
+      user_id TEXT NOT NULL,
+      game TEXT NOT NULL,
+      data TEXT NOT NULL,
+      updated_at INTEGER NOT NULL,
+      PRIMARY KEY (user_id, game)
+    );
+
+    -- Preferencias del usuario (clave/valor)
+    CREATE TABLE IF NOT EXISTS user_preferences (
+      user_id TEXT NOT NULL,
+      key TEXT NOT NULL,
+      value TEXT NOT NULL,
+      updated_at INTEGER NOT NULL,
+      PRIMARY KEY (user_id, key)
+    );
+
+    -- Historial de la Mesa de Fichas (/apuestas)
+    CREATE TABLE IF NOT EXISTS bet_slips (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id TEXT NOT NULL,
+      amount INTEGER NOT NULL,
+      created_at INTEGER NOT NULL
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_bet_slips_user ON bet_slips(user_id, created_at);
     CREATE UNIQUE INDEX IF NOT EXISTS idx_recharge_codes_code ON recharge_codes(code);
     CREATE INDEX IF NOT EXISTS idx_recharge_codes_status ON recharge_codes(status);
     CREATE INDEX IF NOT EXISTS idx_transactions_user ON transactions(user_id);
