@@ -130,9 +130,9 @@ onUnmounted(() => {
 
     <v-container fluid class="poker-container pa-2 d-flex flex-column justify-space-between">
       <!-- ═══ TOP BAR ═══ -->
-      <header class="poker-topbar d-flex align-center justify-space-between px-3 py-1">
+      <header class="poker-topbar d-flex align-center justify-space-between flex-wrap ga-2 px-3 py-1">
         <!-- Left: Back button + Title -->
-        <div class="d-flex align-center ga-2">
+        <div class="d-flex align-center flex-wrap ga-2">
           <v-btn
             id="poker-back-btn"
             icon="mdi-arrow-left"
@@ -147,7 +147,7 @@ onUnmounted(() => {
             <v-icon color="red-lighten-1" size="26">mdi-cards-playing-spade</v-icon>
             <div>
               <h1 class="poker-heading">RETRO TEXAS HOLD'EM</h1>
-              <div class="poker-subheading">★ ARCADE POKER ROOM · 16-BIT HEADS-UP ★</div>
+              <div class="poker-subheading d-none d-sm-block">★ ARCADE POKER ROOM · 16-BIT HEADS-UP ★</div>
             </div>
           </div>
 
@@ -159,7 +159,7 @@ onUnmounted(() => {
             size="x-small"
             rounded="pill"
             prepend-icon="mdi-help-circle-outline"
-            class="rules-btn font-weight-bold ml-1"
+            class="rules-btn font-weight-bold ml-1 d-none d-sm-flex"
             @click="showRulesDialog = true"
           >
             ¿Cómo Jugar?
@@ -173,10 +173,10 @@ onUnmounted(() => {
             size="x-small"
             rounded="pill"
             prepend-icon="mdi-chart-bar"
-            class="stats-btn ml-1"
+            class="stats-btn ml-1 d-none d-sm-flex"
             @click="showStatsDialog = true"
           >
-            Estadísticas
+            Stats
           </v-btn>
         </div>
 
@@ -542,5 +542,18 @@ onUnmounted(() => {
 .result-slide-leave-to {
   opacity: 0;
   transform: translateY(-10px);
+}
+
+@media (max-width: 600px) {
+  .poker-heading {
+    font-size: 0.85rem !important;
+  }
+  .poker-topbar {
+    padding: 6px 8px !important;
+  }
+  .refill-btn {
+    font-size: 0.6rem !important;
+    padding: 0 8px !important;
+  }
 }
 </style>

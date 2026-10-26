@@ -644,4 +644,70 @@ function getChipColor(amount: number): string {
     opacity: 1;
   }
 }
+
+/* ═══ Adaptabilidad Compacta para que Todo Quepa en Pantalla ═══ */
+@media (max-width: 768px) {
+  .roulette-table-felt {
+    padding: 2px;
+  }
+  .felt-border {
+    min-width: 0 !important;
+    width: 100% !important;
+    padding: 6px 4px !important;
+  }
+  .grid-table {
+    margin-bottom: 3px;
+  }
+  .spot-number {
+    height: 28px !important;
+  }
+  .number-label {
+    font-size: 0.52rem !important;
+  }
+  .spot-zero {
+    width: 32px !important;
+  }
+  .zero-text {
+    font-size: 0.75rem !important;
+  }
+  .columns-col {
+    width: 32px !important;
+  }
+  .spot-col {
+    height: 28px !important;
+  }
+  .col-label {
+    font-size: 0.36rem !important;
+  }
+  .spacer-zero {
+    width: 32px !important;
+  }
+  .spacer-col {
+    width: 32px !important;
+  }
+  .dozens-row {
+    margin-bottom: 3px;
+  }
+  .spot-dozen {
+    height: 26px !important;
+  }
+  .spot-simple {
+    height: 26px !important;
+  }
+  .outside-title {
+    font-size: 0.4rem !important;
+  }
+  .outside-sub {
+    display: none !important;
+  }
+  .color-diamond {
+    font-size: 0.4rem !important;
+    height: 80% !important;
+  }
+  .chip-token {
+    width: 18px !important;
+    height: 18px !important;
+    font-size: 0.35rem !important;
+  }
+}
 </style>

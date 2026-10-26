@@ -1,0 +1,17 @@
+[Unit]
+Description=Royal Casino Cloudflare Tunnel
+After=network.target casino.service
+Wants=casino.service
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/casino
+ExecStart=/usr/local/bin/cloudflared tunnel --url http://127.0.0.1:3000
+Restart=always
+RestartSec=5
+StandardOutput=append:/var/log/cloudflared.log
+StandardError=append:/var/log/cloudflared.log
+
+[Install]
+WantedBy=multi-user.target

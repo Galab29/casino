@@ -528,4 +528,33 @@ const nickname = computed(() => getRollNickname(props.die1, props.die2))
   color: #ffd54f;
   letter-spacing: 0px;
 }
+
+@media (max-width: 768px), (max-height: 800px) {
+  .arena-felt {
+    min-height: 120px !important;
+    padding: 8px 10px !important;
+  }
+  .dice-stage {
+    transform: scale(0.75);
+    margin: 2px 0 !important;
+  }
+  .craps-puck {
+    width: 36px;
+    height: 36px;
+  }
+  .puck-face {
+    font-size: 0.5rem;
+  }
+  .result-banner-area {
+    min-height: 34px;
+  }
+  .sum-badge {
+    width: 30px;
+    height: 30px;
+    font-size: 0.72rem;
+  }
+  .nickname-text {
+    font-size: 0.62rem;
+  }
+}
 </style>

@@ -835,4 +835,87 @@ function isWinningCard(card: Card, isPlayer: boolean): boolean {
 .player-hand-eval-wrap {
   margin-bottom: 6px;
 }
+
+/* ═══ Responsive para Móviles & Pantallas Compactas (Todo Visible) ═══ */
+@media (max-width: 768px), (max-height: 800px) {
+  .poker-table-rim {
+    border-radius: 32px;
+    padding: 6px;
+  }
+  .poker-table-felt {
+    border-radius: 26px;
+    min-height: auto;
+    padding: 10px 6px 14px 6px;
+  }
+  .community-cards-row {
+    gap: 4px;
+  }
+  .community-slot {
+    width: 56px;
+    height: 82px;
+  }
+  .community-slot :deep(.playing-card-wrapper) {
+    transform: scale(0.56);
+  }
+  .card-slot--dealer {
+    width: 56px;
+    height: 82px;
+  }
+  .card-slot--dealer :deep(.playing-card-wrapper) {
+    transform: scale(0.56);
+  }
+  .card-slot--player {
+    width: 68px;
+    height: 98px;
+  }
+  .card-slot--player :deep(.playing-card-wrapper) {
+    transform: scale(0.68);
+  }
+  .dealer-avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 8px;
+  }
+  .pot-display {
+    padding: 4px 10px;
+    gap: 6px;
+  }
+  .pot-amount {
+    font-size: 0.78rem;
+  }
+  .table-action-line {
+    margin: 8px auto 6px auto;
+  }
+  .action-line-text {
+    font-size: 0.38rem;
+    padding: 0 6px;
+  }
+}
+
+@media (max-width: 380px) {
+  .community-slot {
+    width: 48px;
+    height: 72px;
+  }
+  .community-slot :deep(.playing-card-wrapper) {
+    transform: scale(0.48);
+  }
+  .card-slot--dealer {
+    width: 48px;
+    height: 72px;
+  }
+  .card-slot--dealer :deep(.playing-card-wrapper) {
+    transform: scale(0.48);
+  }
+  .card-slot--player {
+    width: 58px;
+    height: 84px;
+  }
+  .card-slot--player :deep(.playing-card-wrapper) {
+    transform: scale(0.58);
+  }
+  .placeholder-label {
+    font-size: 0.38rem;
+  }
+}
 </style>

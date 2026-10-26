@@ -1,9 +1,9 @@
 <template>
-  <NuxtLayout>
-    <v-app class="pixel-theme">
+  <v-app class="pixel-theme">
+    <NuxtLayout>
       <NuxtPage />
-      <div class="pixel-crt-scanlines" />
-      <div class="pixel-crt-vignette" />
-    </v-app>
-  </NuxtLayout>
+    </NuxtLayout>
+    <div class="pixel-crt-scanlines" />
+    <div class="pixel-crt-vignette" />
+  </v-app>
 </template>

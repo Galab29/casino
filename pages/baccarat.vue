@@ -179,7 +179,8 @@ onUnmounted(() => {
             class="back-btn"
             @click="handleBack"
           >
-            Volver al Casino
+            <span class="d-none d-sm-inline">Volver al Casino</span>
+            <span class="d-inline d-sm-none">Lobby</span>
           </v-btn>
         </div>
 
@@ -699,4 +700,30 @@ onUnmounted(() => {
 .slide-fade-enter-active { transition: all 0.3s ease-out; }
 .slide-fade-leave-active { transition: all 0.2s cubic-bezier(1, 0.5, 0.8, 1); }
 .slide-fade-enter-from, .slide-fade-leave-to { transform: translateY(15px); opacity: 0; }
+
+@media (max-width: 768px), (max-height: 800px) {
+  .baccarat-room {
+    padding: 4px 6px 8px;
+    min-height: 100vh;
+  }
+  .top-compact-bar {
+    flex-wrap: wrap;
+    padding: 4px 6px !important;
+    gap: 4px;
+    margin-bottom: 4px !important;
+  }
+  .header-center {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+    margin-top: 2px;
+  }
+  .mb-3 {
+    margin-bottom: 4px !important;
+  }
+  .refill-alert-btn {
+    font-size: 0.58rem !important;
+    padding: 0 6px !important;
+  }
+}
 </style>

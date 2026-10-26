@@ -473,7 +473,7 @@ onUnmounted(() => {
 .roulette-wheel-wrapper {
   position: relative;
   width: 100%;
-  max-width: clamp(300px, 36vh, 400px);
+  max-width: clamp(140px, 26vh, 360px);
   aspect-ratio: 1;
   margin: 0 auto;
   display: flex;

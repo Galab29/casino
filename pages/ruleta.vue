@@ -209,7 +209,8 @@ onUnmounted(() => {
             class="back-btn"
             @click="handleBack"
           >
-            Volver al Casino
+            <span class="d-none d-sm-inline">Volver al Casino</span>
+            <span class="d-inline d-sm-none">Lobby</span>
           </v-btn>
         </div>
 
@@ -991,18 +992,62 @@ onUnmounted(() => {
 
 /* ═══ Responsive para Móvil / Pantallas Pequeñas ═══ */
 @media (max-width: 960px) {
+  .ruleta-room {
+    padding: 4px 6px 8px;
+    min-height: 100vh;
+  }
   .casino-stage {
     flex-direction: column;
     align-items: center;
+    gap: 4px;
   }
   .left-column {
     flex: 1 1 100%;
-    max-width: 440px;
-    margin-bottom: 12px;
+    width: 100%;
+    max-width: 720px;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+  .wheel-cabinet {
+    width: clamp(130px, 30vw, 180px);
+    flex: 0 0 clamp(130px, 30vw, 180px);
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .result-banner {
+    flex: 1;
+    margin-top: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 6px 10px;
   }
   .right-column {
     flex: 1 1 100%;
     width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .top-compact-bar {
+    flex-wrap: wrap;
+    border-radius: 8px;
+    padding: 4px 6px;
+    gap: 4px;
+    margin-bottom: 4px !important;
+  }
+  .table-container {
+    margin-bottom: 4px !important;
+  }
+  .refill-alert-btn {
+    font-size: 0.58rem !important;
+    padding: 0 6px !important;
   }
 }
 </style>

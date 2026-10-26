@@ -236,7 +236,8 @@ onUnmounted(() => {
             class="back-btn elevation-3"
             @click="handleBack"
           >
-            Volver al Casino
+            <span class="d-none d-sm-inline">Volver al Casino</span>
+            <span class="d-inline d-sm-none">Lobby</span>
           </v-btn>
         </v-col>
 
@@ -258,7 +259,8 @@ onUnmounted(() => {
             class="rules-btn font-weight-bold"
             @click="showRulesDialog = true"
           >
-            ¿Cómo Jugar?
+            <span class="d-none d-sm-inline">¿Cómo Jugar?</span>
+            <span class="d-inline d-sm-none">Reglas</span>
           </v-btn>
 
           <v-btn
@@ -1247,24 +1249,34 @@ kbd {
   letter-spacing: 0;
 }
 
-/* ─── Responsive ───────────────────────── */
-@media (max-width: 600px) {
+/* ─── Responsive & Pantallas Compactas (Todo Visible) ─── */
+@media (max-width: 768px), (max-height: 800px) {
+  .room-content {
+    padding-top: 4px !important;
+    padding-bottom: 16px !important;
+  }
   .room-title {
-    font-size: 1.5rem;
-    letter-spacing: 3px;
+    font-size: 1.1rem !important;
+    letter-spacing: 1px !important;
+    margin-bottom: 2px !important;
+  }
+  .room-subtitle {
+    display: none !important;
   }
   .cabinet {
-    padding: 14px 12px 16px;
+    padding: 10px 8px 12px !important;
   }
   .marquee-title {
-    font-size: 1.2rem;
+    font-size: 1.1rem !important;
   }
   .reels-frame {
-    gap: 6px;
-    padding: 8px;
+    gap: 4px !important;
+    padding: 6px !important;
   }
   .lcd {
     grid-template-columns: 1fr 1fr;
+    gap: 4px !important;
+    margin-bottom: 8px !important;
   }
   .lcd-message {
     grid-column: 1 / -1;
@@ -1272,11 +1284,13 @@ kbd {
   }
   .controls {
     flex-wrap: wrap;
+    gap: 6px !important;
   }
   .spin-btn {
     order: -1;
     flex-basis: 100%;
     max-width: none;
+    min-height: 42px !important;
   }
   .key-hint {
     display: none;

@@ -22,6 +22,23 @@ export function getDatabase(): DatabaseSync {
   db.exec('PRAGMA journal_mode = WAL;')
   db.exec('PRAGMA synchronous = NORMAL;')
 
+  // ── Migración: recrear tablas con esquema antiguo incompatible ──
+  const colsOf = (t: string) =>
+    (db.prepare(`PRAGMA table_info(${t})`).all() as any[]).map((c) => `${c.name}:${c.type}`)
+  const txCols = colsOf('transactions')
+  const codeCols = colsOf('recharge_codes')
+  const attCols = colsOf('redeem_attempts')
+  if (txCols.length && !txCols.some((c) => c.startsWith('code_id:'))) {
+    db.exec('DROP TABLE transactions')
+  }
+  if (codeCols.length && !codeCols.includes('id:INTEGER')) {
+    db.exec('DROP TABLE IF EXISTS transactions')
+    db.exec('DROP TABLE recharge_codes')
+  }
+  if (attCols.length && !attCols.some((c) => c.startsWith('ip_address:'))) {
+    db.exec('DROP TABLE redeem_attempts')
+  }
+
   // ── Tablas del sistema ──────────────────────────────────────────
   db.exec(`
     CREATE TABLE IF NOT EXISTS users (
@@ -35,35 +52,35 @@ export function getDatabase(): DatabaseSync {
     );
 
     CREATE TABLE IF NOT EXISTS recharge_codes (
-      id TEXT PRIMARY KEY,
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
       code TEXT UNIQUE NOT NULL,
       amount INTEGER NOT NULL,
       status TEXT NOT NULL DEFAULT 'active',
-      expires_at TEXT,
+      expires_at INTEGER,
       created_by TEXT NOT NULL,
-      created_at TEXT NOT NULL,
+      created_at INTEGER NOT NULL,
       redeemed_by TEXT,
-      redeemed_at TEXT,
-      FOREIGN KEY (redeemed_by) REFERENCES users(id)
+      redeemed_at INTEGER
     );
 
     CREATE TABLE IF NOT EXISTS transactions (
-      id TEXT PRIMARY KEY,
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id TEXT NOT NULL,
+      code_id INTEGER,
       type TEXT NOT NULL,
       amount INTEGER NOT NULL,
-      previous_balance INTEGER NOT NULL,
-      new_balance INTEGER NOT NULL,
-      reference TEXT,
-      created_at TEXT NOT NULL,
-      FOREIGN KEY (user_id) REFERENCES users(id)
+      description TEXT,
+      balance_after INTEGER NOT NULL,
+      created_at INTEGER NOT NULL
     );
 
     CREATE TABLE IF NOT EXISTS redeem_attempts (
-      ip TEXT PRIMARY KEY,
-      failed_count INTEGER NOT NULL DEFAULT 0,
-      blocked_until INTEGER NOT NULL DEFAULT 0,
-      last_attempt_at INTEGER NOT NULL
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      ip_address TEXT NOT NULL,
+      user_id TEXT,
+      code_attempted TEXT,
+      success INTEGER NOT NULL DEFAULT 0,
+      created_at INTEGER NOT NULL
     );
 
     CREATE UNIQUE INDEX IF NOT EXISTS idx_recharge_codes_code ON recharge_codes(code);

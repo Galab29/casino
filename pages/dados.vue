@@ -181,7 +181,7 @@ function handleRefill() {
           </div>
           <div>
             <h1 class="brand-title">DADOS · CRAPS</h1>
-            <p class="brand-sub">ROYAL CASINO · LAS VEGAS STYLE</p>
+            <p class="brand-sub d-none d-sm-block">ROYAL CASINO · LAS VEGAS STYLE</p>
           </div>
         </div>
 
@@ -445,5 +445,29 @@ function handleRefill() {
   border-radius: 0 !important;
   box-shadow: 6px 6px 0 #000 !important;
   color: #fff;
+}
+
+@media (max-width: 768px), (max-height: 800px) {
+  .dados-page-wrapper {
+    padding-bottom: 8px;
+  }
+  .game-container {
+    padding: 4px 6px !important;
+  }
+  .top-nav-bar {
+    padding: 4px 8px !important;
+    gap: 6px !important;
+    margin-bottom: 6px !important;
+  }
+  .game-board-layout {
+    gap: 6px !important;
+  }
+  .brand-title {
+    font-size: 0.65rem !important;
+  }
+  .brand-icon-wrap {
+    width: 28px !important;
+    height: 28px !important;
+  }
 }
 </style>

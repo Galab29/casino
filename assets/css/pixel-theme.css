@@ -38,9 +38,25 @@
   --pixel-border-color: #2e2e42;
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
+  -webkit-text-size-adjust: 100%;
+}
+
 /* ─── Global Background & CRT Dot Grid ─── */
 body,
 .v-application {
+  overflow-x: hidden !important;
+  width: 100% !important;
+  max-width: 100vw !important;
   background-color: var(--pixel-bg-dark) !important;
   background-image:
     radial-gradient(#272738 1px, transparent 1px),
@@ -317,3 +333,51 @@ h1, h2, h3,
 ::-webkit-scrollbar-thumb:hover {
   background: var(--pixel-gold-glow);
 }
+
+/* ─── Global Responsive Helpers (Móviles & Tablets) ─── */
+@media (max-width: 768px) {
+  /* Contenedores de juego fluidos sin salirse de la pantalla */
+  .v-container {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+
+  /* Diálogos que no desborden la pantalla en móvil */
+  .v-dialog .v-overlay__content {
+    max-width: 95vw !important;
+    margin: 8px !important;
+  }
+
+  /* Ajuste de botones arcade en pantallas compactas */
+  .v-btn {
+    font-size: 0.6rem !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Píldoras de balance compactas en teléfonos */
+  .balance-pill,
+  .balance-pill-badge {
+    padding: 4px 8px !important;
+  }
+
+  .balance-value,
+  .balance-amount,
+  .balance-val {
+    font-size: 0.7rem !important;
+  }
+
+  .balance-label,
+  .balance-lbl,
+  .balance-curr {
+    font-size: 0.5rem !important;
+  }
+
+  /* Reducir tamaño de títulos 8-bit para evitar saltos o recortes */
+  h1, .game-title, .poker-heading, .room-title {
+    font-size: 1rem !important;
+  }
+}
+

@@ -217,7 +217,8 @@ const resultIconColor = computed(() => {
             class="back-btn elevation-3"
             @click="handleBackClick"
           >
-            Volver al Casino
+            <span class="d-none d-sm-inline">Volver al Casino</span>
+            <span class="d-inline d-sm-none">Lobby</span>
           </v-btn>
         </v-col>
 
@@ -990,14 +991,33 @@ const resultIconColor = computed(() => {
   100% { transform: scale(1); }
 }
 
-/* ─── Responsive ─────────────────────── */
-@media (max-width: 600px) {
+/* ─── Responsive & Pantallas Compactas (Todo Visible) ─── */
+@media (max-width: 768px), (max-height: 800px) {
   .game-title {
-    font-size: 1.5rem;
-    letter-spacing: 3px;
+    font-size: 1.1rem !important;
+    letter-spacing: 1px !important;
+    margin-bottom: 2px !important;
   }
   .table-content {
-    padding-top: 8px;
+    padding-top: 2px;
+    padding-bottom: 8px;
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+  }
+  .top-bar {
+    margin-bottom: 4px !important;
+    padding-bottom: 4px !important;
+  }
+  .table-badge-text {
+    font-size: 0.52rem !important;
+  }
+  .hand-row {
+    min-height: 104px !important;
+    gap: 4px;
+  }
+  .hand-label {
+    margin-bottom: 2px !important;
+    font-size: 10px !important;
   }
 }
 </style>

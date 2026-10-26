@@ -261,4 +261,36 @@ function handleRebet() {
 .spin-btn-text {
   font-size: 0.75rem;
 }
+
+@media (max-width: 768px) {
+  .roulette-controls-panel {
+    padding: 6px 8px !important;
+    border-radius: 10px;
+  }
+  .controls-row {
+    margin-bottom: 6px !important;
+    gap: 6px !important;
+  }
+  .chip-selector-item {
+    transform: scale(0.85);
+    margin: -2px;
+  }
+  .total-bet-display {
+    padding: 2px 6px !important;
+  }
+  .total-bet-value {
+    font-size: 0.7rem !important;
+  }
+  .total-bet-label {
+    font-size: 0.42rem !important;
+  }
+  .spin-btn {
+    min-height: 38px !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+  .spin-btn-text {
+    font-size: 0.62rem !important;
+  }
+}
 </style>
