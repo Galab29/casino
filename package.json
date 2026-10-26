@@ -7,7 +7,9 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "json-server": "json-server db.json --port 4000",
+    "server:json": "json-server db.json --port 4000"
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
@@ -23,6 +25,7 @@
     "@capacitor/android": "^8.5.3",
     "@capacitor/cli": "^8.5.3",
     "@capacitor/core": "^8.5.3",
+    "json-server": "^1.0.0-beta.15",
     "vite-plugin-vuetify": "^2.0.4",
     "vuetify": "^3.7.2"
   }

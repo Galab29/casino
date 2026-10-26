@@ -1,0 +1,112 @@
+{
+  "users": [
+    {
+      "id": "usr_default_01",
+      "username": "Jugador_VIP",
+      "chips": 1000,
+      "role": "player",
+      "createdAt": "2026-10-26T10:00:00.000Z"
+    },
+    {
+      "id": "admin_root_01",
+      "username": "admin",
+      "chips": 999999,
+      "role": "admin",
+      "createdAt": "2026-10-26T10:00:00.000Z"
+    }
+  ],
+  "recharge_codes": [
+    {
+      "id": 1,
+      "code": "ROYAL-WELCOME-1000",
+      "amount": 1000,
+      "status": "active",
+      "createdAt": 1793030000,
+      "expiresAt": null,
+      "createdBy": "admin"
+    },
+    {
+      "id": 2,
+      "code": "ROYAL-JACKPOT-5000",
+      "amount": 5000,
+      "status": "active",
+      "createdAt": 1793030000,
+      "expiresAt": null,
+      "createdBy": "admin"
+    }
+  ],
+  "transactions": [
+    {
+      "id": 1,
+      "userId": "usr_default_01",
+      "code": "ROYAL-BONUS-500",
+      "amount": 500,
+      "type": "recharge",
+      "description": "Bono de Bienvenida",
+      "balanceAfter": 1000,
+      "createdAt": 1793030000
+    }
+  ],
+  "game_stats": [
+    {
+      "id": "blackjack",
+      "game": "blackjack",
+      "playerWins": 0,
+      "dealerWins": 0,
+      "draws": 0,
+      "totalGames": 0
+    },
+    {
+      "id": "slots",
+      "game": "slots",
+      "bronze": { "spins": 0, "wins": 0, "totalBet": 0, "totalWon": 0, "biggestWin": 0 },
+      "gold": { "spins": 0, "wins": 0, "totalBet": 0, "totalWon": 0, "biggestWin": 0 },
+      "royal": { "spins": 0, "wins": 0, "totalBet": 0, "totalWon": 0, "biggestWin": 0 }
+    },
+    {
+      "id": "ruleta",
+      "game": "ruleta",
+      "spins": 0,
+      "wins": 0,
+      "totalBet": 0,
+      "totalWon": 0,
+      "biggestWin": 0
+    },
+    {
+      "id": "dados",
+      "game": "dados",
+      "totalRolls": 0,
+      "comeOutRolls": 0,
+      "pointsEstablished": 0,
+      "pointsHit": 0,
+      "sevenOuts": 0,
+      "totalBet": 0,
+      "totalWon": 0,
+      "biggestWin": 0
+    },
+    {
+      "id": "poker",
+      "game": "poker",
+      "handsPlayed": 0,
+      "handsWon": 0,
+      "handsLost": 0,
+      "handsTied": 0,
+      "totalProfit": 0,
+      "biggestPotWon": 0
+    }
+  ],
+  "user_preferences": [
+    {
+      "id": "usr_default_01",
+      "deckStyle": "pixel"
+    }
+  ],
+  "bets": [
+    {
+      "id": 1,
+      "userId": "usr_default_01",
+      "amount": 250,
+      "createdAt": 1793031946
+    }
+  ]
+}
