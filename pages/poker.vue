@@ -2,7 +2,7 @@
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { usePokerStore } from '~/stores/poker'
-import { useWalletStore } from '~/stores/wallet'
+import { useDineroStore } from '~/stores/dinero'
 import { useSoundEngine } from '~/composables/useSoundEngine'
 import { useConfetti } from '~/composables/useConfetti'
 import PokerTable from '~/components/poker/PokerTable.vue'
@@ -21,7 +21,7 @@ useHead({
 
 const router = useRouter()
 const store = usePokerStore()
-const wallet = useWalletStore()
+const dinero = useDineroStore()
 const sound = useSoundEngine()
 const confetti = useConfetti()
 
@@ -32,7 +32,7 @@ const showRefillDialog = ref<boolean>(false)
 const showStatsDialog = ref<boolean>(false)
 
 // Chips
-const chips = computed(() => wallet.chips)
+const chips = computed(() => dinero.chips)
 
 // Sound & animations on round finish
 watch(

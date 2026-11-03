@@ -13,7 +13,7 @@ import {
   getRollNickname,
   type ValidPoint,
 } from '~/constants/dados'
-import { useWalletStore } from '~/stores/wallet'
+import { useDineroStore } from '~/stores/dinero'
 import { createStatsPersistence } from '~/services/stats.api'
 
 const LEGACY_STATS_STORAGE_KEY = 'craps_dados_stats_v1'
@@ -21,15 +21,15 @@ const HISTORY_LIMIT = 40
 
 export const useDadosStore = defineStore('dados', () => {
   // ─── Billetera Compartida del Casino (Servidor) ───────────────
-  const wallet = useWalletStore()
-  const chips = computed(() => wallet.chips)
+  const dinero = useDineroStore()
+  const chips = computed(() => dinero.chips)
 
   function setChips(val: number) {
-    wallet.setChips(val)
+    dinero.setChips(val)
   }
 
   function refillChips() {
-    wallet.openRecharge()
+    dinero.openRecharge()
   }
 
   // ─── Ficha Seleccionada ──────────────────────────────────────
@@ -602,7 +602,7 @@ export const useDadosStore = defineStore('dados', () => {
   loadStats()
 
   return {
-    // Wallet
+    // Dinero
     chips,
     refillChips,
     setChips,

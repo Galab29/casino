@@ -11,7 +11,7 @@ import type {
   WinLevel,
 } from '~/types/slots'
 import { SLOT_MACHINES } from '~/constants/slotMachines'
-import { useWalletStore } from '~/stores/wallet'
+import { useDineroStore } from '~/stores/dinero'
 import { createStatsPersistence } from '~/services/stats.api'
 
 // ─── Constantes ──────────────────────────────────────────────
@@ -70,11 +70,11 @@ function getWinLevel(machine: SlotMachineConfig, rule: PayoutRule): WinLevel {
 
 export const useSlotsStore = defineStore('slots', () => {
   // ── Billetera centralizada (Servidor) ──
-  const wallet = useWalletStore()
-  const chips = computed(() => wallet.chips)
+  const dinero = useDineroStore()
+  const chips = computed(() => dinero.chips)
 
   function setChips(value: number) {
-    wallet.setChips(value)
+    dinero.setChips(value)
   }
 
   // ── Máquinas ──
@@ -228,7 +228,7 @@ export const useSlotsStore = defineStore('slots', () => {
   }
 
   function refillChips() {
-    wallet.openRecharge()
+    dinero.openRecharge()
   }
 
   return {

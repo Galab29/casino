@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { fetchBets, createBet, clearBets, type BetSlip } from '~/services/bets.api'
 import { apiErrorMessage } from '~/services/http'
-import { useWalletStore } from '~/stores/wallet'
+import { useDineroStore } from '~/stores/dinero'
 
 /**
  * Store de la Mesa de Fichas (/apuestas).
@@ -10,10 +10,10 @@ import { useWalletStore } from '~/stores/wallet'
  * y cada apuesta realizada descuenta del saldo central en el servidor.
  */
 export const useApuestasStore = defineStore('apuestas', () => {
-  const wallet = useWalletStore()
+  const dinero = useDineroStore()
 
   // ── Saldo reactivo del servidor ───────────
-  const chips = computed(() => wallet.chips)
+  const chips = computed(() => dinero.chips)
 
   // ── Estado de la mesa ─────────────────────
   const amount = ref(0)
@@ -42,12 +42,12 @@ export const useApuestasStore = defineStore('apuestas', () => {
   }
 
   function setAllIn() {
-    if (wallet.chips <= 0) {
-      wallet.openRecharge()
+    if (dinero.chips <= 0) {
+      dinero.openRecharge()
       return
     }
     allIn.value = true
-    amount.value = wallet.chips
+    amount.value = dinero.chips
     error.value = null
   }
 
@@ -78,13 +78,13 @@ export const useApuestasStore = defineStore('apuestas', () => {
    * 3. Registra el ticket de apuesta en el servidor.
    */
   async function placeBet(): Promise<boolean> {
-    const betAmount = allIn.value ? wallet.chips : amount.value
+    const betAmount = allIn.value ? dinero.chips : amount.value
     if (betAmount <= 0 || isSaving.value) return false
 
     // Validar saldo suficiente
-    if (betAmount > wallet.chips) {
+    if (betAmount > dinero.chips) {
       error.value = 'Saldo insuficiente para realizar esta apuesta.'
-      wallet.openRecharge()
+      dinero.openRecharge()
       return false
     }
 
@@ -92,7 +92,7 @@ export const useApuestasStore = defineStore('apuestas', () => {
     error.value = null
 
     // Restar fichas inmediatamente de la billetera (se sincroniza con el server)
-    wallet.removeChips(betAmount)
+    dinero.removeChips(betAmount)
 
     try {
       const res = await createBet(betAmount)
@@ -101,7 +101,7 @@ export const useApuestasStore = defineStore('apuestas', () => {
       return true
     } catch (e) {
       // Revertir fichas en caso de fallo de red/servidor
-      wallet.addChips(betAmount)
+      dinero.addChips(betAmount)
       error.value = apiErrorMessage(e, 'No se pudo registrar la apuesta.')
       return false
     } finally {
@@ -134,6 +134,6 @@ export const useApuestasStore = defineStore('apuestas', () => {
     loadHistory,
     placeBet,
     clearHistory,
-    openRecharge: wallet.openRecharge,
+    openRecharge: dinero.openRecharge,
   }
 })

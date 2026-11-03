@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { redeemCode as apiRedeemCode, fetchTransactions, type RechargeTransaction } from '~/services/recharge.api'
 import { apiErrorMessage } from '~/services/http'
-import { useWalletStore } from '~/stores/wallet'
+import { useDineroStore } from '~/stores/dinero'
 
 export type FeedbackType = 'success' | 'error'
 
@@ -11,7 +11,7 @@ export type FeedbackType = 'success' | 'error'
  * El componente RechargeDialog solo muestra este estado y llama a sus acciones.
  */
 export const useRechargeStore = defineStore('recharge', () => {
-  const wallet = useWalletStore()
+  const dinero = useDineroStore()
 
   // ── Canje ─────────────────────────────────
   const isRedeeming = ref(false)
@@ -44,7 +44,7 @@ export const useRechargeStore = defineStore('recharge', () => {
       feedbackType.value = 'success'
       feedbackMessage.value = res.message
       // El servidor ya guardó el saldo: solo actualizamos la copia en memoria
-      wallet.setChips(res.newBalance, { sync: false })
+      dinero.setChips(res.newBalance, { sync: false })
       // El historial cambió: se recargará la próxima vez que se abra
       transactions.value = []
       return res.amount

@@ -13,7 +13,7 @@ import {
   PAYOUT_MULTIPLIERS,
   CHIP_OPTIONS,
 } from '~/constants/ruleta'
-import { useWalletStore } from '~/stores/wallet'
+import { useDineroStore } from '~/stores/dinero'
 import { createStatsPersistence } from '~/services/stats.api'
 
 const LEGACY_STATS_STORAGE_KEY = 'ruleta_game_stats_v1'
@@ -21,16 +21,16 @@ const HISTORY_LIMIT = 15
 
 export const useRuletaStore = defineStore('ruleta', () => {
   // ─── Billetera compartida centralizada (Servidor) ───────────
-  const wallet = useWalletStore()
+  const dinero = useDineroStore()
 
-  const chips = computed(() => wallet.chips)
+  const chips = computed(() => dinero.chips)
 
   function setChips(value: number) {
-    wallet.setChips(value)
+    dinero.setChips(value)
   }
 
   function refillChips() {
-    wallet.openRecharge()
+    dinero.openRecharge()
   }
 
   // ─── Ficha seleccionada ────────────────────────────────────

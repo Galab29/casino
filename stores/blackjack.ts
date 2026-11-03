@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { Card, Suit, PlayerState, DealerState, GameStatus, GameStats } from '~/types/blackjack'
-import { useWalletStore } from '~/stores/wallet'
+import { useDineroStore } from '~/stores/dinero'
 import { createStatsPersistence } from '~/services/stats.api'
 
 // ─── Helpers ─────────────────────────────────────────────────
@@ -88,8 +88,8 @@ export type SoundEvent =
 
 export const useBlackjackStore = defineStore('blackjack', () => {
   // ── Billetera compartida (saldo en el servidor) ──
-  const wallet = useWalletStore()
-  const chips = computed(() => wallet.chips)
+  const dinero = useDineroStore()
+  const chips = computed(() => dinero.chips)
 
   // ── Sound callback ────────────────────────
   const onSoundEvent = ref<((event: SoundEvent) => void) | null>(null)
@@ -193,7 +193,7 @@ export const useBlackjackStore = defineStore('blackjack', () => {
       gameStatus.value === 'player_turn' &&
       player.value.status === 'playing' &&
       player.value.hand.length === 2 &&
-      wallet.chips >= player.value.currentBet &&
+      dinero.chips >= player.value.currentBet &&
       !isDealing.value,
   )
 
@@ -247,8 +247,8 @@ export const useBlackjackStore = defineStore('blackjack', () => {
     player.value.score = 0
     player.value.currentBet = 0
     player.value.status = 'playing'
-    if (wallet.chips <= 0) {
-      wallet.openRecharge()
+    if (dinero.chips <= 0) {
+      dinero.openRecharge()
     }
     dealer.value = {
       hand: [],
@@ -262,11 +262,11 @@ export const useBlackjackStore = defineStore('blackjack', () => {
 
   async function placeBet(amount: number) {
     if (gameStatus.value !== 'betting') return
-    if (amount > wallet.chips || amount <= 0) return
+    if (amount > dinero.chips || amount <= 0) return
 
     emitSound('bet_place')
     player.value.currentBet = amount
-    wallet.removeChips(amount)
+    dinero.removeChips(amount)
     gameStatus.value = 'dealing'
     isDealing.value = true
     resultMessage.value = ''
@@ -338,7 +338,7 @@ export const useBlackjackStore = defineStore('blackjack', () => {
 
     emitSound('chip_click')
     // Double the bet
-    wallet.removeChips(player.value.currentBet)
+    dinero.removeChips(player.value.currentBet)
     player.value.currentBet *= 2
     player.value.status = 'doubled_down'
 
@@ -432,28 +432,28 @@ export const useBlackjackStore = defineStore('blackjack', () => {
       emitSound('bust')
     } else if (player.value.status === 'blackjack' && ds !== 21) {
       resultMessage.value = '🎰 ¡BLACKJACK! ¡Ganaste x2.5!'
-      wallet.addChips(Math.floor(player.value.currentBet * 2.5))
+      dinero.addChips(Math.floor(player.value.currentBet * 2.5))
       stats.value.playerWins++
       lastResult.value = 'win'
       currentStreak.value = currentStreak.value > 0 ? currentStreak.value + 1 : 1
       emitSound('blackjack')
     } else if (player.value.status === 'blackjack' && ds === 21) {
       resultMessage.value = '🤝 ¡Empate de Blackjack! Se devuelve tu apuesta.'
-      wallet.addChips(player.value.currentBet)
+      dinero.addChips(player.value.currentBet)
       stats.value.draws++
       lastResult.value = 'draw'
       currentStreak.value = 0
       emitSound('draw')
     } else if (dealer.value.status === 'busted') {
       resultMessage.value = '🎉 ¡El Dealer se pasó! ¡Ganaste!'
-      wallet.addChips(player.value.currentBet * 2)
+      dinero.addChips(player.value.currentBet * 2)
       stats.value.playerWins++
       lastResult.value = 'win'
       currentStreak.value = currentStreak.value > 0 ? currentStreak.value + 1 : 1
       emitSound('win')
     } else if (ps > ds) {
       resultMessage.value = '🏆 ¡Ganaste la ronda!'
-      wallet.addChips(player.value.currentBet * 2)
+      dinero.addChips(player.value.currentBet * 2)
       stats.value.playerWins++
       lastResult.value = 'win'
       currentStreak.value = currentStreak.value > 0 ? currentStreak.value + 1 : 1
@@ -466,7 +466,7 @@ export const useBlackjackStore = defineStore('blackjack', () => {
       emitSound('bust')
     } else {
       resultMessage.value = '🤝 ¡Empate! Se devuelve tu apuesta.'
-      wallet.addChips(player.value.currentBet)
+      dinero.addChips(player.value.currentBet)
       stats.value.draws++
       lastResult.value = 'draw'
       currentStreak.value = 0
@@ -487,8 +487,8 @@ export const useBlackjackStore = defineStore('blackjack', () => {
     resultMessage.value = ''
     isDealing.value = false
 
-    if (wallet.chips <= 0) {
-      wallet.openRecharge()
+    if (dinero.chips <= 0) {
+      dinero.openRecharge()
     }
 
     gameStatus.value = 'betting'

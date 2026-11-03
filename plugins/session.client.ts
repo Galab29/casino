@@ -1,4 +1,4 @@
-import { useWalletStore } from '~/stores/wallet'
+import { useDineroStore } from '~/stores/dinero'
 import { usePreferencesStore } from '~/stores/preferences'
 
 /**
@@ -11,8 +11,8 @@ import { usePreferencesStore } from '~/stores/preferences'
  */
 export default defineNuxtPlugin(async (nuxtApp) => {
   const pinia = nuxtApp.$pinia as any
-  const wallet = useWalletStore(pinia)
+  const dinero = useDineroStore(pinia)
   const preferences = usePreferencesStore(pinia)
 
-  await Promise.all([wallet.fetchWallet(), preferences.fetchAll()])
+  await Promise.all([dinero.fetchDinero(), preferences.fetchAll()])
 })

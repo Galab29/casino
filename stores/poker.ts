@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { useWalletStore } from '~/stores/wallet'
+import { useDineroStore } from '~/stores/dinero'
 import { createStatsPersistence } from '~/services/stats.api'
 import type { Card } from '~/types/blackjack'
 import type {
@@ -19,7 +19,7 @@ import {
 const LEGACY_STATS_KEY = 'poker_royal_stats_v1'
 
 export const usePokerStore = defineStore('poker', () => {
-  const wallet = useWalletStore()
+  const dinero = useDineroStore()
 
   // ─── Stakes & Configuration ─────────────────────────────────────
   const smallBlind = ref<number>(25)
@@ -125,7 +125,7 @@ export const usePokerStore = defineStore('poker', () => {
   }
 
   // ─── Computed Properties ────────────────────────────────────────
-  const playerChips = computed(() => wallet.chips)
+  const playerChips = computed(() => dinero.chips)
 
   const isHandActive = computed(
     () => street.value !== 'idle' && street.value !== 'showdown',
@@ -273,7 +273,7 @@ export const usePokerStore = defineStore('poker', () => {
 
   function postPlayerChips(amount: number) {
     const actual = Math.max(0, Math.min(Math.floor(amount), playerChips.value))
-    wallet.removeChips(actual)
+    dinero.removeChips(actual)
     playerRoundBet.value += actual
     playerTotalBet.value += actual
     pot.value += actual
@@ -320,7 +320,7 @@ export const usePokerStore = defineStore('poker', () => {
   function returnUncalledBets() {
     const diff = playerRoundBet.value - dealerRoundBet.value
     if (diff > 0) {
-      wallet.addChips(diff)
+      dinero.addChips(diff)
       playerRoundBet.value -= diff
       playerTotalBet.value -= diff
       pot.value -= diff
@@ -713,7 +713,7 @@ export const usePokerStore = defineStore('poker', () => {
 
     if (cmp > 0) {
       // Player wins
-      wallet.addChips(totalPot)
+      dinero.addChips(totalPot)
       const profit = totalPot - playerTotalBet.value
       stats.value.handsWon++
       stats.value.totalProfit += profit
@@ -752,7 +752,7 @@ export const usePokerStore = defineStore('poker', () => {
       // Tie (Split pot) – odd chip goes to the player
       const playerShare = Math.ceil(totalPot / 2)
       const dealerShare = totalPot - playerShare
-      wallet.addChips(playerShare)
+      dinero.addChips(playerShare)
       dealerChips.value += dealerShare
       stats.value.handsTied++
       stats.value.totalProfit += playerShare - playerTotalBet.value
@@ -784,7 +784,7 @@ export const usePokerStore = defineStore('poker', () => {
     const dHand = getBestHand(dealerCards.value, communityCards.value)
 
     if (winner === 'player') {
-      wallet.addChips(totalPot)
+      dinero.addChips(totalPot)
       const profit = totalPot - playerTotalBet.value
       stats.value.handsWon++
       stats.value.totalProfit += profit

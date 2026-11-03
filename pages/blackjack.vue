@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useBlackjackStore } from '~/stores/blackjack'
-import { useWalletStore } from '~/stores/wallet'
+import { useDineroStore } from '~/stores/dinero'
 import type { SoundEvent } from '~/stores/blackjack'
 import { useSoundEngine } from '~/composables/useSoundEngine'
 import { useConfetti } from '~/composables/useConfetti'
@@ -13,11 +13,11 @@ import { getPixelCardUrl } from '~/utils/pixelDeck'
 const router = useRouter()
 const nuxtApp = useNuxtApp()
 const store = useBlackjackStore(nuxtApp.$pinia)
-const wallet = useWalletStore(nuxtApp.$pinia)
+const dinero = useDineroStore(nuxtApp.$pinia)
 const sound = useSoundEngine()
 const effects = useConfetti()
 
-const chips = computed(() => wallet.chips)
+const chips = computed(() => dinero.chips)
 
 const {
   player,
@@ -304,7 +304,7 @@ const resultIconColor = computed(() => {
             rounded="pill"
             prepend-icon="mdi-cash-plus"
             class="rules-btn font-weight-bold ml-1"
-            @click="wallet.openRecharge()"
+            @click="dinero.openRecharge()"
           >
             + Recargar
           </v-btn>
@@ -578,7 +578,7 @@ const resultIconColor = computed(() => {
       <GameRulesDialog v-model="showRulesDialog" game="blackjack" />
 
       <!-- Diálogo de Recarga por Códigos -->
-      <RechargeDialog v-model="wallet.isRechargeOpen" />
+      <RechargeDialog v-model="dinero.isRechargeOpen" />
     </v-container>
   </div>
 </template>

@@ -121,7 +121,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { useWalletStore } from '~/stores/wallet'
+import { useDineroStore } from '~/stores/dinero'
 import { useRechargeStore } from '~/stores/recharge'
 import { useSoundEngine } from '~/composables/useSoundEngine'
 import { useConfetti } from '~/composables/useConfetti'
@@ -135,7 +135,7 @@ const emit = defineEmits<{
   (e: 'recharged', amount: number): void
 }>()
 
-const wallet = useWalletStore()
+const dinero = useDineroStore()
 const recharge = useRechargeStore()
 const sound = useSoundEngine()
 const effects = useConfetti()
@@ -145,7 +145,7 @@ const isOpen = computed({
   set: (val: boolean) => emit('update:modelValue', val),
 })
 
-const chips = computed(() => wallet.chips)
+const chips = computed(() => dinero.chips)
 
 const activeTab = ref<'redeem' | 'history'>('redeem')
 const inputCode = ref('')

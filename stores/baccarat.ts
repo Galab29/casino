@@ -18,7 +18,7 @@ import {
   shouldBankerDraw,
 } from '~/constants/baccarat'
 import { BACCARAT_PAYOUTS, buildShoe, calculateBaccaratScore, checkPair, shouldPlayerDraw, shouldBankerDraw } from '~/constants/baccarat'
-import { useWalletStore } from '~/stores/wallet'
+import { useDineroStore } from '~/stores/dinero'
 import { createStatsPersistence } from '~/services/stats.api'
 
 const LEGACY_STATS_STORAGE_KEY = 'baccarat_game_stats_v1'
@@ -27,16 +27,16 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 export const useBaccaratStore = defineStore('baccarat', () => {
   // ─── Billetera Compartida ──────────────────────────────────
-  const wallet = useWalletStore()
+  const dinero = useDineroStore()
 
-  const chips = computed(() => wallet.chips)
+  const chips = computed(() => dinero.chips)
 
   function setChips(value: number) {
-    wallet.setChips(value)
+    dinero.setChips(value)
   }
 
   function refillChips() {
-    wallet.openRecharge()
+    dinero.openRecharge()
   }
 
   // ─── Ficha seleccionada ────────────────────────────────────

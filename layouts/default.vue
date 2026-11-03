@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useWalletStore } from '~/stores/wallet'
+import { useDineroStore } from '~/stores/dinero'
 import { useSoundEngine } from '~/composables/useSoundEngine'
 import RechargeDialog from '~/components/common/RechargeDialog.vue'
 import GameRulesDialog from '~/components/common/GameRulesDialog.vue'
@@ -9,7 +9,7 @@ import GameRulesDialog from '~/components/common/GameRulesDialog.vue'
 const route = useRoute()
 const router = useRouter()
 const nuxtApp = useNuxtApp()
-const wallet = useWalletStore(nuxtApp.$pinia)
+const dinero = useDineroStore(nuxtApp.$pinia)
 const sound = useSoundEngine()
 
 // Estado local del layout
@@ -18,12 +18,12 @@ const showRulesDialog = ref(false)
 const activeRuleGame = ref<'blackjack' | 'tragamonedas' | 'ruleta' | 'baccarat' | 'poker' | 'dados'>('blackjack')
 
 // Saldo reactivo conectado con la Store central
-const chips = computed(() => wallet.chips)
+const chips = computed(() => dinero.chips)
 const chipsFormatted = computed(() => chips.value.toLocaleString())
 
 // Sincronizar saldo con el servidor al cargar
 onMounted(() => {
-  wallet.fetchWallet()
+  dinero.fetchDinero()
 })
 
 // Catálogo de juegos para la navegación
@@ -126,7 +126,7 @@ function openRules(gameKey?: 'blackjack' | 'tragamonedas' | 'ruleta' | 'baccarat
 
 function handleRechargeClick() {
   sound.playChipStack()
-  wallet.openRecharge()
+  dinero.openRecharge()
   drawerOpen.value = false
 }
 
@@ -430,7 +430,7 @@ function navigateTo(path: string) {
     </footer>
 
     <!-- ═══ Modales Globales Centralizados ═══ -->
-    <RechargeDialog v-model="wallet.isRechargeOpen" />
+    <RechargeDialog v-model="dinero.isRechargeOpen" />
     <GameRulesDialog v-model="showRulesDialog" :game="activeRuleGame" />
   </div>
 </template>

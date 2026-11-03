@@ -1,17 +1,17 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { fetchMe, syncChips, type UserProfile } from '~/services/wallet.api'
+import { fetchMe, syncChips, type UserProfile } from '~/services/dinero.api'
 import { apiErrorMessage, debounce } from '~/services/http'
 
 /**
- * Store de Billetera (saldo único del casino).
+ * Store de Dinero / Billetera (saldo único del casino).
  *
  * - El servidor (tabla `users.chips`) es la fuente de la verdad.
  * - Esta Store guarda una copia temporal en memoria pedida al servidor
- *   (`fetchWallet`) y le reenvía cada cambio (`setChips` → sync con debounce).
+ *   (`fetchDinero`) y le reenvía cada cambio (`setChips` → sync con debounce).
  * - Todos los juegos y componentes leen el saldo desde aquí.
  */
-export const useWalletStore = defineStore('wallet', () => {
+export const useDineroStore = defineStore('dinero', () => {
   // ── Estado ────────────────────────────────
   const user = ref<UserProfile | null>(null)
   const chips = ref<number>(0)
@@ -29,7 +29,7 @@ export const useWalletStore = defineStore('wallet', () => {
   const chipsFormatted = computed(() => chips.value.toLocaleString())
 
   // ── Servidor → Store ──────────────────────
-  async function fetchWallet() {
+  async function fetchDinero() {
     if (isLoading.value) return
     isLoading.value = true
     try {
@@ -39,7 +39,7 @@ export const useWalletStore = defineStore('wallet', () => {
       error.value = null
     } catch (e) {
       error.value = apiErrorMessage(e, 'No se pudo cargar tu saldo.')
-      console.warn('[wallet] fetchWallet:', e)
+      console.warn('[dinero] fetchDinero:', e)
     } finally {
       isLoading.value = false
       isLoaded.value = true
@@ -54,7 +54,7 @@ export const useWalletStore = defineStore('wallet', () => {
       error.value = null
     } catch (e) {
       error.value = apiErrorMessage(e, 'No se pudo guardar tu saldo.')
-      console.warn('[wallet] syncChips:', e)
+      console.warn('[dinero] syncChips:', e)
     } finally {
       isSyncing.value = false
     }
@@ -105,7 +105,8 @@ export const useWalletStore = defineStore('wallet', () => {
     isAdmin,
     chipsFormatted,
     // actions
-    fetchWallet,
+    fetchDinero,
+    fetchWallet: fetchDinero,
     setChips,
     addChips,
     removeChips,
@@ -114,3 +115,6 @@ export const useWalletStore = defineStore('wallet', () => {
     refillChips,
   }
 })
+
+// Alias de compatibilidad para evitar rupturas
+export const useWalletStore = useDineroStore
